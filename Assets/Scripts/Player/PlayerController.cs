@@ -16,6 +16,9 @@ namespace Player
         [SerializeField] private Transform m_cameraRoot;
         [SerializeField] private float m_lookSensitivity = 0.1f;
 
+        [SerializeField] private PlayerAnimationController m_animController;
+
+
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
 
@@ -50,6 +53,10 @@ namespace Player
         {
             HandleMovement();
             HandleCamera();
+            HandleAnimations();
+            Debug.Log($"Grounded: {m_controller.isGrounded}, verticalVel: {m_verticalVelocity}");
+
+
         }
 
         private void OnMove(InputAction.CallbackContext ctx)
@@ -101,6 +108,14 @@ namespace Player
 
             m_cameraRoot.localRotation = Quaternion.Euler(m_cameraPitch, 0f, 0f);
             transform.Rotate(Vector3.up * mouseX);
+        }
+
+        private void HandleAnimations()
+        {
+            float normalizedSpeed = m_isRunning ? 1f : (m_moveInput.magnitude > 0 ? 0.5f : 0f);
+
+            m_animController.SetMoveSpeed(normalizedSpeed);
+            m_animController.SetRunning(m_isRunning);
         }
     }
 }
