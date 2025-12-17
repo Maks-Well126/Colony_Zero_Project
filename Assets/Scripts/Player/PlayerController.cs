@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
@@ -12,22 +13,17 @@ namespace Player
         [SerializeField] private float m_jumpHeight = 1.5f;
         [SerializeField] private float m_gravity = -9.81f;
 
-        [Header("Camera")]
-        [SerializeField] private Transform m_cameraRoot;
-        [SerializeField] private float m_lookSensitivity = 0.1f;
-
+        [Header("References")]
+        [SerializeField] private PlayerCameraController m_camera;
         [SerializeField] private PlayerAnimationController m_animController;
-
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
 
+
         private Vector2 m_moveInput;
         private Vector2 m_lookInput;
-
         private float m_verticalVelocity;
-        private float m_cameraPitch;
-
         private bool m_isRunning;
 
         private void Awake()
@@ -37,36 +33,49 @@ namespace Player
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
 
-            m_actions.Player.Move.performed += OnMove;
-            m_actions.Player.Move.canceled += OnMove;
-
-            m_actions.Player.Look.performed += OnLook;
-            m_actions.Player.Look.canceled += OnLook;
+            m_actions.Player.Move.performed += ctx => m_moveInput = ctx.ReadValue<Vector2>();
+            m_actions.Player.Move.canceled += ctx => m_moveInput = Vector2.zero;
 
             m_actions.Player.Jump.performed += OnJump;
 
-            m_actions.Player.Run.performed += OnRun;
-            m_actions.Player.Run.canceled += OnRun;
+            m_actions.Player.Run.performed += ctx => m_isRunning = ctx.ReadValueAsButton();
+            m_actions.Player.Run.canceled += ctx => m_isRunning = false;
+
+            m_actions.Player.Look.performed += ctx => m_lookInput = ctx.ReadValue<Vector2>();
+            m_actions.Player.Look.canceled += _ => m_lookInput = Vector2.zero;
+
         }
 
         private void Update()
         {
+
             HandleMovement();
-            HandleCamera();
             HandleAnimations();
-            Debug.Log($"Grounded: {m_controller.isGrounded}, verticalVel: {m_verticalVelocity}");
-
-
         }
 
-        private void OnMove(InputAction.CallbackContext ctx)
+        private void HandleMovement()
         {
-            m_moveInput = ctx.ReadValue<Vector2>();
-        }
+            float speed = m_isRunning ? m_runSpeed : m_moveSpeed;
 
-        private void OnLook(InputAction.CallbackContext ctx)
-        {
-            m_lookInput = ctx.ReadValue<Vector2>();
+            Vector3 move =
+                m_camera.Right * m_moveInput.x +
+                m_camera.Forward * m_moveInput.y;
+
+            move.y = 0f;
+
+            m_controller.Move(move * speed * Time.deltaTime);
+
+            if (m_controller.isGrounded)
+            {
+                if (m_verticalVelocity < 0f)
+                    m_verticalVelocity = -2f;
+            }
+            else
+            {
+                m_verticalVelocity += m_gravity * Time.deltaTime;
+            }
+
+            m_controller.Move(Vector3.up * m_verticalVelocity * Time.deltaTime);
         }
 
         private void OnJump(InputAction.CallbackContext ctx)
@@ -77,44 +86,10 @@ namespace Player
             }
         }
 
-        private void OnRun(InputAction.CallbackContext ctx)
-        {
-            m_isRunning = ctx.ReadValueAsButton();
-        }
-
-        private void HandleMovement()
-        {
-            if (m_controller.isGrounded && m_verticalVelocity < 0f)
-            {
-                m_verticalVelocity = -2f;
-            }
-
-            float speed = m_isRunning ? m_runSpeed : m_moveSpeed;
-
-            Vector3 move = transform.right * m_moveInput.x + transform.forward * m_moveInput.y;
-            m_controller.Move(move * speed * Time.deltaTime);
-
-            m_verticalVelocity += m_gravity * Time.deltaTime;
-            m_controller.Move(Vector3.up * m_verticalVelocity * Time.deltaTime);
-        }
-
-        private void HandleCamera()
-        {
-            float mouseX = m_lookInput.x * m_lookSensitivity;
-            float mouseY = m_lookInput.y * m_lookSensitivity;
-
-            m_cameraPitch -= mouseY;
-            m_cameraPitch = Mathf.Clamp(m_cameraPitch, -80f, 80f);
-
-            m_cameraRoot.localRotation = Quaternion.Euler(m_cameraPitch, 0f, 0f);
-            transform.Rotate(Vector3.up * mouseX);
-        }
-
         private void HandleAnimations()
         {
-            float normalizedSpeed = m_isRunning ? 1f : (m_moveInput.magnitude > 0 ? 0.5f : 0f);
-
-            m_animController.SetMoveSpeed(normalizedSpeed);
+            float speed = m_moveInput.magnitude;
+            m_animController.SetMoveSpeed(speed);
             m_animController.SetRunning(m_isRunning);
         }
     }
