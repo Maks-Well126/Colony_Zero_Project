@@ -2,124 +2,140 @@
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class RobotController : MonoBehaviour
 {
-    public NavMeshAgent agent;                 // ← NavMeshAgent
-    public Rigidbody rb;                       // ← Rigidbody
+    [Header("NavMesh")]
+    [SerializeField] private NavMeshAgent agent;
 
-    public WheelCollider frontLeft;            // ← переднее левое колесо
-    public WheelCollider frontRight;           // ← переднее правое колесо
-    public WheelCollider rearLeft;             // ← заднее левое колесо
-    public WheelCollider rearRight;             // ← заднее правое колесо
+    [Header("Wheels (Transforms only)")]
+    [SerializeField] private Transform frontLeft;
+    [SerializeField] private Transform frontRight;
+    [SerializeField] private Transform rearLeft;
+    [SerializeField] private Transform rearRight;
 
-    public Transform frontLeftMesh;             // ← визуальная модель колеса
-    public Transform frontRightMesh;
-    public Transform rearLeftMesh;
-    public Transform rearRightMesh;
+    [Header("Visual settings")]
+    [SerializeField] private float maxWheelTurnAngle = 30f;
+    [SerializeField] private float wheelRotateSpeed = 360f;
+    [SerializeField] private float bodyTurnSpeed = 4f;
+    [SerializeField] private float steerSmooth = 4f;
 
-    public float motorForce = 1500f;           // ← сила двигателя
-    public float maxSteerAngle = 30f;           // ← максимальный угол поворота
+    [Header("Stop settings")]
+    private string stopTag = "Stop";
+    [SerializeField] private float minSpeedToRotate = 0.2f;
 
-    [Header("Steering")]
-    public float steerSpeed = 5f;        // ← скорость поворота руля
-    private float currentSteer = 0f;     // ← текущий угол
+    private float currentSteer;
+    private bool isBlocked;       
 
-    [Header("Speed")]
-    public float maxSpeed = 10f;          // ← макс скорость
-    public float brakeForce = 3000f;      // ← торможение
-
-
-    void Update()
+    private void Start()
     {
-        // Проверяем нажатие ПРАВОЙ кнопки мыши (новый Input System)
+        agent.updateRotation = false;
+    }
+
+    private void Update()
+    {
+        HandleInput();
+        HandleMovement();
+        AnimateWheels();
+    }
+
+    // -------------------- INPUT --------------------
+
+    private void HandleInput()
+    {
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
-            // Получаем позицию мыши
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-
-            // Пускаем луч из камеры в точку мыши
-            Ray ray = Camera.main.ScreenPointToRay(mousePos);
-
-            // Проверяем, куда кликнули
+            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                // Передаём точку в NavMeshAgent
                 agent.SetDestination(hit.point);
             }
         }
     }
 
+    // -------------------- MOVEMENT --------------------
 
-
-    void FixedUpdate()
+    private void HandleMovement()
     {
-        // Если пути нет — тормозим
-        if (!agent.hasPath)
-        {
-            ApplyBrake();
+        if (isBlocked || agent.velocity.magnitude < minSpeedToRotate)
             return;
-        }
 
-        // Направление следующей точки пути
-        Vector3 target = agent.steeringTarget;
-        Vector3 localTarget = transform.InverseTransformPoint(target);
+        RotateBodySmoothly();
+    }
 
-        // Защита от деления на 0
-        float distance = Mathf.Max(localTarget.magnitude, 0.1f);
+    private void RotateBodySmoothly()
+    {
+        Vector3 moveDir = agent.velocity.normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
 
-        // Желаемый угол поворота
-        float targetSteer = (localTarget.x / distance) * maxSteerAngle;
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            targetRotation,
+            bodyTurnSpeed * Time.deltaTime
+        );
+    }
 
-        // СГЛАЖИВАНИЕ ПОВОРОТА
-        currentSteer = Mathf.Lerp(currentSteer, targetSteer, steerSpeed * Time.fixedDeltaTime);
+    // -------------------- WHEELS --------------------
 
-        // Подаём угол
-        frontLeft.steerAngle = currentSteer;
-        frontRight.steerAngle = currentSteer;
+    private void AnimateWheels()
+    {
+        float speed = agent.velocity.magnitude;
 
-        // Ограничение скорости
-        float speed = rb.linearVelocity.magnitude;
+        RotateWheel(frontLeft, speed);
+        RotateWheel(frontRight, speed);
+        RotateWheel(rearLeft, speed);
+        RotateWheel(rearRight, speed);
 
-        if (speed < maxSpeed && agent.remainingDistance > 1.5f)
+        SteerFrontWheels();
+    }
+
+    private void RotateWheel(Transform wheel, float speed)
+    {
+        if (!wheel) return;
+        wheel.Rotate(Vector3.right, speed * wheelRotateSpeed * Time.deltaTime, Space.Self);
+    }
+
+    private void SteerFrontWheels()
+    {
+        if (!agent.hasPath) return;
+
+        Vector3 localTarget = transform.InverseTransformPoint(agent.steeringTarget);
+        float targetSteer = Mathf.Clamp(localTarget.x / Mathf.Max(localTarget.magnitude, 0.1f), -1f, 1f);
+
+        currentSteer = Mathf.Lerp(currentSteer, targetSteer, steerSmooth * Time.deltaTime);
+        float steerAngle = currentSteer * maxWheelTurnAngle;
+
+        SetWheelSteer(frontLeft, steerAngle);
+        SetWheelSteer(frontRight, steerAngle);
+    }
+
+    private void SetWheelSteer(Transform wheel, float angle)
+    {
+        if (!wheel) return;
+
+        Vector3 euler = wheel.localEulerAngles;
+        wheel.localRotation = Quaternion.Euler(euler.x, angle, euler.z);
+    }
+
+    // -------------------- STOP LOGIC --------------------
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(stopTag))
         {
-            rearLeft.motorTorque = motorForce;
-            rearRight.motorTorque = motorForce;
-            ReleaseBrake();
+            isBlocked = true;
+            agent.isStopped = true;
         }
-        else
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(stopTag))
         {
-            ApplyBrake();
+            isBlocked = false;
+            agent.isStopped = false;
         }
-
-        // Обновление визуальных колёс
-        UpdateWheel(frontLeft, frontLeftMesh);
-        UpdateWheel(frontRight, frontRightMesh);
-        UpdateWheel(rearLeft, rearLeftMesh);
-        UpdateWheel(rearRight, rearRightMesh);
     }
 
-    void ApplyBrake()
-    {
-        rearLeft.motorTorque = 0;
-        rearRight.motorTorque = 0;
-
-        rearLeft.brakeTorque = brakeForce;
-        rearRight.brakeTorque = brakeForce;
-    }
-
-    void ReleaseBrake()
-    {
-        rearLeft.brakeTorque = 0;
-        rearRight.brakeTorque = 0;
-    }
-
-
-    void UpdateWheel(WheelCollider col, Transform mesh)
-    {
-        Vector3 pos;
-        Quaternion rot;
-        col.GetWorldPose(out pos, out rot);
-        mesh.position = pos;
-        mesh.rotation = rot;
-    }
+    
 }
