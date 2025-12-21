@@ -19,4 +19,4 @@ MonoBehaviour:
   m_attackCooldown: 1.2
   m_viewDistance: 10
   m_viewAngle: 120
-  m_modelPrefab: {fileID: 0}
+  m_modelPrefab: {fileID: 8052537840018781201, guid: 1e3a0904b78cfb74594f0136b58f5149, type: 3}
