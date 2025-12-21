@@ -51,6 +51,8 @@ namespace Player
             m_actions.Player.Aim.performed += _ => SetAiming(true);
             m_actions.Player.Aim.canceled  += _ => SetAiming(false);
 
+            m_actions.Player.Shoot.performed += _ => OnShoot();
+
         }
 
         private void Update()
@@ -67,8 +69,17 @@ namespace Player
 
             m_crosshair.SetVisible(value);
             m_camera.SetAiming(value);
-            //m_animController.SetAiming(value);
+            m_animController.SetAiming(value);
         }
+
+        private void OnShoot()
+        {
+            if (!m_isAiming)
+                return;
+
+            m_animController.Shoot();
+        }
+
 
 
         private void HandleMovement()

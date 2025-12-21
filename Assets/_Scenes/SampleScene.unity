@@ -1240,19 +1240,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5059957
+      value: 0.5380177
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.46778217
+      value: 0.44651607
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.6133853
+      value: 0.5854999
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.38588428
+      value: 0.41030505
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1260,7 +1260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 100.96
+      value: 94.84
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b4bac87a59e3520479d5cde2aeeca4a6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1403,6 +1403,7 @@ GameObject:
   - component: {fileID: 1333781025}
   - component: {fileID: 1333781024}
   - component: {fileID: 1333781023}
+  - component: {fileID: 1333781027}
   m_Layer: 0
   m_Name: Anemy
   m_TagString: Untagged
@@ -1502,6 +1503,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1333781027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1333781022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a8f982a26696a41afab2e33d3d69d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  m_data: {fileID: 11400000, guid: 5268ee5d9be12a841b6380a52e3526fb, type: 2}
 --- !u!1 &1487394706
 GameObject:
   m_ObjectHideFlags: 0
@@ -2640,7 +2654,7 @@ GameObject:
   - component: {fileID: 2189165697719360993}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
