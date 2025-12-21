@@ -1,21 +1,33 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "EnemyData",menuName = "Game/Enemy Data")]
-public class EnemyData : ScriptableObject
+[CreateAssetMenu(fileName = "EnemyData", menuName = "Xlab/Data/EnemyData")]
+public sealed class EnemyData : ScriptableObject
 {
-    [Header("Base Stats")]
-    public float maxHealth = 100f;
-    public float moveSpeed = 3f;
-    public float damage = 10f;
+    [Header("Stats")]
+    [SerializeField][Min(1)] private float m_maxHealth = 100f;
+    [SerializeField][Min(0)] private float m_moveSpeed = 3f;
+    [SerializeField][Min(0)] private float m_damage = 10f;
 
     [Header("Combat")]
-    public float attackRange = 2f;
-    public float attackCooldown = 1.2f;
+    [SerializeField][Min(0)] private float m_attackRange = 2f;
+    [SerializeField][Min(0)] private float m_attackCooldown = 1.2f;
 
     [Header("Vision")]
-    public float viewDistance = 10f;
-    public float viewAngle = 120f;
+    [SerializeField][Min(0)] private float m_viewDistance = 10f;
+    [SerializeField][Range(0, 180)] private float m_viewAngle = 120f;
 
     [Header("Visual")]
-    public GameObject modelPrefab;
+    [SerializeField] private GameObject m_modelPrefab;
+
+    public float maxHealth => m_maxHealth;
+    public float moveSpeed => m_moveSpeed;
+    public float damage => m_damage;
+
+    public float attackRange => m_attackRange;
+    public float attackCooldown => m_attackCooldown;
+
+    public float viewDistance => m_viewDistance;
+    public float viewAngle => m_viewAngle;
+
+    public GameObject modelPrefab => m_modelPrefab;
 }

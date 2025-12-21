@@ -5,9 +5,10 @@ namespace Player
 {
     public class PlayerShoot : MonoBehaviour
     {
-        [SerializeField] private PlayerCameraController m_camera;
-        [SerializeField] private float m_distance = 200f;
-        [SerializeField] private LayerMask m_hitMask;
+        [SerializeField] private WeaponConfig m_weaponConfig;
+        [SerializeField] private Camera m_camera;
+
+        private float m_lastShootTime;
 
         private PlayerInputActions m_actions;
 
@@ -16,19 +17,31 @@ namespace Player
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
 
-            m_actions.Player.Shoot.performed += _ => Shoot();
+            m_actions.Player.Shoot.performed += _ => TryShoot();
+        }
+
+        private void TryShoot()
+        {
+            if (Time.time < m_lastShootTime + m_weaponConfig.FireRate)
+                return;
+
+            m_lastShootTime = Time.time;
+
+            Shoot();
         }
 
         private void Shoot()
         {
-            Ray ray = new Ray(
+            if (Physics.Raycast(
                 m_camera.transform.position,
-                m_camera.Forward
-            );
-
-            if (Physics.Raycast(ray, out RaycastHit hit, m_distance, m_hitMask))
+                m_camera.transform.forward,
+                out RaycastHit hit,
+                m_weaponConfig.Range))
             {
-                Debug.Log($"Hit: {hit.collider.name}");
+                if (hit.collider.TryGetComponent(out Enemy enemy))
+                {
+                    enemy.TakeDamage(m_weaponConfig.Damage);
+                }
             }
         }
     }

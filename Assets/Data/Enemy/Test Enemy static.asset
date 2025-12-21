@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7609e75bfef28504cab6eda9b036bb57, type: 3}
   m_Name: Test Enemy static
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  maxHealth: 100
-  moveSpeed: 0
-  damage: 10
-  attackRange: 2
-  attackCooldown: 1.2
-  viewDistance: 10
-  viewAngle: 120
-  modelPrefab: {fileID: 0}
+  m_maxHealth: 100
+  m_moveSpeed: 0
+  m_damage: 10
+  m_attackRange: 2
+  m_attackCooldown: 1.2
+  m_viewDistance: 10
+  m_viewAngle: 120
+  m_modelPrefab: {fileID: 0}
