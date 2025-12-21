@@ -17,8 +17,12 @@ namespace Player
         [SerializeField] private PlayerCameraController m_camera;
         [SerializeField] private PlayerAnimationController m_animController;
 
+        [Header("AIM")]
+        [SerializeField] private CrosshairController m_crosshair;
+
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
+        private bool m_isAiming;
 
 
         private Vector2 m_moveInput;
@@ -44,6 +48,9 @@ namespace Player
             m_actions.Player.Look.performed += ctx => m_lookInput = ctx.ReadValue<Vector2>();
             m_actions.Player.Look.canceled += _ => m_lookInput = Vector2.zero;
 
+            m_actions.Player.Aim.performed += _ => SetAiming(true);
+            m_actions.Player.Aim.canceled  += _ => SetAiming(false);
+
         }
 
         private void Update()
@@ -53,13 +60,24 @@ namespace Player
             HandleAnimations();
         }
 
+
+        private void SetAiming(bool value)
+        {
+            m_isAiming = value;
+
+            m_crosshair.SetVisible(value);
+            m_camera.SetAiming(value);
+            //m_animController.SetAiming(value);
+        }
+
+
         private void HandleMovement()
         {
             float speed = m_isRunning ? m_runSpeed : m_moveSpeed;
 
             Vector3 move =
-                m_camera.Right * m_moveInput.x +
-                m_camera.Forward * m_moveInput.y;
+                m_camera.Forward * m_moveInput.y +
+                m_camera.transform.right * m_moveInput.x;
 
             move.y = 0f;
 
