@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4450293547955022242}
   - component: {fileID: 3344877692133270144}
   - component: {fileID: 6205948748749573632}
-  - component: {fileID: 985474670681791892}
+  - component: {fileID: -5833600328420740129}
   m_Layer: 0
   m_Name: Monster_Plants
   m_TagString: Untagged
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6759696919374336112}
-  m_Mesh: {fileID: -7003644138009874191, guid: 4cc4f62da9cfb0c4c925023839858a01, type: 3}
+  m_Mesh: {fileID: -7003644138009874191, guid: 5d735db96db1a6449a819b1f6123e634, type: 3}
 --- !u!23 &3344877692133270144
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e5107c9242c2f24ea203db3aa897c11, type: 2}
+  - {fileID: 2100000, guid: d7c674c01c56abd4fbb4baad9e1fde07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   m_data: {fileID: 11400000, guid: 5268ee5d9be12a841b6380a52e3526fb, type: 2}
---- !u!64 &985474670681791892
+--- !u!64 &-5833600328420740129
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,4 +125,4 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -7003644138009874191, guid: 4cc4f62da9cfb0c4c925023839858a01, type: 3}
+  m_Mesh: {fileID: -7003644138009874191, guid: 5d735db96db1a6449a819b1f6123e634, type: 3}
