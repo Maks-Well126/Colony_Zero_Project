@@ -1,0 +1,128 @@
+using UnityEngine;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
+
+[ExecuteAlways]
+public class TerrainRoadNavMesh : MonoBehaviour
+{
+    [Header("Terrain Settings")]
+    public Terrain terrain;
+    public int roadTextureIndex1 = 0;
+    public int roadTextureIndex2 = 1;
+    [Range(0f, 1f)] public float threshold = 0.5f;
+    public float cellSize = 4f;
+    public float volumeHeight = 2f;
+    [Tooltip("Регулирует смещение NavMeshVolume над Terrain")]
+    public float groundOffset = 0.02f;
+
+    [Header("Optional NavMeshSurface")]
+    public NavMeshSurface navMeshSurface;
+
+    private const string volumeName = "RoadNavMeshCell";
+
+    [ContextMenu("Bake Road NavMesh")]
+    public void BakeRoadNavMesh()
+    {
+        if (terrain == null)
+        {
+            Debug.LogWarning("Terrain не назначен!");
+            return;
+        }
+
+        ClearOldVolumes();
+
+        TerrainData data = terrain.terrainData;
+        Vector3 terrainPos = terrain.transform.position;
+        Vector3 terrainSize = data.size;
+
+        int cellsX = Mathf.CeilToInt(terrainSize.x / cellSize);
+        int cellsZ = Mathf.CeilToInt(terrainSize.z / cellSize);
+
+        float[,,] alphamaps = data.GetAlphamaps(0, 0, data.alphamapWidth, data.alphamapHeight);
+
+        for (int x = 0; x < cellsX; x++)
+        {
+            for (int z = 0; z < cellsZ; z++)
+            {
+                float worldX = x * cellSize;
+                float worldZ = z * cellSize;
+
+                int alphaX = Mathf.Clamp(Mathf.RoundToInt(worldX / terrainSize.x * data.alphamapWidth), 0, data.alphamapWidth - 1);
+                int alphaZ = Mathf.Clamp(Mathf.RoundToInt(worldZ / terrainSize.z * data.alphamapHeight), 0, data.alphamapHeight - 1);
+
+                float roadAmount1 = alphamaps[alphaZ, alphaX, roadTextureIndex1];
+                float roadAmount2 = alphamaps[alphaZ, alphaX, roadTextureIndex2];
+
+                if (roadAmount1 < threshold && roadAmount2 < threshold) continue;
+
+                // Создаём плоскость
+                GameObject cell = GameObject.CreatePrimitive(PrimitiveType.Plane);
+                cell.name = volumeName;
+                cell.transform.SetParent(transform);
+
+                // Позиция по высоте террейна с groundOffset
+                float sampleX = terrainPos.x + worldX + cellSize / 2f;
+                float sampleZ = terrainPos.z + worldZ + cellSize / 2f;
+                float terrainHeight = terrain.SampleHeight(new Vector3(sampleX, 0, sampleZ)) + terrainPos.y;
+
+                Vector3 cellPos = new Vector3(sampleX, terrainHeight + volumeHeight / 2f + groundOffset, sampleZ);
+                cell.transform.position = cellPos;
+
+                // Получаем нормаль террейна для наклона
+                Vector3 normal = terrain.terrainData.GetInterpolatedNormal((sampleX - terrainPos.x) / terrainSize.x, (sampleZ - terrainPos.z) / terrainSize.z);
+                cell.transform.rotation = Quaternion.FromToRotation(Vector3.up, normal);
+
+                // Масштаб под ячейку
+                float scale = cellSize / 10f; // Plane по умолчанию 10x10
+                cell.transform.localScale = new Vector3(scale, 1f, scale);
+
+                // NavMeshModifierVolume
+                var vol = cell.AddComponent<NavMeshModifierVolume>();
+                vol.size = new Vector3(cellSize, volumeHeight, cellSize);
+                vol.area = NavMesh.GetAreaFromName("Walkable");
+
+                // Отключаем Renderer после bake
+                var renderer = cell.GetComponent<MeshRenderer>();
+                if (renderer != null) renderer.enabled = false;
+            }
+        }
+
+        Debug.Log("Road NavMesh cells created with terrain slopes.");
+
+        // Авто-бейк NavMeshSurface
+        if (navMeshSurface != null)
+        {
+            // Временно включаем Renderer для bake
+            foreach (Transform t in transform)
+            {
+                var rend = t.GetComponent<MeshRenderer>();
+                if (rend != null) rend.enabled = true;
+            }
+
+            navMeshSurface.BuildNavMesh();
+            Debug.Log("NavMeshSurface baked.");
+
+            // Выключаем Renderer после bake
+            foreach (Transform t in transform)
+            {
+                var rend = t.GetComponent<MeshRenderer>();
+                if (rend != null) rend.enabled = false;
+            }
+        }
+    }
+
+    private void ClearOldVolumes()
+    {
+        var old = GetComponentsInChildren<NavMeshModifierVolume>();
+        foreach (var v in old)
+        {
+            if (Application.isEditor) DestroyImmediate(v.gameObject);
+            else Destroy(v.gameObject);
+        }
+
+        foreach (Transform t in transform)
+        {
+            if (t.name.StartsWith(volumeName)) DestroyImmediate(t.gameObject);
+        }
+    }
+}

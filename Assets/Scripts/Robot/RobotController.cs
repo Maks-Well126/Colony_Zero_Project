@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEditor.Experimental;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
@@ -7,6 +10,7 @@ public class RobotController : MonoBehaviour
 {
     [Header("NavMesh")]
     [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private Transform destinationPoint;
 
     [Header("Wheels (Transforms only)")]
     [SerializeField] private Transform frontLeft;
@@ -21,44 +25,93 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float steerSmooth = 4f;
 
     [Header("Stop settings")]
-    private string stopTag = "Stop";
+    [SerializeField] private string stopTag = "Stop";
     [SerializeField] private float minSpeedToRotate = 0.2f;
 
+    [Header("Player interaction")]
+    [SerializeField] private GameObject interactCanvas;
+    [SerializeField] private float interactRange = 3f;
+    [SerializeField] private Transform player;
+
     private float currentSteer;
-    private bool isBlocked;       
+    private bool isBlocked;
+    private bool isMovingToDestination;   
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+
+    public event Action<GameObject> OnArtifactPick;
 
     private void Start()
     {
         agent.updateRotation = false;
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+
+        if (interactCanvas) interactCanvas.SetActive(false);
     }
 
     private void Update()
     {
-        HandleInput();
+        
+        HandlePlayerInteraction();
         HandleMovement();
         AnimateWheels();
     }
 
-    // -------------------- INPUT --------------------
-
-    private void HandleInput()
+    // -------------------- PLAYER INPUT --------------------
+    private void HandlePlayerInteraction()
     {
-        if (Mouse.current.rightButton.wasPressedThisFrame)
+        if (!player || !interactCanvas) return;
+
+        float dist = Vector3.Distance(player.position, transform.position);
+        interactCanvas.SetActive(dist <= interactRange);
+        if (dist >= interactRange)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                agent.SetDestination(hit.point);
-            }
+            interactCanvas.SetActive(false);
+        }
+
+        if (dist <= interactRange && Keyboard.current.eKey.wasPressedThisFrame && !isMovingToDestination)
+        {
+            StartCoroutine(MoveToDestination());
         }
     }
 
     // -------------------- MOVEMENT --------------------
+    private IEnumerator MoveToDestination()
+    {
+        if (destinationPoint == null) yield break;
 
+        isMovingToDestination = true;
+
+        // Едем к цели
+        agent.SetDestination(destinationPoint.position);
+        agent.isStopped = false;
+
+        // Ждём, пока робот доедет
+        while (Vector3.Distance(transform.position, destinationPoint.position) > agent.stoppingDistance)
+            yield return null;
+
+        agent.isStopped = true;
+
+        
+        // Возврат на старт
+        agent.SetDestination(startPosition);
+        agent.isStopped = false;
+
+        while (Vector3.Distance(transform.position, startPosition) > agent.stoppingDistance)
+            yield return null;
+
+        agent.isStopped = true;
+        transform.rotation = startRotation;
+        isMovingToDestination = false;
+    }
+    
+   
+
+    // -------------------- BODY ROTATION --------------------
     private void HandleMovement()
     {
-        if (isBlocked || agent.velocity.magnitude < minSpeedToRotate)
-            return;
+        if (isBlocked || agent.velocity.magnitude < minSpeedToRotate) return;
 
         RotateBodySmoothly();
     }
@@ -66,17 +119,13 @@ public class RobotController : MonoBehaviour
     private void RotateBodySmoothly()
     {
         Vector3 moveDir = agent.velocity.normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+        if (moveDir.sqrMagnitude < 0.001f) return;
 
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRotation,
-            bodyTurnSpeed * Time.deltaTime
-        );
+        Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, bodyTurnSpeed * Time.deltaTime);
     }
 
     // -------------------- WHEELS --------------------
-
     private void AnimateWheels()
     {
         float speed = agent.velocity.magnitude;
@@ -112,20 +161,26 @@ public class RobotController : MonoBehaviour
     private void SetWheelSteer(Transform wheel, float angle)
     {
         if (!wheel) return;
-
         Vector3 euler = wheel.localEulerAngles;
         wheel.localRotation = Quaternion.Euler(euler.x, angle, euler.z);
     }
 
     // -------------------- STOP LOGIC --------------------
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag(stopTag))
         {
             isBlocked = true;
             agent.isStopped = true;
+            
         }
+        if (other.CompareTag("Artifact"))
+        {            
+            OnArtifactPick?.Invoke(other.gameObject);
+            Debug.Log("Atref");                       
+
+        }
+        Debug.Log("Atref");
     }
 
     private void OnTriggerExit(Collider other)
@@ -136,6 +191,5 @@ public class RobotController : MonoBehaviour
             agent.isStopped = false;
         }
     }
-
     
 }

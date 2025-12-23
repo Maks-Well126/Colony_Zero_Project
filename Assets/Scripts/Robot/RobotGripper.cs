@@ -1,155 +1,71 @@
 using UnityEngine;
+using System.Collections;
 
 public class RobotGripper : MonoBehaviour
 {
-    private enum GripperState
+    [SerializeField] private Transform craneArm;
+    [SerializeField] private Transform pickPosition;
+    [SerializeField] private float rotateSpeed = 90f;
+
+    [Header("Pick rotation")]
+    [SerializeField] private float pickYawAngle = 45f; // óãîë ïîâîðîòà ïî Y
+
+    [SerializeField] private RobotController controller;
+
+    private Quaternion initialRotation;
+
+    private void Start()
     {
-        Idle,
-        LoweringArm,
-        ClosingClaws,
-        Holding
-    }
+        initialRotation = craneArm.localRotation;
 
-    [Header("Arm")]
-    [SerializeField] private Transform armJoint;   // ñóñòàâ ðóêàâà
-    [SerializeField] private float armDownAngle = -45f;
-    [SerializeField] private float armUpAngle = 0f;
-    [SerializeField] private float armSpeed = 40f;
-
-    [Header("Claws")]
-    [SerializeField] private Transform leftClaw;
-    [SerializeField] private Transform rightClaw;
-    [SerializeField] private float openAngle = 30f;
-    [SerializeField] private float closeAngle = 5f;
-    [SerializeField] private float clawSpeed = 60f;
-
-    [Header("Grab")]
-    [SerializeField] private string grabbableTag = "Grabbable";
-
-    private GripperState state = GripperState.Idle;
-    private bool objectDetected;
-    private Rigidbody grabbedBody;
-    private FixedJoint grabJoint;
-
-    // -------------------- UPDATE --------------------
-
-    private void Update()
-    {
-        // ïðèìåð óïðàâëåíèÿ
-        if (Input.GetKeyDown(KeyCode.E) && state == GripperState.Idle)
+        if (controller != null)
         {
-            state = GripperState.LoweringArm;
-        }
-
-        ProcessState();
-    }
-
-    // -------------------- STATE MACHINE --------------------
-
-    private void ProcessState()
-    {
-        switch (state)
-        {
-            case GripperState.LoweringArm:
-                LowerArm();
-                break;
-
-            case GripperState.ClosingClaws:
-                CloseClaws();
-                break;
-
-            case GripperState.Holding:
-                HoldObject();
-                break;
+            controller.OnArtifactPick += HandlePick;
         }
     }
 
-    // -------------------- ARM --------------------
-
-    private void LowerArm()
+    private void HandlePick(GameObject artifact)
     {
-        RotateArm(armDownAngle);
+        StartCoroutine(PickRoutine(artifact));
+    }
 
-        if (Mathf.Abs(GetArmAngle() - armDownAngle) < 1f || objectDetected)
+    private IEnumerator PickRoutine(GameObject artifact)
+    {
+        // --- ÖÅËÅÂÎÉ ÏÎÂÎÐÎÒ ÒÎËÜÊÎ ÏÎ Y ---
+        Quaternion targetRotation =
+            initialRotation * Quaternion.Euler(0f, pickYawAngle, 0f);
+
+        // Ïîâîðîò ê óãëó
+        while (Quaternion.Angle(craneArm.localRotation, targetRotation) > 0.5f)
         {
-            state = GripperState.ClosingClaws;
+            craneArm.localRotation = Quaternion.RotateTowards(
+                craneArm.localRotation,
+                targetRotation,
+                rotateSpeed * Time.deltaTime
+            );
+            yield return null;
         }
-    }
 
-    private void RotateArm(float targetAngle)
-    {
-        Quaternion target = Quaternion.Euler(targetAngle, 0, 0);
-        armJoint.localRotation = Quaternion.RotateTowards(
-            armJoint.localRotation,
-            target,
-            armSpeed * Time.deltaTime
-        );
-    }
+        // --- ÏÎÄÁÎÐ ÀÐÒÅÔÀÊÒÀ ---
+        artifact.transform.SetParent(pickPosition);
+        artifact.transform.localPosition = Vector3.zero;
+        artifact.transform.localRotation = Quaternion.identity;
 
-    private float GetArmAngle()
-    {
-        return armJoint.localEulerAngles.x > 180
-            ? armJoint.localEulerAngles.x - 360
-            : armJoint.localEulerAngles.x;
-    }
+        Rigidbody rb = artifact.GetComponent<Rigidbody>();
+        if (rb != null)
+            rb.isKinematic = true;
 
-    // -------------------- CLAWS --------------------
+        yield return new WaitForSeconds(0.5f);
 
-    private void CloseClaws()
-    {
-        RotateClaw(leftClaw, closeAngle);
-        RotateClaw(rightClaw, -closeAngle);
-    }
-
-    private void RotateClaw(Transform claw, float angle)
-    {
-        Quaternion target = Quaternion.Euler(angle, 0, 0);
-        claw.localRotation = Quaternion.RotateTowards(
-            claw.localRotation,
-            target,
-            clawSpeed * Time.deltaTime
-        );
-    }
-
-    // -------------------- PHYSICS GRAB --------------------
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (state != GripperState.ClosingClaws) return;
-        if (!collision.collider.CompareTag(grabbableTag)) return;
-
-        Rigidbody rb = collision.rigidbody;
-        if (!rb) return;
-
-        Grab(rb);
-    }
-
-    private void Grab(Rigidbody rb)
-    {
-        grabbedBody = rb;
-
-        grabJoint = gameObject.AddComponent<FixedJoint>();
-        grabJoint.connectedBody = rb;
-        grabJoint.breakForce = Mathf.Infinity;
-        grabJoint.breakTorque = Mathf.Infinity;
-
-        state = GripperState.Holding;
-    }
-
-    private void HoldObject()
-    {
-        // äåðæèì îáúåêò
-        RotateArm(armUpAngle);
-    }
-
-    // -------------------- OPTIONAL RELEASE --------------------
-
-    public void Release()
-    {
-        if (grabJoint)
-            Destroy(grabJoint);
-
-        grabbedBody = null;
-        state = GripperState.Idle;
+        // --- ÂÎÇÂÐÀÒ Â ÈÑÕÎÄÍÎÅ ÏÎËÎÆÅÍÈÅ ---
+        while (Quaternion.Angle(craneArm.localRotation, initialRotation) > 0.5f)
+        {
+            craneArm.localRotation = Quaternion.RotateTowards(
+                craneArm.localRotation,
+                initialRotation,
+                rotateSpeed * Time.deltaTime
+            );
+            yield return null;
+        }
     }
 }
