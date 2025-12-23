@@ -416,12 +416,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.07301072, y: 0.6393862, z: -0.061176296, w: 0.7629629}
-  m_LocalPosition: {x: -5.0966187, y: 0.8132792, z: 2.0844727}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalRotation: {x: 0.41256618, y: 0.295817, z: -0.14145276, w: 0.8498663}
+  m_LocalPosition: {x: 159.7672, y: 157.78587, z: 710.396}
+  m_LocalScale: {x: 1, y: 0.98201835, z: 1.0359634}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 898198336}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 4.74, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -785,8 +785,92 @@ Transform:
   m_LocalPosition: {x: 374.37, y: 7.57, z: 756.2}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 330585546}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &995207729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 995207732}
+  - component: {fileID: 995207731}
+  - component: {fileID: 995207730}
+  m_Layer: 6
+  m_Name: Robot Nav Mesh
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &995207730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995207729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: -1372625422
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.75
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 28740794aef03d64bad36fa48c9bed22, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!114 &995207731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995207729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e00ec6e48cc36534f977866cfdf78874, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TerrainRoadNavMesh
+  terrain: {fileID: 1853857915}
+  roadTextureIndex1: 6
+  roadTextureIndex2: 3
+  threshold: 0.001
+  cellSize: 2
+  volumeHeight: 2
+  groundOffset: -1
+  navMeshSurface: {fileID: 995207730}
+--- !u!4 &995207732
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995207729}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 179.38573, y: 2.6854, z: 863.52484}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1365378789
@@ -805,7 +889,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1365378790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -945,7 +1029,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 45728126688396678, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_AgentTypeID
-      value: 0
+      value: -1372625422
       objectReference: {fileID: 0}
     - target: {fileID: 861154570755661895, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_Enabled
@@ -1199,3 +1283,5 @@ SceneRoots:
   - {fileID: 658179477}
   - {fileID: 1365378791}
   - {fileID: 1655073341}
+  - {fileID: 995207732}
+  - {fileID: 330585546}
