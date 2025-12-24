@@ -97,19 +97,19 @@ public class DestroyItem : MonoBehaviour
 
     private void ProcessInteraction()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !m_isCollecting)
+        if (Input.GetKeyDown(KeyCode.F) && !m_isCollecting)
         {
             StartCollecting();
             return;
         }
 
-        if (Input.GetKeyUp(KeyCode.E) && m_isCollecting)
+        if (Input.GetKeyUp(KeyCode.F) && m_isCollecting)
         {
             StopCollecting();
             return;
         }
 
-        if (Input.GetKey(KeyCode.E) && m_isCollecting)
+        if (Input.GetKey(KeyCode.F) && m_isCollecting)
         {
             UpdateCollecting();
         }
