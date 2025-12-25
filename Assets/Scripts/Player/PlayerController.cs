@@ -20,6 +20,9 @@ namespace Player
         [Header("AIM")]
         [SerializeField] private CrosshairController m_crosshair;
 
+        private Destructible m_currentTarget;//
+        [SerializeField] private float m_destroyDistance = 5f;//
+
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
         private bool m_isAiming;
@@ -53,13 +56,49 @@ namespace Player
 
             m_actions.Player.Shoot.performed += _ => OnShoot();
 
+            m_actions.Player.Destroy.performed += _ => TryStartDestroy();//
+            m_actions.Player.Destroy.canceled  += _ => CancelDestroy();//
+
+
         }
+
+//
+        private void TryStartDestroy()
+        {
+            if (!Physics.Raycast(
+                m_camera.transform.position,
+                m_camera.transform.forward,
+                out RaycastHit hit,
+                m_destroyDistance))
+                return;
+
+            if (!hit.collider.TryGetComponent(out Destructible destructible))
+                return;
+
+            m_currentTarget = destructible;
+            m_currentTarget.StartDestroy();
+        }
+
+        private void CancelDestroy()
+        {
+            if (m_currentTarget == null)
+                return;
+
+            m_currentTarget.CancelDestroy();
+            m_currentTarget = null;
+        }
+//
+
 
         private void Update()
         {
 
             HandleMovement();
             HandleAnimations();
+
+            if (m_currentTarget != null)
+                m_currentTarget.UpdateDestroy(Time.deltaTime);
+
         }
 
 
@@ -79,10 +118,6 @@ namespace Player
 
             m_animController.Shoot();
         }
-
-        
-
-
 
         private void HandleMovement()
         {

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9f1544023f6c4c44ab50b3d51c1f964, type: 3}
   m_Name: BrambleSoundSettings
   m_EditorClassIdentifier: Assembly-CSharp::SoundSettings
-  collectingSound: {fileID: 8300000, guid: 642771746886ce241ae228e89ea10369, type: 3}
-  completeSound: {fileID: 8300000, guid: a66d734be8517d04b8eb9b6154a5965e, type: 3}
+  m_collectingSound: {fileID: 8300000, guid: 642771746886ce241ae228e89ea10369, type: 3}
+  m_completeSound: {fileID: 8300000, guid: a66d734be8517d04b8eb9b6154a5965e, type: 3}
   volume: 0.7
   collectingVolumeMultiplier: 1
   spatialBlend: 1

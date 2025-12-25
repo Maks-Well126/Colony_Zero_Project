@@ -72,6 +72,7 @@ public class RobotController : MonoBehaviour
 
         if (dist <= interactRange && Keyboard.current.eKey.wasPressedThisFrame && !isMovingToDestination)
         {
+            agent.isStopped = false;
             StartCoroutine(MoveToDestination());
         }
     }
