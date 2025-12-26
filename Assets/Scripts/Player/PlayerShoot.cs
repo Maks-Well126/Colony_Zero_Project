@@ -7,6 +7,8 @@ namespace Player
     {
         [SerializeField] private WeaponConfig m_weaponConfig;
         [SerializeField] private Camera m_camera;
+        [SerializeField] private AudioSource m_audioSource;
+
 
         private float m_lastShootTime;
 
@@ -32,6 +34,8 @@ namespace Player
 
         private void Shoot()
         {
+            PlayShootSound();
+
             if (Physics.Raycast(
                 m_camera.transform.position,
                 m_camera.transform.forward,
@@ -43,6 +47,14 @@ namespace Player
                     enemy.TakeDamage(m_weaponConfig.Damage);
                 }
             }
+        }
+
+        private void PlayShootSound()
+        {
+            if (m_audioSource == null || m_weaponConfig.ShootSound == null)
+                return;
+
+            m_audioSource.PlayOneShot(m_weaponConfig.ShootSound);
         }
     }
 }

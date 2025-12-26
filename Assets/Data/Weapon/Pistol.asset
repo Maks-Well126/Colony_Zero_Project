@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a6f9227b48a3a5418f673ecdb15dce0, type: 3}
   m_Name: Pistol
   m_EditorClassIdentifier: Assembly-CSharp::WeaponConfig
-  m_damage: 100
+  m_damage: 25
   m_fireRate: 0.2
-  m_range: 100
+  m_range: 1000
   m_muzzleFlashPrefab: {fileID: 0}
-  m_shootSound: {fileID: 0}
+  m_shootSound: {fileID: 8300000, guid: 2ab2a971898470f4db4c774be98206ee, type: 3}

@@ -1,8 +1,12 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private EnemyData m_data;
+    [SerializeField] private float hitFlashTime = 0.1f;
+    private Renderer[] m_renderers;
+
 
     private float m_currentHealth;
 
@@ -10,6 +14,8 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
+        m_renderers = GetComponentsInChildren<Renderer>();
+
         m_currentHealth = m_data.maxHealth;
 
         m_player = GameObject.FindWithTag("Player").transform;
@@ -50,6 +56,8 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
 {
+    FlashHit();
+
     m_currentHealth -= damage;
 
     if (m_currentHealth <= 0f)
@@ -62,5 +70,22 @@ public class Enemy : MonoBehaviour
     private void Die()
     {
         Destroy(gameObject);
+    }
+
+    private void FlashHit()
+{
+    StopAllCoroutines();
+    StartCoroutine(HitFlashCoroutine());
+}
+
+    private IEnumerator HitFlashCoroutine()
+    {
+        foreach (var r in m_renderers)
+            r.material.color = Color.red;
+
+        yield return new WaitForSeconds(hitFlashTime);
+
+        foreach (var r in m_renderers)
+            r.material.color = Color.white;
     }
 }

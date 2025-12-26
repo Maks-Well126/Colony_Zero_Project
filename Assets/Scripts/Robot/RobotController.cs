@@ -33,6 +33,11 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float interactRange = 3f;
     [SerializeField] private Transform player;
 
+    [Header("Force Move")]
+    [SerializeField] private float obstacleCheckDistance = 1.5f;
+    [SerializeField] private LayerMask obstacleLayer;
+
+
     private float currentSteer;
     private bool isBlocked;
     private bool isMovingToDestination;   
@@ -56,6 +61,8 @@ public class RobotController : MonoBehaviour
         HandlePlayerInteraction();
         HandleMovement();
         AnimateWheels();
+        HandleForceMove();
+
     }
 
     // -------------------- PLAYER INPUT --------------------
@@ -72,10 +79,54 @@ public class RobotController : MonoBehaviour
 
         if (dist <= interactRange && Keyboard.current.eKey.wasPressedThisFrame && !isMovingToDestination)
         {
+            if (IsObstacleAhead())
+            {
+                Debug.Log("Can't start moving: obstacle ahead");
+                return;
+            }
+
             agent.isStopped = false;
             StartCoroutine(MoveToDestination());
         }
     }
+
+    private void HandleForceMove()
+    {
+        if (!isBlocked)
+            return;
+
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            if (!IsObstacleAhead())
+            {
+                isBlocked = false;
+                agent.isStopped = false;
+
+                Debug.Log("Force move: path is clear");
+            }
+            else
+            {
+                Debug.Log("Force move blocked: obstacle still ahead");
+            }
+        }
+    }
+
+    private bool IsObstacleAhead()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        Vector3 direction = transform.forward;
+
+        if (Physics.Raycast(origin, direction, obstacleCheckDistance, obstacleLayer))
+        {
+            Debug.DrawRay(origin, direction * obstacleCheckDistance, Color.red, 0.2f);
+            return true;
+        }
+
+        Debug.DrawRay(origin, direction * obstacleCheckDistance, Color.green, 0.2f);
+        return false;
+    }
+
+
 
     // -------------------- MOVEMENT --------------------
     private IEnumerator MoveToDestination()

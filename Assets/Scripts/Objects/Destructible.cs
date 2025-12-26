@@ -11,46 +11,54 @@ public sealed class Destructible : MonoBehaviour
 
     public void StartDestroy()
     {
-        if (m_isDestroying)
-            return;
+        if (m_isDestroying) return;
 
         m_isDestroying = true;
         m_timer = 0f;
 
-        m_progressBar.Show(transform);
-        m_sound.PlayLoop(m_config.LoopSound);
+        m_progressBar?.Show(transform);
+        m_sound?.PlayLoop(m_config.LoopSound);
     }
 
     public void UpdateDestroy(float deltaTime)
     {
-        if (!m_isDestroying)
-            return;
+        if (!m_isDestroying) return;
 
         m_timer += deltaTime;
+        UpdateProgress();
 
-        float progress = m_timer / m_config.DestroyTime;
-        m_progressBar.SetProgress(progress);
-
-        if (m_timer >= m_config.DestroyTime)
-            CompleteDestroy();
+        if (IsComplete) CompleteDestroy();
     }
 
     public void CancelDestroy()
     {
-        if (!m_isDestroying)
-            return;
+        if (!m_isDestroying) return;
 
-        m_isDestroying = false;
-        m_timer = 0f;
+        ResetState();
+        m_progressBar?.Hide();
+        m_sound?.Stop();
+    }
 
-        m_progressBar.Hide();
-        m_sound.Stop();
+    private void UpdateProgress()
+    {
+        float progress = m_timer / m_config.DestroyTime;
+        m_progressBar?.SetProgress(progress);
     }
 
     private void CompleteDestroy()
     {
-        m_sound.PlayOneShot(m_config.CompleteSound);
-        m_progressBar.Hide();
+        m_sound?.PlayOneShot(m_config.CompleteSound);
+        m_progressBar?.Hide();
         Destroy(gameObject);
     }
+
+    private void ResetState()
+    {
+        m_isDestroying = false;
+        m_timer = 0f;
+    }
+
+    private bool IsComplete => m_timer >= m_config.DestroyTime;
+    public bool IsDestroying => m_isDestroying;
+    public float DestroyProgress => m_isDestroying ? Mathf.Clamp01(m_timer / m_config.DestroyTime) : 0f;
 }
