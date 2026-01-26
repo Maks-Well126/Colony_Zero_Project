@@ -10,13 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7609e75bfef28504cab6eda9b036bb57, type: 3}
-  m_Name: Test Enemy Run
+  m_Name: Enemy Cyber Minotaur
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  m_maxHealth: 100
+  m_enemyPrefab: {fileID: 7237254295368599493, guid: c0a9ebe51b9fe744f9e0018c14b0f490, type: 3}
+  m_health: 150
   m_moveSpeed: 4
   m_damage: 10
-  m_attackRange: 2
   m_attackCooldown: 1.2
-  m_viewDistance: 10
-  m_viewAngle: 120
-  m_modelPrefab: {fileID: 0}
+  m_attackRange: 2

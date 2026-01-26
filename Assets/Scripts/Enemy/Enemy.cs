@@ -1,66 +1,96 @@
+using System;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public sealed class Enemy : MonoBehaviour
 {
-    [SerializeField] private EnemyData m_data;
+    public event Action<Enemy> Died;
 
-    private float m_currentHealth;
+    [SerializeField] private EnemyMovement m_movement;
+    [SerializeField] private EnemyAttack m_attack;
+    [SerializeField] private HealthComponent m_health;
 
+    private EnemyData m_data;
     private Transform m_player;
+    private EnemyStateMachine m_stateMachine;
 
     private void Awake()
     {
-        m_currentHealth = m_data.maxHealth;
+        m_stateMachine = new EnemyStateMachine();
+    }
 
-        m_player = GameObject.FindWithTag("Player").transform;
+    private void OnEnable()
+    {
+        m_health.Died += OnDied;
+        m_stateMachine.StateChanged += OnStateChanged;
+    }
 
-        if (m_data.modelPrefab != null)
-        {
-            Instantiate(
-                m_data.modelPrefab,
-                transform.position,
-                transform.rotation,
-                transform
-            );
-        }
+    private void OnDisable()
+    {
+        m_health.Died -= OnDied;
+        m_stateMachine.StateChanged -= OnStateChanged;
     }
 
     private void Update()
     {
-        MoveToPlayer();
+        if (m_stateMachine.currentState is EnemyState.Dead || !m_data)
+            return;
+
+        UpdateState();
     }
 
-    private void MoveToPlayer()
+    public void Initialize(EnemyData data, Transform player)
     {
-        if (m_player == null) return;
+        m_data = data;
+        m_player = player;
 
-        Vector3 direction = m_player.position - transform.position;
-        direction.y = 0f;
+        m_health.Initialize(data.health);
+        m_movement.Initialize(data.moveSpeed, player);
+        m_attack.Initialize(data.damage, data.attackCooldown, player);
 
-        if (direction.magnitude > m_data.attackRange)
+        m_stateMachine.ChangeState(EnemyState.Move);
+    }
+
+    private void UpdateState()
+    {
+        bool inRange = IsInAttackRange();
+
+        switch (m_stateMachine.currentState)
         {
-            transform.position +=
-                direction.normalized *
-                m_data.moveSpeed *
-                Time.deltaTime;
+            case EnemyState.Move:
+                if (inRange)
+                    m_stateMachine.ChangeState(EnemyState.Attack);
+                break;
 
-            transform.rotation = Quaternion.LookRotation(direction);
+            case EnemyState.Attack:
+                m_attack.TryAttack();
+
+                if (!inRange)
+                    m_stateMachine.ChangeState(EnemyState.Move);
+                break;
         }
     }
 
-    public void TakeDamage(float damage)
-{
-    m_currentHealth -= damage;
-
-    if (m_currentHealth <= 0f)
+    private bool IsInAttackRange()
     {
-        Die();
+        if (!m_player)
+            return false;
+
+        return Vector3.Distance(transform.position, m_player.position)
+               <= m_data.attackRange;
     }
-}
 
-
-    private void Die()
+    private void OnStateChanged(EnemyState prev, EnemyState next)
     {
-        Destroy(gameObject);
+        if (prev == EnemyState.Move)
+            m_movement.StopMoving();
+
+        if (next == EnemyState.Move)
+            m_movement.StartMoving();
+    }
+
+    private void OnDied()
+    {
+        m_stateMachine.ChangeState(EnemyState.Dead);
+        Died?.Invoke(this);
     }
 }
