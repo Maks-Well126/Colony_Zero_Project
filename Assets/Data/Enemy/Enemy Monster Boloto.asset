@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7609e75bfef28504cab6eda9b036bb57, type: 3}
-  m_Name: Enemy Cyber Minotaur
+  m_Name: Enemy Monster Boloto
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  m_enemyPrefab: {fileID: 7237254295368599493, guid: c0a9ebe51b9fe744f9e0018c14b0f490, type: 3}
-  m_health: 150
-  m_moveSpeed: 4
+  m_enemyPrefab: {fileID: 1307543344617200865, guid: 0a31e6a995dacdb48918c669449f6e40, type: 3}
+  m_health: 75
+  m_moveSpeed: 6
   m_damage: 10
   m_attackCooldown: 1.2
   m_attackRange: 2
