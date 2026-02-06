@@ -220,6 +220,7 @@ public class RobotController : MonoBehaviour
     // -------------------- STOP LOGIC --------------------
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Atref");
         if (other.CompareTag(stopTag))
         {
             isBlocked = true;
