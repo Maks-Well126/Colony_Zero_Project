@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using Random = UnityEngine.Random;
 
@@ -41,15 +42,19 @@ public sealed class SpawnerEnemy : MonoBehaviour
 
         enemyInstance.Initialize(data, m_playerTransform);
 
-        enemyInstance.Died += enemy => OnEnemyDied(enemy, spawnPoint);
+        Action<Enemy> handler = null;
+        handler = enemy =>
+        {
+            enemy.Died -= handler;
+            OnEnemyDied(enemy, spawnPoint);
+        };
+
+        enemyInstance.Died += handler;
     }
 
     private void OnEnemyDied(Enemy enemy, Transform spawnPoint)
     {
-        enemy.Died -= e => OnEnemyDied(e, spawnPoint);
-
         Destroy(enemy.gameObject, 4f);
-
         StartCoroutine(RespawnAfterDelay(spawnPoint));
     }
 

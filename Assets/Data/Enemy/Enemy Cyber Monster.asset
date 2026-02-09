@@ -16,5 +16,6 @@ MonoBehaviour:
   m_health: 100
   m_moveSpeed: 4
   m_damage: 10
-  m_attackCooldown: 1.2
-  m_attackRange: 2
+  m_attackCooldown: 1.4
+  m_attackRange: 1.5
+  m_detectRange: 10

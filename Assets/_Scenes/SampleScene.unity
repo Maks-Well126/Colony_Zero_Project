@@ -1613,6 +1613,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpawnerEnemy
   m_enemies:
   - {fileID: 11400000, guid: a794b9c9347cf054ead350da669f56b8, type: 2}
+  - {fileID: 11400000, guid: 4130e9797afcd3b4a9f8df3b10f1d2eb, type: 2}
   m_spawnPoints:
   - {fileID: 867244043}
   - {fileID: 1321157964}
@@ -1620,6 +1621,7 @@ MonoBehaviour:
   - {fileID: 302259513}
   - {fileID: 522681372}
   m_playerTransform: {fileID: 567940900}
+  m_respawnDelay: 5
 --- !u!4 &1794514937
 Transform:
   m_ObjectHideFlags: 0

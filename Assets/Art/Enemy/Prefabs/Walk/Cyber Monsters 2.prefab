@@ -4474,6 +4474,7 @@ GameObject:
   - component: {fileID: 5467710398818229370}
   - component: {fileID: 7084670446854608244}
   - component: {fileID: 8463515034885166605}
+  - component: {fileID: -5295285409021879894}
   m_Layer: 0
   m_Name: Cyber Monsters 2
   m_TagString: Untagged
@@ -4509,8 +4510,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5715907094900294045}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: a4544f3443b35324db34bf13819a2a48, type: 3}
-  m_Controller: {fileID: 9100000, guid: 4b63ffe2968c88448ba3a1785f1a9cf9, type: 2}
+  m_Avatar: {fileID: 9000000, guid: c47274737cf75624191fc490cc421b96, type: 3}
+  m_Controller: {fileID: 9100000, guid: aebda000004562a4faf024e3d5a55545, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4537,7 +4538,7 @@ MonoBehaviour:
   m_movement: {fileID: 7084670446854608244}
   m_attack: {fileID: 851808828427334059}
   m_health: {fileID: 8463515034885166605}
-  m_animator: {fileID: 0}
+  m_animator: {fileID: -5295285409021879894}
 --- !u!65 &6714641517477599639
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4660,6 +4661,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a4ba72253659649a05653122ff9d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+--- !u!114 &-5295285409021879894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5715907094900294045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f03b6b625b1612488e4273d238cd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
+  m_animator: {fileID: 6969212245188222526}
 --- !u!1 &5748714934885945130
 GameObject:
   m_ObjectHideFlags: 0
@@ -7260,7 +7274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7323017053719090308
 Transform:
   m_ObjectHideFlags: 0
