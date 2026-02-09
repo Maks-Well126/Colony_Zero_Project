@@ -8,6 +8,7 @@ public sealed class Enemy : MonoBehaviour
     [SerializeField] private EnemyMovement m_movement;
     [SerializeField] private EnemyAttack m_attack;
     [SerializeField] private HealthComponent m_health;
+    [SerializeField] private EnemyAnimator m_animator;
 
     private EnemyData m_data;
     private Transform m_player;
@@ -16,6 +17,8 @@ public sealed class Enemy : MonoBehaviour
     private void Awake()
     {
         m_stateMachine = new EnemyStateMachine();
+
+        m_attack.OnAttackStarted += () => m_animator.PlayAttack();
     }
 
     private void OnEnable()
@@ -32,7 +35,7 @@ public sealed class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (m_stateMachine.currentState is EnemyState.Dead || !m_data)
+        if (m_stateMachine.currentState == EnemyState.Dead || !m_data)
             return;
 
         UpdateState();
@@ -47,45 +50,62 @@ public sealed class Enemy : MonoBehaviour
         m_movement.Initialize(data.moveSpeed, player);
         m_attack.Initialize(data.damage, data.attackCooldown, player);
 
-        m_stateMachine.ChangeState(EnemyState.Move);
+        m_stateMachine.ChangeState(EnemyState.Idle);
     }
 
     private void UpdateState()
     {
-        bool inRange = IsInAttackRange();
+        float distance = Vector3.Distance(transform.position, m_player.position);
 
         switch (m_stateMachine.currentState)
         {
+            case EnemyState.Idle:
+                if (distance <= m_data.detectRange)
+                    m_stateMachine.ChangeState(EnemyState.Move);
+                break;
+
             case EnemyState.Move:
-                if (inRange)
+                if (distance <= m_data.attackRange)
                     m_stateMachine.ChangeState(EnemyState.Attack);
                 break;
 
             case EnemyState.Attack:
-                m_attack.TryAttack();
-
-                if (!inRange)
+                if (distance > m_data.attackRange)
+                {
                     m_stateMachine.ChangeState(EnemyState.Move);
+                    break;
+                }
+
+                m_attack.TryAttack();
                 break;
         }
     }
 
-    private bool IsInAttackRange()
-    {
-        if (!m_player)
-            return false;
-
-        return Vector3.Distance(transform.position, m_player.position)
-               <= m_data.attackRange;
-    }
-
     private void OnStateChanged(EnemyState prev, EnemyState next)
     {
-        if (prev == EnemyState.Move)
-            m_movement.StopMoving();
+        switch (next)
+        {
+            case EnemyState.Idle:
+                m_animator.SetMoveSpeed(0f);
+                m_movement.StopMoving();
+                break;
 
-        if (next == EnemyState.Move)
-            m_movement.StartMoving();
+            case EnemyState.Move:
+                m_animator.SetMoveSpeed(1f);
+                m_movement.StartMoving();
+                break;
+
+            case EnemyState.Attack:
+                m_animator.SetMoveSpeed(0f);
+                m_animator.PlayAttack();
+                m_movement.StopMoving();
+                break;
+
+            case EnemyState.Dead:
+                m_animator.PlayDead();
+                m_movement.StopMoving();
+                break;
+        }
     }
 
     private void OnDied()

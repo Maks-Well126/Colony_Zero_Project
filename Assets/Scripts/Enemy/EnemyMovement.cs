@@ -31,6 +31,25 @@ public sealed class EnemyMovement : MonoBehaviour
         m_agent.SetDestination(m_target.position);
     }
 
+    private void LateUpdate()
+    {
+        if (!m_isInitialized || m_isMoving || !m_target)
+            return;
+
+        Vector3 dir = m_target.position - transform.position;
+        dir.y = 0;
+
+        if (dir.sqrMagnitude < 0.01f)
+            return;
+
+        Quaternion rot = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            rot,
+            Time.deltaTime * 8f
+        );
+    }
+
     public void StartMoving()
     {
         if (!m_isInitialized)

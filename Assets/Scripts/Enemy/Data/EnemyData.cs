@@ -18,6 +18,11 @@ public sealed class EnemyData : ScriptableObject
 [SerializeField][Min(0)] private float m_attackCooldown = 1.2f;
 [SerializeField][Min(0)] private float m_attackRange = 2f;
 
+[Header("Vision")]
+[SerializeField][Min(0)] private float m_detectRange = 10f;
+
+public float detectRange => m_detectRange;
+
 
 public Enemy enemyPrefab => m_enemyPrefab;
 

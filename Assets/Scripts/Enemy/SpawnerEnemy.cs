@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using Random = UnityEngine.Random;
 
 public sealed class SpawnerEnemy : MonoBehaviour
@@ -12,34 +13,55 @@ public sealed class SpawnerEnemy : MonoBehaviour
     [Header("Player")]
     [SerializeField] private Transform m_playerTransform;
 
+    [Header("Respawn Settings")]
+    [SerializeField] private float m_respawnDelay = 5f;
+
     private void Start()
     {
-        Spawn();
+        SpawnAll();
     }
 
-    public void Spawn()
+    public void SpawnAll()
     {
         foreach (var point in m_spawnPoints)
         {
-            var data = GetEnemyData();
-
-            var enemyInstance = Instantiate(
-                data.enemyPrefab,
-                point.position,
-                point.rotation
-            );
-
-            enemyInstance.Initialize(data, m_playerTransform);
-            enemyInstance.Died += OnEnemyDied;
+            SpawnEnemy(point);
         }
     }
 
-    private void OnEnemyDied(Enemy enemy)
+    private void SpawnEnemy(Transform spawnPoint)
     {
-        enemy.Died -= OnEnemyDied;
-        Destroy(enemy.gameObject);
+        var data = GetEnemyData();
+
+        var enemyInstance = Instantiate(
+            data.enemyPrefab,
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
+
+        enemyInstance.Initialize(data, m_playerTransform);
+
+        enemyInstance.Died += enemy => OnEnemyDied(enemy, spawnPoint);
     }
 
-    private EnemyData GetEnemyData() =>
-        m_enemies[Random.Range(0, m_enemies.Length)];
+    private void OnEnemyDied(Enemy enemy, Transform spawnPoint)
+    {
+        enemy.Died -= e => OnEnemyDied(e, spawnPoint);
+
+        Destroy(enemy.gameObject, 4f);
+
+        StartCoroutine(RespawnAfterDelay(spawnPoint));
+    }
+
+    private IEnumerator RespawnAfterDelay(Transform spawnPoint)
+    {
+        yield return new WaitForSeconds(m_respawnDelay);
+        SpawnEnemy(spawnPoint);
+    }
+
+
+    private EnemyData GetEnemyData()
+    {
+        return m_enemies[Random.Range(0, m_enemies.Length)];
+    }
 }
