@@ -6223,6 +6223,7 @@ GameObject:
   - component: {fileID: 8947554588693522331}
   - component: {fileID: 4908570927885125644}
   - component: {fileID: 2322808566458206785}
+  - component: {fileID: 6740352747487857865}
   m_Layer: 0
   m_Name: Monster Mutant
   m_TagString: Untagged
@@ -6258,7 +6259,7 @@ Animator:
   m_GameObject: {fileID: 8570650061988196386}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: e1af740f30dfdb14a9cbcc62f6e78120, type: 3}
-  m_Controller: {fileID: 9100000, guid: f6482d4ee17f77042b91e0a421b67d08, type: 2}
+  m_Controller: {fileID: 9100000, guid: ff97b21828235604d91eeb885c0a686f, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -6285,6 +6286,7 @@ MonoBehaviour:
   m_movement: {fileID: 8947554588693522331}
   m_attack: {fileID: 9183136790654528684}
   m_health: {fileID: 4908570927885125644}
+  m_animator: {fileID: 6740352747487857865}
 --- !u!114 &9183136790654528684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6367,6 +6369,19 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0.88, z: 0}
+--- !u!114 &6740352747487857865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8570650061988196386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f03b6b625b1612488e4273d238cd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
+  m_animator: {fileID: 7106187991415411010}
 --- !u!1 &8616513507836179370
 GameObject:
   m_ObjectHideFlags: 0
