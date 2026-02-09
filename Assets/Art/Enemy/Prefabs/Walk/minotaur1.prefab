@@ -824,6 +824,7 @@ GameObject:
   - component: {fileID: 8849873290416493550}
   - component: {fileID: 5921454907669111585}
   - component: {fileID: 5530591808314903469}
+  - component: {fileID: 5378045100446871321}
   m_Layer: 0
   m_Name: minotaur1
   m_TagString: Untagged
@@ -859,7 +860,7 @@ Animator:
   m_GameObject: {fileID: 1720217458144591747}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 63e974d9ec82619419e69ae2287be94e, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1ec31ee6b4e699b4c919f9ddd24f6f73, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3d4da4f42425ac44885f43a7ab165f96, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -908,6 +909,7 @@ MonoBehaviour:
   m_movement: {fileID: 8483156267073199117}
   m_attack: {fileID: 8849873290416493550}
   m_health: {fileID: 5921454907669111585}
+  m_animator: {fileID: 5378045100446871321}
 --- !u!114 &8483156267073199117
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -968,6 +970,19 @@ CapsuleCollider:
   m_Height: 2.51
   m_Direction: 1
   m_Center: {x: 0, y: 0.97, z: 0}
+--- !u!114 &5378045100446871321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1720217458144591747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f03b6b625b1612488e4273d238cd97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
+  m_animator: {fileID: 5473308911823747502}
 --- !u!1 &1959191317212145166
 GameObject:
   m_ObjectHideFlags: 0
