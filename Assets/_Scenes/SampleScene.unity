@@ -1614,6 +1614,7 @@ MonoBehaviour:
   m_enemies:
   - {fileID: 11400000, guid: a794b9c9347cf054ead350da669f56b8, type: 2}
   - {fileID: 11400000, guid: 4130e9797afcd3b4a9f8df3b10f1d2eb, type: 2}
+  - {fileID: 11400000, guid: deeefcaba808d834a9bd1a509f0a2b87, type: 2}
   m_spawnPoints:
   - {fileID: 867244043}
   - {fileID: 1321157964}

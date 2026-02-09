@@ -24,12 +24,14 @@ public sealed class Enemy : MonoBehaviour
     private void OnEnable()
     {
         m_health.Died += OnDied;
+        m_health.Damaged += OnDamaged;
         m_stateMachine.StateChanged += OnStateChanged;
     }
 
     private void OnDisable()
     {
         m_health.Died -= OnDied;
+        m_health.Damaged -= OnDamaged;
         m_stateMachine.StateChanged -= OnStateChanged;
     }
 
@@ -106,6 +108,11 @@ public sealed class Enemy : MonoBehaviour
                 m_movement.StopMoving();
                 break;
         }
+    }
+
+    private void OnDamaged()
+    {
+        m_animator.PlayHit();
     }
 
     private void OnDied()

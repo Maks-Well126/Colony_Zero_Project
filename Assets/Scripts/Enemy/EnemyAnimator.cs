@@ -7,6 +7,7 @@ public sealed class EnemyAnimator : MonoBehaviour
     private static readonly int Speed = Animator.StringToHash("Speed");
     private static readonly int Attack = Animator.StringToHash("Attack");
     private static readonly int IsDead = Animator.StringToHash("IsDead");
+    //private static readonly int Hit = Animator.StringToHash("Hit");
 
     public void SetMoveSpeed(float value)
     {
@@ -17,6 +18,12 @@ public sealed class EnemyAnimator : MonoBehaviour
     {
         m_animator.SetTrigger(Attack);
     }
+
+    public void PlayHit()
+    {
+        m_animator.SetTrigger("Hit");
+    }
+
 
     public void PlayDead()
     {
