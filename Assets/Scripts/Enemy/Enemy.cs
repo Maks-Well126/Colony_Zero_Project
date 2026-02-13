@@ -1,91 +1,123 @@
-using System.Collections;
+using System;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public sealed class Enemy : MonoBehaviour
 {
-    [SerializeField] private EnemyData m_data;
-    [SerializeField] private float hitFlashTime = 0.1f;
-    private Renderer[] m_renderers;
+    public event Action<Enemy> Died;
 
+    [SerializeField] private EnemyMovement m_movement;
+    [SerializeField] private EnemyAttack m_attack;
+    [SerializeField] private HealthComponent m_health;
+    [SerializeField] private EnemyAnimator m_animator;
 
-    private float m_currentHealth;
-
+    private EnemyData m_data;
     private Transform m_player;
+    private EnemyStateMachine m_stateMachine;
 
     private void Awake()
     {
-        m_renderers = GetComponentsInChildren<Renderer>();
+        m_stateMachine = new EnemyStateMachine();
 
-        m_currentHealth = m_data.maxHealth;
+        m_attack.OnAttackStarted += () => m_animator.PlayAttack();
+    }
 
-        m_player = GameObject.FindWithTag("Player").transform;
+    private void OnEnable()
+    {
+        m_health.Died += OnDied;
+        m_health.Damaged += OnDamaged;
+        m_stateMachine.StateChanged += OnStateChanged;
+    }
 
-        if (m_data.modelPrefab != null)
-        {
-            Instantiate(
-                m_data.modelPrefab,
-                transform.position,
-                transform.rotation,
-                transform
-            );
-        }
+    private void OnDisable()
+    {
+        m_health.Died -= OnDied;
+        m_health.Damaged -= OnDamaged;
+        m_stateMachine.StateChanged -= OnStateChanged;
     }
 
     private void Update()
     {
-        MoveToPlayer();
+        if (m_stateMachine.currentState == EnemyState.Dead || !m_data)
+            return;
+
+        UpdateState();
     }
 
-    private void MoveToPlayer()
+    public void Initialize(EnemyData data, Transform player)
     {
-        if (m_player == null) return;
+        m_data = data;
+        m_player = player;
 
-        Vector3 direction = m_player.position - transform.position;
-        direction.y = 0f;
+        m_health.Initialize(data.health);
+        m_movement.Initialize(data.moveSpeed, player);
+        m_attack.Initialize(data.damage, data.attackCooldown, player);
 
-        if (direction.magnitude > m_data.attackRange)
+        m_stateMachine.ChangeState(EnemyState.Idle);
+    }
+
+    private void UpdateState()
+    {
+        float distance = Vector3.Distance(transform.position, m_player.position);
+
+        switch (m_stateMachine.currentState)
         {
-            transform.position +=
-                direction.normalized *
-                m_data.moveSpeed *
-                Time.deltaTime;
+            case EnemyState.Idle:
+                if (distance <= m_data.detectRange)
+                    m_stateMachine.ChangeState(EnemyState.Move);
+                break;
 
-            transform.rotation = Quaternion.LookRotation(direction);
+            case EnemyState.Move:
+                if (distance <= m_data.attackRange)
+                    m_stateMachine.ChangeState(EnemyState.Attack);
+                break;
+
+            case EnemyState.Attack:
+                if (distance > m_data.attackRange)
+                {
+                    m_stateMachine.ChangeState(EnemyState.Move);
+                    break;
+                }
+
+                m_attack.TryAttack();
+                break;
         }
     }
 
-    public void TakeDamage(float damage)
-{
-    FlashHit();
-
-    m_currentHealth -= damage;
-
-    if (m_currentHealth <= 0f)
+    private void OnStateChanged(EnemyState prev, EnemyState next)
     {
-        Die();
+        switch (next)
+        {
+            case EnemyState.Idle:
+                m_animator.SetMoveSpeed(0f);
+                m_movement.StopMoving();
+                break;
+
+            case EnemyState.Move:
+                m_animator.SetMoveSpeed(1f);
+                m_movement.StartMoving();
+                break;
+
+            case EnemyState.Attack:
+                m_animator.SetMoveSpeed(0f);
+                m_animator.PlayAttack();
+                m_movement.StopMoving();
+                break;
+
+            case EnemyState.Dead:
+                m_animator.PlayDead();
+                m_movement.StopMoving();
+                break;
+        }
     }
-}
 
-
-    private void Die()
+    private void OnDamaged()
     {
-        Destroy(gameObject);
+        m_animator.PlayHit();
     }
 
-    private void FlashHit()
-{
-    StopAllCoroutines();
-    StartCoroutine(HitFlashCoroutine());
-}
-
-    private IEnumerator HitFlashCoroutine()
+    private void OnDied()
     {
-        foreach (var r in m_renderers)
-            r.material.color = Color.red;
-
-        yield return new WaitForSeconds(hitFlashTime);
-
-        foreach (var r in m_renderers)
-            r.material.color = Color.white;
+        m_stateMachine.ChangeState(EnemyState.Dead);
+        Died?.Invoke(this);
     }
 }

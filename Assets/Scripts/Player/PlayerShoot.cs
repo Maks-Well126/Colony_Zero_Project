@@ -11,14 +11,12 @@ namespace Player
 
 
         private float m_lastShootTime;
-
         private PlayerInputActions m_actions;
 
         private void Awake()
         {
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
-
             m_actions.Player.Shoot.performed += _ => TryShoot();
         }
 
@@ -28,7 +26,6 @@ namespace Player
                 return;
 
             m_lastShootTime = Time.time;
-
             Shoot();
         }
 
@@ -42,9 +39,9 @@ namespace Player
                 out RaycastHit hit,
                 m_weaponConfig.Range))
             {
-                if (hit.collider.TryGetComponent(out Enemy enemy))
+                if (hit.collider.TryGetComponent(out HealthComponent health))
                 {
-                    enemy.TakeDamage(m_weaponConfig.Damage);
+                    health.TakeDamage(m_weaponConfig.Damage);
                 }
             }
         }
