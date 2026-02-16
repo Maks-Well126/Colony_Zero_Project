@@ -117,6 +117,7 @@ namespace Player
 
         private void HandleAnimations()
         {
+            m_animController.SetMove(m_moveInput.magnitude);
             m_animController.SetMoveDirection(m_moveInput);
             m_animController.SetRunning(m_isRunning);
         }
