@@ -11,8 +11,12 @@ namespace Player
         private static readonly int MoveX = Animator.StringToHash("MoveX");
         private static readonly int MoveY = Animator.StringToHash("MoveY");
         private static readonly int IsRunning = Animator.StringToHash("IsRunning");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+
         private static readonly int IsAiming = Animator.StringToHash("IsAiming");
         private static readonly int ShootHash = Animator.StringToHash("Shoot");
+
 
         private void Awake()
         {
@@ -43,5 +47,15 @@ namespace Player
         {
             m_animator.SetTrigger(ShootHash);
         }
+        public void Jump()
+        {
+            m_animator.SetTrigger(JumpHash);
+        }
+
+        public void SetGrounded(bool value)
+        {
+            m_animator.SetBool(IsGroundedHash, value);
+        }
+
     }
 }

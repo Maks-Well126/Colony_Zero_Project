@@ -60,6 +60,7 @@ namespace Player
 
             HandleMovement();
             HandleAnimations();
+            m_animController.SetGrounded(m_controller.isGrounded);
         }
 
 
@@ -112,6 +113,7 @@ namespace Player
             if (m_controller.isGrounded)
             {
                 m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * -2f * m_gravity);
+                m_animController.Jump();
             }
         }
 
