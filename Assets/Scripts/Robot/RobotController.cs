@@ -5,14 +5,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class RobotController : MonoBehaviour
-{
-    private enum RobotState
-    {
-        Idle,
-        MovingToFirst,
-        MovingToSecond,
-        Returning
-    }
+{    
 
     [Header("NavMesh")]
     [SerializeField] private NavMeshAgent agent;
@@ -236,5 +229,12 @@ public class RobotController : MonoBehaviour
         {
             OnArtifactPick?.Invoke(other.gameObject);
         }
+    }
+    private enum RobotState
+    {
+        Idle,
+        MovingToFirst,
+        MovingToSecond,
+        Returning
     }
 }
