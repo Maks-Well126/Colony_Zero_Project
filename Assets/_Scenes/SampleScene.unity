@@ -922,6 +922,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Croc
       objectReference: {fileID: 0}
+    - target: {fileID: 7137547102135014118, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_maxPitch
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7137547102135014118, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_minPitch
+      value: -70
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1615,6 +1623,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a794b9c9347cf054ead350da669f56b8, type: 2}
   - {fileID: 11400000, guid: 4130e9797afcd3b4a9f8df3b10f1d2eb, type: 2}
   - {fileID: 11400000, guid: deeefcaba808d834a9bd1a509f0a2b87, type: 2}
+  - {fileID: 11400000, guid: 71e55d234e9955a4cb8a208a5e956509, type: 2}
   m_spawnPoints:
   - {fileID: 867244043}
   - {fileID: 1321157964}
