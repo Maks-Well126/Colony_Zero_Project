@@ -49,7 +49,7 @@ namespace Player
             m_actions.Player.Look.canceled += _ => m_lookInput = Vector2.zero;
 
             m_actions.Player.Aim.performed += _ => SetAiming(true);
-            m_actions.Player.Aim.canceled  += _ => SetAiming(false);
+            m_actions.Player.Aim.canceled += _ => SetAiming(false);
 
             m_actions.Player.Shoot.performed += _ => OnShoot();
 
@@ -117,8 +117,7 @@ namespace Player
 
         private void HandleAnimations()
         {
-            float speed = m_moveInput.magnitude;
-            m_animController.SetMoveSpeed(speed);
+            m_animController.SetMoveDirection(m_moveInput);
             m_animController.SetRunning(m_isRunning);
         }
     }

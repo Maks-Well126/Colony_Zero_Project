@@ -7,7 +7,8 @@ namespace Player
     {
         private Animator m_animator;
 
-        private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
+        private static readonly int MoveX = Animator.StringToHash("MoveX");
+        private static readonly int MoveY = Animator.StringToHash("MoveY");
         private static readonly int IsRunning = Animator.StringToHash("IsRunning");
         private static readonly int IsAiming  = Animator.StringToHash("IsAiming");
         private static readonly int ShootHash  = Animator.StringToHash("Shoot");
@@ -17,9 +18,10 @@ namespace Player
             m_animator = GetComponent<Animator>();
         }
 
-        public void SetMoveSpeed(float value)
+        public void SetMoveDirection(Vector2 dir)
         {
-            m_animator.SetFloat(MoveSpeed, value);
+            m_animator.SetFloat(MoveX, dir.x, 0.1f, Time.deltaTime);
+            m_animator.SetFloat(MoveY, dir.y, 0.1f, Time.deltaTime);
         }
 
         public void SetRunning(bool value)
