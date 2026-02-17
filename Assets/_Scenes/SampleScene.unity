@@ -924,7 +924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7137547102135014118, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_maxPitch
-      value: 20
+      value: 35.8
       objectReference: {fileID: 0}
     - target: {fileID: 7137547102135014118, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_minPitch
