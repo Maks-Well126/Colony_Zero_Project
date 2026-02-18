@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ShipUpgrade : MonoBehaviour
 {
@@ -13,69 +14,84 @@ public class ShipUpgrade : MonoBehaviour
     [SerializeField] private GameObject m_upgradeHintUI;
 
     private bool playerNearby;
-
-    // Flags to prevent building multiple times
     private bool isLevel1Built = false;
     private bool isLevel2Built = false;
-
-    private void Start()
-    {
-        if (m_upgradeHintUI != null)
-            m_upgradeHintUI.SetActive(false);
-    }
+    private bool m_debugMode = true;
 
     private void Update()
     {
-        if (!playerNearby)
+        MouseDirectionChecker.MouseDirection direction =
+            MouseDirectionChecker.GetMouseDirection(0.3f, 50);
+
+        if (direction == MouseDirectionChecker.MouseDirection.Up)
         {
-            if (m_upgradeHintUI.activeSelf)
-                m_upgradeHintUI.SetActive(false);
-            return;
+            HandleUpgrade();
         }
 
-        // Level 1 upgrade
+        HandleUI();
+    }
+
+    private void HandleUpgrade()
+    {
         if (Artifact.isArtefact1Delivered && !isLevel1Built)
         {
-            m_upgradeHintUI.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetMouseButtonDown(1))
             {
                 UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint);
-                isLevel1Built = true; // mark as built
-                m_upgradeHintUI.SetActive(false);
+                isLevel1Built = true;
             }
         }
-        // Level 2 upgrade
         else if (Artifact.isArtefact2Delivered && !isLevel2Built)
         {
-            m_upgradeHintUI.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetMouseButtonDown(1))
             {
                 UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
-                isLevel2Built = true; // mark as built
-                m_upgradeHintUI.SetActive(false);
+                isLevel2Built = true;
             }
         }
-        else
+    }
+
+    private void HandleUI()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && playerNearby)
         {
-            if (m_upgradeHintUI.activeSelf)
-                m_upgradeHintUI.SetActive(false);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            m_upgradeHintUI.gameObject.SetActive(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            m_upgradeHintUI.gameObject.SetActive(false);
+        }
+        else if (!playerNearby && m_upgradeHintUI.activeSelf)
+        {
+            m_upgradeHintUI.gameObject.SetActive(false);
         }
     }
 
     private void UpgradeShip(GameObject prefab, Transform position)
     {
-        Instantiate(prefab, position.position, position.rotation);
+        if (prefab != null && position != null)
+        {
+            Instantiate(prefab, position.position, position.rotation);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerNearby = true;
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
+        {
             playerNearby = false;
+        }
     }
 }
