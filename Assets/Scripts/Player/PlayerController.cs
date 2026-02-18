@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Animations.Rigging;
 
 
 namespace Player
@@ -19,10 +20,15 @@ namespace Player
 
         [Header("AIM")]
         [SerializeField] private CrosshairController m_crosshair;
+        [SerializeField] private Rig m_aimRig;
+        [SerializeField] private Transform m_aimTarget;
+        [SerializeField] private float m_aimDistance = 10f;
+        [SerializeField] private float m_rigSmoothSpeed = 8f;
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
         private bool m_isAiming;
+        private float m_currentRigWeight;
 
 
         private Vector2 m_moveInput;
@@ -60,7 +66,31 @@ namespace Player
 
             HandleMovement();
             HandleAnimations();
+            UpdateRig();
+            UpdateAimTarget();
             m_animController.SetGrounded(m_controller.isGrounded);
+        }
+
+        private void UpdateRig()
+        {
+            float target = m_isAiming ? 1f : 0f;
+
+            m_currentRigWeight = Mathf.Lerp(
+                m_currentRigWeight,
+                target,
+                Time.deltaTime * m_rigSmoothSpeed
+            );
+
+            m_aimRig.weight = m_currentRigWeight;
+        }
+
+        private void UpdateAimTarget()
+        {
+            Vector3 targetPos =
+                m_camera.transform.position +
+                m_camera.transform.forward * m_aimDistance;
+
+            m_aimTarget.position = targetPos;
         }
 
 
@@ -71,6 +101,8 @@ namespace Player
             m_crosshair.SetVisible(value);
             m_camera.SetAiming(value);
             m_animController.SetAiming(value);
+
+            m_aimRig.weight = value ? 1f : 0f;
         }
 
         private void OnShoot()
