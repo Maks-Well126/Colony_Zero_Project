@@ -10,17 +10,23 @@ namespace Player
 
         private float m_lastShootTime;
         private PlayerInputActions m_actions;
+        private PlayerCameraController m_cameraController;
 
         private void Awake()
         {
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
             m_actions.Player.Shoot.performed += _ => TryShoot();
+
+            m_cameraController = m_camera.GetComponent<PlayerCameraController>();
         }
 
         private void TryShoot()
         {
             if (Time.time < m_lastShootTime + m_weaponConfig.FireRate)
+                return;
+
+            if (!m_cameraController.IsAiming)
                 return;
 
             m_lastShootTime = Time.time;
@@ -39,6 +45,31 @@ namespace Player
                 {
                     health.TakeDamage(m_weaponConfig.Damage);
                 }
+            }
+
+            // Отдача
+            m_cameraController.ApplyRecoil(
+                m_weaponConfig.RecoilX,
+                m_weaponConfig.RecoilY,
+                m_weaponConfig.RecoilRecoverySpeed
+            );
+
+            // Эффекты
+            if (m_weaponConfig.MuzzleFlashPrefab != null)
+            {
+                Instantiate(
+                    m_weaponConfig.MuzzleFlashPrefab,
+                    m_camera.transform.position + m_camera.transform.forward,
+                    Quaternion.identity
+                );
+            }
+
+            if (m_weaponConfig.ShootSound != null)
+            {
+                AudioSource.PlayClipAtPoint(
+                    m_weaponConfig.ShootSound,
+                    m_camera.transform.position
+                );
             }
         }
     }

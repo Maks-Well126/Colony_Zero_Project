@@ -14,6 +14,16 @@ public sealed class WeaponConfig : ScriptableObject
     [SerializeField] private GameObject m_muzzleFlashPrefab;
     [SerializeField] private AudioClip m_shootSound;
 
+    [Header("Recoil")]
+    [SerializeField] private float m_recoilX = 2f; // Вертикальная отдача
+    [SerializeField] private float m_recoilY = 1f; // Горизонтальная отдача
+    [SerializeField] private float m_recoilRecoverySpeed = 5f; // Скорость возвращения камеры
+
+    public float RecoilX => m_recoilX;
+    public float RecoilY => m_recoilY;
+    public float RecoilRecoverySpeed => m_recoilRecoverySpeed;
+
+
     public float Damage => m_damage;
     public float FireRate => m_fireRate;
     public float Range => m_range;

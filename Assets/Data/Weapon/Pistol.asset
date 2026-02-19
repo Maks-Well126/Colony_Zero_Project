@@ -17,3 +17,6 @@ MonoBehaviour:
   m_range: 100
   m_muzzleFlashPrefab: {fileID: 0}
   m_shootSound: {fileID: 0}
+  m_recoilX: 0.5
+  m_recoilY: 0.2
+  m_recoilRecoverySpeed: 5
