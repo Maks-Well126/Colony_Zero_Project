@@ -11,7 +11,7 @@ public class ShipUpgrade : MonoBehaviour
     [SerializeField] private Transform m_buildingSpawnPoint2;
 
     [Header("UI")]
-    [SerializeField] private GameObject m_upgradeHintUI;
+    [SerializeField] private GameObject m_radialUI;
 
     private bool playerNearby;
     private bool isLevel1Built = false;
@@ -35,7 +35,7 @@ public class ShipUpgrade : MonoBehaviour
     {
         if (Artifact.isArtefact1Delivered && !isLevel1Built)
         {
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(0))
             {
                 UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint);
                 isLevel1Built = true;
@@ -43,7 +43,7 @@ public class ShipUpgrade : MonoBehaviour
         }
         else if (Artifact.isArtefact2Delivered && !isLevel2Built)
         {
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(0))
             {
                 UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
                 isLevel2Built = true;
@@ -57,17 +57,17 @@ public class ShipUpgrade : MonoBehaviour
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-            m_upgradeHintUI.gameObject.SetActive(true);
+            m_radialUI.gameObject.SetActive(true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            m_upgradeHintUI.gameObject.SetActive(false);
+            m_radialUI.gameObject.SetActive(false);
         }
-        else if (!playerNearby && m_upgradeHintUI.activeSelf)
+        else if (!playerNearby && m_radialUI.activeSelf)
         {
-            m_upgradeHintUI.gameObject.SetActive(false);
+            m_radialUI.gameObject.SetActive(false);
         }
     }
 
