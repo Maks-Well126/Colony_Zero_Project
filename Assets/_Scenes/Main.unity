@@ -9896,7 +9896,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 46.55
+  m_fontSize: 65.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10429,6 +10429,14 @@ PrefabInstance:
       propertyPath: m_playerTransform
       value: 
       objectReference: {fileID: 570353300}
+    - target: {fileID: 473650567301475539, guid: f32976a32818e1442b01a10efec61086, type: 3}
+      propertyPath: m_enemies.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 473650567301475539, guid: f32976a32818e1442b01a10efec61086, type: 3}
+      propertyPath: 'm_enemies.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 71e55d234e9955a4cb8a208a5e956509, type: 2}
     - target: {fileID: 821923842736395542, guid: f32976a32818e1442b01a10efec61086, type: 3}
       propertyPath: m_LocalPosition.y
       value: 3.31
