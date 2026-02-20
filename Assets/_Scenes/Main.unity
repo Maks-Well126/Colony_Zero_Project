@@ -1011,7 +1011,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &104039921
 Transform:
   m_ObjectHideFlags: 0
@@ -9870,7 +9870,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 44
+  m_fontSize: 65.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11430,15 +11430,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6436099672767966363, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 132.89606
+      value: 157.59
       objectReference: {fileID: 0}
     - target: {fileID: 6436099672767966363, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0.36
       objectReference: {fileID: 0}
     - target: {fileID: 6436099672767966363, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 883.7362
+      value: 840.4141
       objectReference: {fileID: 0}
     - target: {fileID: 6436099672767966363, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11485,9 +11485,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 335003502}
     - target: {fileID: 9111296126603074476, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
+      propertyPath: maxDistanceFromPlayer
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 9111296126603074476, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: secondDestinationPoint
       value: 
       objectReference: {fileID: 272848638}
+    - target: {fileID: 9115652186398863808, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
+      propertyPath: m_Size.x
+      value: 6.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 9115652186398863808, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
+      propertyPath: m_Size.y
+      value: 5.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 9115652186398863808, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
+      propertyPath: m_Size.z
+      value: 7.71
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 174240863791754776, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
@@ -16599,7 +16615,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6285453440351075976, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 810.8827
+      value: 852.24
       objectReference: {fileID: 0}
     - target: {fileID: 6285453440351075976, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_LocalRotation.w
