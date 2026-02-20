@@ -5,7 +5,7 @@ using UnityEngine.Animations.Rigging;
 
 namespace Player
 {
-    [RequireComponent(typeof(CharacterController))]
+  //  [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement")]
