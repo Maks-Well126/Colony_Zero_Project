@@ -126,5 +126,9 @@ namespace Player
                 Time.deltaTime * m_aimSpeed
             );
         }
+        public void ForceStopAiming()
+        {
+            m_isAiming = false;
+        }
     }
 }

@@ -879,9 +879,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 846725225}
     - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_animator
+      value: 
+      objectReference: {fileID: 1139813615}
+    - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_muzzlePoint
       value: 
       objectReference: {fileID: 1223280547}
+    - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_animController
+      value: 
+      objectReference: {fileID: 1139813612}
+    - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_cameraController
+      value: 
+      objectReference: {fileID: 1277995686}
+    - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_playerController
+      value: 
+      objectReference: {fileID: 1139813613}
     - target: {fileID: 5822233542044633782, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_aimRig
       value: 
@@ -1282,6 +1298,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1139813612 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1474315960186226094, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+  m_PrefabInstance: {fileID: 432670792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2fabda4dc2ba6e429a3cca00724a5fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerAnimationController
+--- !u!114 &1139813613 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5822233542044633782, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+  m_PrefabInstance: {fileID: 432670792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 893dfb2c3fdf5c64d91b8117155a0b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerController
+--- !u!95 &1139813615 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 2586314196427910235, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+  m_PrefabInstance: {fileID: 432670792}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1160663764
 GameObject:
   m_ObjectHideFlags: 0
@@ -1398,6 +1441,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6234155507414181387, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
   m_PrefabInstance: {fileID: 432670792}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1277995686 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7137547102135014118, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+  m_PrefabInstance: {fileID: 432670792}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e5825b82dfdd5d48b3c1aed015251bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerCameraController
 --- !u!1 &1321157963
 GameObject:
   m_ObjectHideFlags: 0

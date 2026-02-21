@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 namespace Player
 {
@@ -8,35 +9,53 @@ namespace Player
         [SerializeField] private WeaponConfig m_weaponConfig;
         [SerializeField] private Camera m_camera;
         [SerializeField] private Transform m_muzzlePoint;
+        [SerializeField] private PlayerController m_playerController;
+        [SerializeField] private PlayerCameraController m_cameraController;
+
+        private PlayerInputActions m_actions;
 
         private float m_lastShootTime;
-        private PlayerInputActions m_actions;
-        private PlayerCameraController m_cameraController;
-        
+        private int m_currentAmmo;
 
         private void Awake()
         {
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
-            m_actions.Player.Shoot.performed += _ => TryShoot();
 
-            m_cameraController = m_camera.GetComponent<PlayerCameraController>();
+            m_actions.Player.Shoot.performed += _ => TryShoot();
+            m_actions.Player.Reload.performed += _ => TryReload();
+            
+        }
+
+        private void Start()
+        {
+            m_currentAmmo = m_weaponConfig.MagazineSize;
         }
 
         private void TryShoot()
         {
+            if (m_playerController.CurrentState != PlayerController.PlayerState.Aiming)
+                return;
+
             if (Time.time < m_lastShootTime + m_weaponConfig.FireRate)
                 return;
 
-            if (!m_cameraController.IsAiming)
+            if (m_currentAmmo <= 0)
+            {
+                StartCoroutine(Reload());
                 return;
+            }
 
             m_lastShootTime = Time.time;
+
+            m_playerController.SetState(PlayerController.PlayerState.Shooting);
             Shoot();
         }
 
         private void Shoot()
         {
+            m_currentAmmo--;
+
             if (Physics.Raycast(
                 m_camera.transform.position,
                 m_camera.transform.forward,
@@ -56,8 +75,7 @@ namespace Player
             );
 
             SpawnMuzzleFlash();
-
-
+            m_playerController.TriggerShootAnimation();
             if (m_weaponConfig.ShootSound != null)
             {
                 AudioSource.PlayClipAtPoint(
@@ -65,6 +83,38 @@ namespace Player
                     m_muzzlePoint.position
                 );
             }
+          
+
+            if (m_currentAmmo <= 0)
+            {
+                StartCoroutine(Reload());
+            }
+            else
+            {
+                m_playerController.SetState(PlayerController.PlayerState.Aiming);
+            }
+        }
+
+        private void TryReload()
+        {
+            if (m_playerController.CurrentState == PlayerController.PlayerState.Reloading)
+                return;
+
+            if (m_currentAmmo == m_weaponConfig.MagazineSize)
+                return;
+
+            StartCoroutine(Reload());
+        }
+
+        private IEnumerator Reload()
+        {
+            m_playerController.SetState(PlayerController.PlayerState.Reloading);
+
+            yield return new WaitForSeconds(m_weaponConfig.ReloadTime);
+
+            m_currentAmmo = m_weaponConfig.MagazineSize;
+
+            m_playerController.SetState(PlayerController.PlayerState.Idle);
         }
 
         private void SpawnMuzzleFlash()
@@ -75,12 +125,11 @@ namespace Player
             GameObject flash = Instantiate(
                 m_weaponConfig.MuzzleFlashPrefab,
                 m_muzzlePoint.position,
-                m_muzzlePoint.rotation
+                m_muzzlePoint.rotation,
+                m_muzzlePoint
             );
 
-            flash.transform.SetParent(m_muzzlePoint);
-
-            Destroy(flash, m_weaponConfig.TimeMuzzle); 
+            Destroy(flash, m_weaponConfig.TimeMuzzle);
         }
     }
 }

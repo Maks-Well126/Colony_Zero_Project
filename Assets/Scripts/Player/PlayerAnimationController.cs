@@ -16,6 +16,12 @@ namespace Player
 
         private static readonly int IsAiming = Animator.StringToHash("IsAiming");
         private static readonly int ShootHash = Animator.StringToHash("Shoot");
+        private static readonly int ReloadHash = Animator.StringToHash("Reload");
+
+        public void TriggerReload()
+        {
+            m_animator.SetTrigger(ReloadHash);
+        }
 
 
         private void Awake()

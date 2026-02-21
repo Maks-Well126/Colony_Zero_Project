@@ -17,8 +17,15 @@ public sealed class WeaponConfig : ScriptableObject
 
     [Header("Recoil")]
     [SerializeField] private float m_recoilX = 2f;
-    [SerializeField] private float m_recoilY = 1f; 
-    [SerializeField] private float m_recoilRecoverySpeed = 5f; 
+    [SerializeField] private float m_recoilY = 1f;
+    [SerializeField] private float m_recoilRecoverySpeed = 5f;
+
+    [Header("Ammo")]
+    [SerializeField] private int m_magazineSize = 30;
+    [SerializeField] private float m_reloadTime = 1.5f;
+
+    public int MagazineSize => m_magazineSize;
+    public float ReloadTime => m_reloadTime;
 
     public float TimeMuzzle => m_timeMuzzle;
     public float RecoilX => m_recoilX;

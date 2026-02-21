@@ -2,12 +2,19 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 
-
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
+        public enum PlayerState
+        {
+            Idle,
+            Aiming,
+            Shooting,
+            Reloading
+        }
+
         [Header("Movement")]
         [SerializeField] private float m_moveSpeed = 5f;
         [SerializeField] private float m_runSpeed = 9f;
@@ -18,7 +25,7 @@ namespace Player
         [SerializeField] private PlayerCameraController m_camera;
         [SerializeField] private PlayerAnimationController m_animController;
 
-        [Header("AIM")]
+        [Header("Aim")]
         [SerializeField] private CrosshairController m_crosshair;
         [SerializeField] private Rig m_aimRig;
         [SerializeField] private Transform m_aimTarget;
@@ -27,14 +34,14 @@ namespace Player
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
-        private bool m_isAiming;
-        private float m_currentRigWeight;
 
+        private PlayerState m_currentState = PlayerState.Idle;
+        public PlayerState CurrentState => m_currentState;
 
         private Vector2 m_moveInput;
-        private Vector2 m_lookInput;
         private float m_verticalVelocity;
         private bool m_isRunning;
+        private float m_currentRigWeight;
 
         private void Awake()
         {
@@ -44,36 +51,80 @@ namespace Player
             m_actions.Player.Enable();
 
             m_actions.Player.Move.performed += ctx => m_moveInput = ctx.ReadValue<Vector2>();
-            m_actions.Player.Move.canceled += ctx => m_moveInput = Vector2.zero;
+            m_actions.Player.Move.canceled += _ => m_moveInput = Vector2.zero;
 
             m_actions.Player.Jump.performed += OnJump;
 
             m_actions.Player.Run.performed += ctx => m_isRunning = ctx.ReadValueAsButton();
-            m_actions.Player.Run.canceled += ctx => m_isRunning = false;
+            m_actions.Player.Run.canceled += _ => m_isRunning = false;
 
-            m_actions.Player.Look.performed += ctx => m_lookInput = ctx.ReadValue<Vector2>();
-            m_actions.Player.Look.canceled += _ => m_lookInput = Vector2.zero;
+            m_actions.Player.Aim.performed += _ =>
+            {
+                if (m_currentState == PlayerState.Reloading)
+                    return;
 
-            m_actions.Player.Aim.performed += _ => SetAiming(true);
-            m_actions.Player.Aim.canceled += _ => SetAiming(false);
+                SetState(PlayerState.Aiming);
+            };
 
-            m_actions.Player.Shoot.performed += _ => OnShoot();
-
+            m_actions.Player.Aim.canceled += _ =>
+            {
+                if (m_currentState == PlayerState.Aiming)
+                    SetState(PlayerState.Idle);
+            };
         }
 
         private void Update()
         {
-
             HandleMovement();
             HandleAnimations();
             UpdateRig();
             UpdateAimTarget();
+
             m_animController.SetGrounded(m_controller.isGrounded);
+        }
+
+        public void SetState(PlayerState newState)
+        {
+            if (m_currentState == newState)
+                return;
+
+            m_currentState = newState;
+
+            switch (m_currentState)
+            {
+                case PlayerState.Idle:
+                    ApplyAiming(false);
+                    break;
+
+                case PlayerState.Aiming:
+                    ApplyAiming(true);
+                    break;
+
+                case PlayerState.Reloading:
+                    ApplyAiming(false);
+                    m_animController.TriggerReload();
+                    break;
+
+                case PlayerState.Shooting:
+                    break;
+            }
+        }
+
+        private void ApplyAiming(bool value)
+        {
+            m_crosshair.SetVisible(value);
+            m_camera.SetAiming(value);
+            m_animController.SetAiming(value);
+        }
+
+        public void TriggerShootAnimation()
+        {
+            m_animController.Shoot();
         }
 
         private void UpdateRig()
         {
-            float target = m_isAiming ? 1f : 0f;
+            float target = m_currentState == PlayerState.Aiming ? 1f : 0f;
 
             m_currentRigWeight = Mathf.Lerp(
                 m_currentRigWeight,
@@ -88,32 +139,10 @@ namespace Player
         {
             Vector3 targetPos =
                 m_camera.transform.position +
-                m_camera.transform.forward * m_aimDistance;
+                m_camera.Forward * m_aimDistance;
 
             m_aimTarget.position = targetPos;
         }
-
-
-        private void SetAiming(bool value)
-        {
-            m_isAiming = value;
-
-            m_crosshair.SetVisible(value);
-            m_camera.SetAiming(value);
-            m_animController.SetAiming(value);
-
-            m_aimRig.weight = value ? 1f : 0f;
-        }
-
-        private void OnShoot()
-        {
-            if (!m_isAiming)
-                return;
-
-            m_animController.Shoot();
-        }
-
-
 
         private void HandleMovement()
         {
@@ -142,11 +171,11 @@ namespace Player
 
         private void OnJump(InputAction.CallbackContext ctx)
         {
-            if (m_controller.isGrounded)
-            {
-                m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * -2f * m_gravity);
-                m_animController.Jump();
-            }
+            if (!m_controller.isGrounded)
+                return;
+
+            m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * -2f * m_gravity);
+            m_animController.Jump();
         }
 
         private void HandleAnimations()
