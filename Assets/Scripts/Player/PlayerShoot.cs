@@ -8,9 +8,10 @@ namespace Player
     {
         [SerializeField] private WeaponConfig m_weaponConfig;
         [SerializeField] private Camera m_camera;
-        [SerializeField] private Transform m_muzzlePoint;
         [SerializeField] private PlayerController m_playerController;
         [SerializeField] private PlayerCameraController m_cameraController;
+        [SerializeField] private WeaponSystem m_weaponSystem;
+        [SerializeField] private WeaponUIController m_weaponUI;
 
         private PlayerInputActions m_actions;
 
@@ -24,12 +25,19 @@ namespace Player
 
             m_actions.Player.Shoot.performed += _ => TryShoot();
             m_actions.Player.Reload.performed += _ => TryReload();
-            
+
         }
 
         private void Start()
         {
+
             m_currentAmmo = m_weaponConfig.MagazineSize;
+
+            m_currentAmmo = m_weaponSystem.GetCurrentWeapon().MagazineSize;
+            m_weaponUI.UpdateAmmo(
+                m_currentAmmo,
+                m_weaponSystem.GetCurrentWeapon().MagazineSize
+            );
         }
 
         private void TryShoot()
@@ -78,12 +86,16 @@ namespace Player
             m_playerController.TriggerShootAnimation();
             if (m_weaponConfig.ShootSound != null)
             {
-                AudioSource.PlayClipAtPoint(
-                    m_weaponConfig.ShootSound,
-                    m_muzzlePoint.position
-                );
+                WeaponInstance weaponInstance = m_weaponSystem.GetCurrentWeaponInstance();
+                if (weaponInstance != null && weaponInstance.MuzzlePoint != null)
+                {
+                    AudioSource.PlayClipAtPoint(
+                        m_weaponConfig.ShootSound,
+                        weaponInstance.MuzzlePoint.position
+                    );
+                }
             }
-          
+
 
             if (m_currentAmmo <= 0)
             {
@@ -93,6 +105,11 @@ namespace Player
             {
                 m_playerController.SetState(PlayerController.PlayerState.Aiming);
             }
+
+            m_weaponUI.UpdateAmmo(
+                m_currentAmmo,
+                m_weaponSystem.GetCurrentWeapon().MagazineSize
+            );
         }
 
         private void TryReload()
@@ -115,18 +132,34 @@ namespace Player
             m_currentAmmo = m_weaponConfig.MagazineSize;
 
             m_playerController.SetState(PlayerController.PlayerState.Idle);
+
+            m_currentAmmo = m_weaponSystem.GetCurrentWeapon().MagazineSize;
+
+            m_weaponUI.UpdateAmmo(
+                m_currentAmmo,
+                m_weaponSystem.GetCurrentWeapon().MagazineSize
+            );
         }
 
         private void SpawnMuzzleFlash()
         {
-            if (m_weaponConfig.MuzzleFlashPrefab == null || m_muzzlePoint == null)
+            if (m_weaponConfig.MuzzleFlashPrefab == null)
+                return;
+
+            // Получаем текущий инстанс оружия
+            WeaponInstance weaponInstance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (weaponInstance == null)
+                return;
+
+            Transform muzzle = weaponInstance.MuzzlePoint;
+            if (muzzle == null)
                 return;
 
             GameObject flash = Instantiate(
                 m_weaponConfig.MuzzleFlashPrefab,
-                m_muzzlePoint.position,
-                m_muzzlePoint.rotation,
-                m_muzzlePoint
+                muzzle.position,
+                muzzle.rotation,
+                muzzle
             );
 
             Destroy(flash, m_weaponConfig.TimeMuzzle);
