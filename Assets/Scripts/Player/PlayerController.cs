@@ -79,6 +79,7 @@ namespace Player
             HandleAnimations();
             UpdateRig();
             UpdateAimTarget();
+            CheckCrosshairTarget();
 
             m_animController.SetGrounded(m_controller.isGrounded);
         }
@@ -184,5 +185,30 @@ namespace Player
             m_animController.SetMoveDirection(m_moveInput);
             m_animController.SetRunning(m_isRunning);
         }
+
+        private void CheckCrosshairTarget()
+        {
+            if (m_currentState != PlayerState.Aiming)
+            {
+                m_crosshair.SetEnemyTarget(false);
+                return;
+            }
+
+            if (Physics.Raycast(
+                m_camera.transform.position,
+                m_camera.Forward,
+                out RaycastHit hit,
+                100f))
+            {
+                if (hit.collider.CompareTag("Enemy"))
+                {
+                    m_crosshair.SetEnemyTarget(true);
+                    return;
+                }
+            }
+
+            m_crosshair.SetEnemyTarget(false);
+        }
     }
+
 }

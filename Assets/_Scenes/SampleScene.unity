@@ -878,6 +878,10 @@ PrefabInstance:
       propertyPath: m_root
       value: 
       objectReference: {fileID: 846725225}
+    - target: {fileID: 1745169531732499309, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_crosshairImage
+      value: 
+      objectReference: {fileID: 846725226}
     - target: {fileID: 4628294490042616090, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_animator
       value: 
@@ -1156,6 +1160,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 9200160123595602021, guid: be70bc1708338be418d998712bdb9daf, type: 3}
   m_PrefabInstance: {fileID: 842376727192764565}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &846725226 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6925164002088147018, guid: be70bc1708338be418d998712bdb9daf, type: 3}
+  m_PrefabInstance: {fileID: 842376727192764565}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 846725225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &867244042
 GameObject:
   m_ObjectHideFlags: 0
