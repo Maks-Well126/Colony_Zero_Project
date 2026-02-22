@@ -4467,7 +4467,6 @@ GameObject:
   - component: {fileID: 773460300998656756}
   - component: {fileID: 6969212245188222526}
   - component: {fileID: 1999904278917415990}
-  - component: {fileID: 6714641517477599639}
   - component: {fileID: 8662446781373547511}
   - component: {fileID: 2153721281796581138}
   - component: {fileID: 851808828427334059}
@@ -4475,6 +4474,9 @@ GameObject:
   - component: {fileID: 7084670446854608244}
   - component: {fileID: 8463515034885166605}
   - component: {fileID: -5295285409021879894}
+  - component: {fileID: 4332576690599679435}
+  - component: {fileID: 5192075278414178119}
+  - component: {fileID: 3639732800677647996}
   m_Layer: 0
   m_Name: Cyber Monsters 2
   m_TagString: Enemy
@@ -4539,27 +4541,6 @@ MonoBehaviour:
   m_attack: {fileID: 851808828427334059}
   m_health: {fileID: 8463515034885166605}
   m_animator: {fileID: -5295285409021879894}
---- !u!65 &6714641517477599639
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5715907094900294045}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1.88, z: 0.29937744}
-  m_Center: {x: 0, y: 0.40971512, z: -0.062347412}
 --- !u!135 &8662446781373547511
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4674,6 +4655,71 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
   m_animator: {fileID: 6969212245188222526}
+--- !u!136 &4332576690599679435
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5715907094900294045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1.39
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.44, z: 0}
+--- !u!135 &5192075278414178119
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5715907094900294045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.2
+  m_Center: {x: 0.27, y: 1.27, z: 0}
+--- !u!135 &3639732800677647996
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5715907094900294045}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.2
+  m_Center: {x: -0.27, y: 1.27, z: 0}
 --- !u!1 &5748714934885945130
 GameObject:
   m_ObjectHideFlags: 0
