@@ -349,6 +349,56 @@ public class RobotController : MonoBehaviour
             Destroy(pendingDestination.gameObject);
     }
 
+    // ================= UI BUTTON CONTROL =================
+
+    public void GoToFirstArtifact()
+    {
+        TryStartTrip(0);
+    }
+
+    public void GoToSecondArtifact()
+    {
+        TryStartTrip(1);
+    }
+
+    private void TryStartTrip(int index)
+    {
+        if (currentState != RobotState.Idle)
+            return;
+
+        if (IsObstacleAhead())
+            return;
+
+        Transform target = (index == 0)
+            ? firstDestinationPoint
+            : secondDestinationPoint;
+
+        if (!target)
+            return;
+
+        // Проверка дистанции от игрока
+        if (player != null)
+        {
+            float targetDistanceFromPlayer =
+                Vector3.Distance(target.position, player.position);
+
+            if (targetDistanceFromPlayer > maxDistanceFromPlayer)
+            {
+                Debug.Log("Destination is too far from player!");
+                return;
+            }
+        }
+
+        nextTripIndex = index;
+
+        agent.isStopped = false;
+        agent.SetDestination(target.position);
+
+        currentState = (index == 0)
+            ? RobotState.MovingToFirst
+            : RobotState.MovingToSecond;
+    }
+
     private enum RobotState
     {
         Idle,
