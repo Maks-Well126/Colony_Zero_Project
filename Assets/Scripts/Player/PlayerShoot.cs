@@ -13,6 +13,7 @@ namespace Player
         [SerializeField] private WeaponUIController m_weaponUI;
 
         private PlayerInputActions m_actions;
+        private PlayerState m_currentState;
 
         private float m_lastShootTime;
 
@@ -25,18 +26,6 @@ namespace Player
             m_actions.Player.Reload.performed += _ => TryReload();
         }
 
-        // private void Start()
-        // {
-        //     WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
-        //     if (instance == null)
-        //         return;
-
-        //     m_weaponUI.UpdateAmmo(
-        //         instance.CurrentAmmo,
-        //         instance.Config.MagazineSize
-        //     );
-        // }
-
         private void TryShoot()
         {
             WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
@@ -45,7 +34,7 @@ namespace Player
 
             WeaponConfig weapon = instance.Config;
 
-            if (m_playerController.CurrentState != PlayerController.PlayerState.Aiming)
+            if (m_playerController.CurrentState != PlayerState.Aiming)
                 return;
 
             if (Time.time < m_lastShootTime + weapon.FireRate)
@@ -59,7 +48,7 @@ namespace Player
 
             m_lastShootTime = Time.time;
 
-            m_playerController.SetState(PlayerController.PlayerState.Shooting);
+            m_playerController.SetState(PlayerState.Shooting);
             Shoot();
         }
 
@@ -108,7 +97,7 @@ namespace Player
             }
             else
             {
-                m_playerController.SetState(PlayerController.PlayerState.Aiming);
+                m_playerController.SetState(PlayerState.Aiming);
             }
 
             m_weaponUI.UpdateAmmo(
@@ -124,7 +113,7 @@ namespace Player
             if (instance == null)
                 return;
 
-            if (m_playerController.CurrentState == PlayerController.PlayerState.Reloading)
+            if (m_playerController.CurrentState == PlayerState.Reloading)
                 return;
 
             if (instance.CurrentAmmo == instance.Config.MagazineSize)
@@ -139,40 +128,41 @@ namespace Player
             if (instance == null)
                 yield break;
 
-            m_playerController.SetState(PlayerController.PlayerState.Reloading);
+            m_playerController.SetState(PlayerState.Reloading);
 
             yield return new WaitForSeconds(instance.Config.ReloadTime);
 
             instance.Reload();
 
-            m_playerController.SetState(PlayerController.PlayerState.Idle);
+            m_playerController.SetState(PlayerState.Idle);
 
             m_weaponUI.UpdateAmmo(
                 instance.CurrentAmmo,
                 instance.Config.MagazineSize
             );
+            
         }
 
         private void SpawnMuzzleFlash()
-{
-    WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
-    if (instance == null)
-        return;
+        {
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
+                return;
 
-    if (instance.Config.MuzzleFlashPrefab == null)
-        return;
+            if (instance.Config.MuzzleFlashPrefab == null)
+                return;
 
-    if (instance.MuzzlePoint == null)
-        return;
+            if (instance.MuzzlePoint == null)
+                return;
 
-    GameObject flash = Instantiate(
-        instance.Config.MuzzleFlashPrefab,
-        instance.MuzzlePoint.position,
-        instance.MuzzlePoint.rotation,
-        instance.MuzzlePoint
-    );
+            GameObject flash = Instantiate(
+                instance.Config.MuzzleFlashPrefab,
+                instance.MuzzlePoint.position,
+                instance.MuzzlePoint.rotation,
+                instance.MuzzlePoint
+            );
 
-    Destroy(flash, instance.Config.TimeMuzzle);
-}
+            Destroy(flash, instance.Config.TimeMuzzle);
+        }
     }
 }

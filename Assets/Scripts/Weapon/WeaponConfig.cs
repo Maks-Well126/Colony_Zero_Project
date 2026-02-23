@@ -4,8 +4,8 @@ using UnityEngine;
 public sealed class WeaponConfig : ScriptableObject
 {
     [Header("Presentation")]
-    [SerializeField] private GameObject m_weaponPrefab;  
-    [SerializeField] private Sprite m_weaponIcon;   
+    [SerializeField] private GameObject m_weaponPrefab;
+    [SerializeField] private Sprite m_weaponIcon;
 
     [Header("Damage")]
     [SerializeField][Min(1)] private float m_damage = 20f;

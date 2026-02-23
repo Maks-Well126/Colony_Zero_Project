@@ -7,13 +7,6 @@ namespace Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
-        public enum PlayerState
-        {
-            Idle,
-            Aiming,
-            Shooting,
-            Reloading
-        }
 
         [Header("Movement")]
         [SerializeField] private float m_moveSpeed = 5f;
