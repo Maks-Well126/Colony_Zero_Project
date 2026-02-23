@@ -376,7 +376,7 @@ public class RobotController : MonoBehaviour
         if (!target)
             return;
 
-        // Проверка дистанции от игрока
+        if (!Artifact.isArtefact1Delivered && index == 1) return;
         if (player != null)
         {
             float targetDistanceFromPlayer =
