@@ -8,67 +8,80 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private WeaponConfig m_secondaryWeapon;
 
     [SerializeField] private Transform m_weaponHolder;
-
-    [Header("UI")]
     [SerializeField] private WeaponUIController m_weaponUI;
 
     private PlayerInputActions m_actions;
 
-    private WeaponConfig m_currentWeapon;
-    private WeaponConfig m_inactiveWeapon;
+    private WeaponInstance m_primaryInstance;
+    private WeaponInstance m_secondaryInstance;
 
-    private GameObject m_currentWeaponObject;
     private WeaponInstance m_currentWeaponInstance;
-    
 
     private void Awake()
     {
         m_actions = new PlayerInputActions();
         m_actions.Player.Enable();
-
         m_actions.Player.SwitchWeapon.performed += _ => SwitchWeapon();
     }
 
     private void Start()
     {
-        EquipWeapon(m_primaryWeapon, m_secondaryWeapon);
+        // Создаём оба оружия ОДИН РАЗ
+        m_primaryInstance = CreateWeapon(m_primaryWeapon);
+        m_secondaryInstance = CreateWeapon(m_secondaryWeapon);
+
+        // Активируем только основное
+        SetActiveWeapon(m_primaryInstance);
     }
 
+    private WeaponInstance CreateWeapon(WeaponConfig config)
+    {
+        GameObject obj = Instantiate(config.WeaponPrefab, m_weaponHolder);
+        WeaponInstance instance = obj.GetComponent<WeaponInstance>();
 
-    private void EquipWeapon(WeaponConfig active, WeaponConfig inactive)
-{
-    m_currentWeapon = active;
-    m_inactiveWeapon = inactive;
+        instance.Initialize(config);
 
-    if (m_currentWeaponObject != null)
-        Destroy(m_currentWeaponObject);
+        obj.SetActive(false);
 
-    m_currentWeaponObject = Instantiate(
-        m_currentWeapon.WeaponPrefab,
-        m_weaponHolder
-    );
+        return instance;
+    }
 
-    // Получаем WeaponInstance на новом объекте
-    m_currentWeaponInstance = m_currentWeaponObject.GetComponent<WeaponInstance>();
+    private void SetActiveWeapon(WeaponInstance weapon)
+    {
+        if (m_currentWeaponInstance != null)
+            m_currentWeaponInstance.gameObject.SetActive(false);
 
-    m_weaponUI.UpdateWeaponUI(
-        m_currentWeapon,
-        m_inactiveWeapon
-    );
-}
+        m_currentWeaponInstance = weapon;
+        m_currentWeaponInstance.gameObject.SetActive(true);
 
-public WeaponInstance GetCurrentWeaponInstance()
-{
-    return m_currentWeaponInstance;
-}
+        m_weaponUI.UpdateAmmo(
+            m_currentWeaponInstance.CurrentAmmo,
+            m_currentWeaponInstance.Config.MagazineSize
+        );
+
+        m_weaponUI.UpdateWeaponUI(
+            m_currentWeaponInstance.Config,
+            GetInactiveWeapon().Config
+        );
+    }
+
+    private WeaponInstance GetInactiveWeapon()
+    {
+        return m_currentWeaponInstance == m_primaryInstance
+            ? m_secondaryInstance
+            : m_primaryInstance;
+    }
 
     private void SwitchWeapon()
     {
-        EquipWeapon(m_inactiveWeapon, m_currentWeapon);
+        if (m_currentWeaponInstance == m_primaryInstance)
+            SetActiveWeapon(m_secondaryInstance);
+        else
+            SetActiveWeapon(m_primaryInstance);
     }
 
-    public WeaponConfig GetCurrentWeapon()
+    public WeaponInstance GetCurrentWeaponInstance()
     {
-        return m_currentWeapon;
+        return m_currentWeaponInstance;
     }
 }
