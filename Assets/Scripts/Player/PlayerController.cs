@@ -7,23 +7,17 @@ namespace Player
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
-
-        [Header("Movement")]
-        [SerializeField] private float m_moveSpeed = 5f;
-        [SerializeField] private float m_runSpeed = 9f;
-        [SerializeField] private float m_jumpHeight = 1.5f;
-        [SerializeField] private float m_gravity = -9.81f;
+        [Header("Config")]
+        [SerializeField] private PlayerConfig m_config;
 
         [Header("References")]
         [SerializeField] private PlayerCameraController m_camera;
         [SerializeField] private PlayerAnimationController m_animController;
-
-        [Header("Aim")]
         [SerializeField] private CrosshairController m_crosshair;
         [SerializeField] private Rig m_aimRig;
         [SerializeField] private Transform m_aimTarget;
-        [SerializeField] private float m_aimDistance = 10f;
-        [SerializeField] private float m_rigSmoothSpeed = 8f;
+        [SerializeField] private HealthComponent m_health;
+        [SerializeField] private DamageVignetteController m_vignette;
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
@@ -35,10 +29,20 @@ namespace Player
         private float m_verticalVelocity;
         private bool m_isRunning;
         private float m_currentRigWeight;
+        private bool m_isDead;
+
+        #region Initialization
 
         private void Awake()
         {
             m_controller = GetComponent<CharacterController>();
+
+            // Инициализация здоровья из конфига
+            m_health.Initialize(m_config.MaxHealth);
+
+            m_health.HealthChanged += OnHealthChanged;
+            m_health.Damaged += OnDamaged;
+            m_health.Died += OnDeath;
 
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
@@ -53,7 +57,7 @@ namespace Player
 
             m_actions.Player.Aim.performed += _ =>
             {
-                if (m_currentState == PlayerState.Reloading)
+                if (m_currentState == PlayerState.Reloading || m_isDead)
                     return;
 
                 SetState(PlayerState.Aiming);
@@ -66,8 +70,13 @@ namespace Player
             };
         }
 
+        #endregion
+
         private void Update()
         {
+            if (m_isDead)
+                return;
+
             HandleMovement();
             HandleAnimations();
             UpdateRig();
@@ -77,9 +86,11 @@ namespace Player
             m_animController.SetGrounded(m_controller.isGrounded);
         }
 
+        #region State Machine
+
         public void SetState(PlayerState newState)
         {
-            if (m_currentState == newState)
+            if (m_currentState == newState || m_isDead)
                 return;
 
             m_currentState = newState;
@@ -111,36 +122,13 @@ namespace Player
             m_animController.SetAiming(value);
         }
 
-        public void TriggerShootAnimation()
-        {
-            m_animController.Shoot();
-        }
+        #endregion
 
-        private void UpdateRig()
-        {
-            float target = m_currentState == PlayerState.Aiming ? 1f : 0f;
-
-            m_currentRigWeight = Mathf.Lerp(
-                m_currentRigWeight,
-                target,
-                Time.deltaTime * m_rigSmoothSpeed
-            );
-
-            m_aimRig.weight = m_currentRigWeight;
-        }
-
-        private void UpdateAimTarget()
-        {
-            Vector3 targetPos =
-                m_camera.transform.position +
-                m_camera.Forward * m_aimDistance;
-
-            m_aimTarget.position = targetPos;
-        }
+        #region Movement
 
         private void HandleMovement()
         {
-            float speed = m_isRunning ? m_runSpeed : m_moveSpeed;
+            float speed = m_isRunning ? m_config.RunSpeed : m_config.MoveSpeed;
 
             Vector3 move =
                 m_camera.Forward * m_moveInput.y +
@@ -157,7 +145,7 @@ namespace Player
             }
             else
             {
-                m_verticalVelocity += m_gravity * Time.deltaTime;
+                m_verticalVelocity += m_config.Gravity * Time.deltaTime;
             }
 
             m_controller.Move(Vector3.up * m_verticalVelocity * Time.deltaTime);
@@ -165,18 +153,40 @@ namespace Player
 
         private void OnJump(InputAction.CallbackContext ctx)
         {
-            if (!m_controller.isGrounded)
+            if (!m_controller.isGrounded || m_isDead)
                 return;
 
-            m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * -2f * m_gravity);
+            m_verticalVelocity = Mathf.Sqrt(
+                m_config.JumpHeight * -2f * m_config.Gravity
+            );
+
             m_animController.Jump();
         }
 
-        private void HandleAnimations()
+        #endregion
+
+        #region Aim & Rig
+
+        private void UpdateRig()
         {
-            m_animController.SetMove(m_moveInput.magnitude);
-            m_animController.SetMoveDirection(m_moveInput);
-            m_animController.SetRunning(m_isRunning);
+            float target = m_currentState == PlayerState.Aiming ? 1f : 0f;
+
+            m_currentRigWeight = Mathf.Lerp(
+                m_currentRigWeight,
+                target,
+                Time.deltaTime * m_config.RigSmoothSpeed
+            );
+
+            m_aimRig.weight = m_currentRigWeight;
+        }
+
+        private void UpdateAimTarget()
+        {
+            Vector3 targetPos =
+                m_camera.transform.position +
+                m_camera.Forward * m_config.AimDistance;
+
+            m_aimTarget.position = targetPos;
         }
 
         private void CheckCrosshairTarget()
@@ -202,6 +212,54 @@ namespace Player
 
             m_crosshair.SetEnemyTarget(false);
         }
-    }
 
+        #endregion
+
+        #region Animation
+
+        private void HandleAnimations()
+        {
+            m_animController.SetMove(m_moveInput.magnitude);
+            m_animController.SetMoveDirection(m_moveInput);
+            m_animController.SetRunning(m_isRunning);
+        }
+
+        public void TriggerShootAnimation()
+        {
+            if (!m_isDead)
+                m_animController.Shoot();
+        }
+
+        #endregion
+
+        #region Health Events
+
+        private void OnHealthChanged(float current, float max)
+        {
+            m_vignette.OnHealthChanged(current, max);
+        }
+
+        private void OnDamaged()
+        {
+            if (m_isDead)
+                return;
+
+            m_animController.TriggerHit();
+            m_vignette.FlashDamage();
+        }
+
+        private void OnDeath()
+        {
+            m_isDead = true;
+
+            SetState(PlayerState.Idle);
+
+            m_animController.TriggerDeath();
+            m_vignette.OnDeath();
+
+            m_actions.Player.Disable();
+        }
+
+        #endregion
+    }
 }

@@ -13,6 +13,8 @@ namespace Player
         private static readonly int IsRunning = Animator.StringToHash("IsRunning");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
         private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
+        private static readonly int HitHash = Animator.StringToHash("Hit");
+        private static readonly int DeathHash = Animator.StringToHash("Death");
 
         private static readonly int IsAiming = Animator.StringToHash("IsAiming");
         private static readonly int ShootHash = Animator.StringToHash("Shoot");
@@ -61,6 +63,24 @@ namespace Player
         public void SetGrounded(bool value)
         {
             m_animator.SetBool(IsGroundedHash, value);
+        }
+
+        public void TriggerDeath()
+        {
+            m_animator.SetTrigger(DeathHash);
+        }
+        public void TriggerHit()
+        {
+            if (IsInHitState())
+                return;
+
+            m_animator.SetTrigger(HitHash);
+        }
+
+        private bool IsInHitState()
+        {
+            AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+            return stateInfo.IsName("Hit");
         }
 
     }
