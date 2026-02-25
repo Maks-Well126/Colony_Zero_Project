@@ -31,7 +31,6 @@ namespace Player
         private float m_currentRigWeight;
         private bool m_isDead;
 
-        #region Initialization
 
         private void Awake()
         {
@@ -70,7 +69,6 @@ namespace Player
             };
         }
 
-        #endregion
 
         private void Update()
         {
@@ -86,7 +84,7 @@ namespace Player
             m_animController.SetGrounded(m_controller.isGrounded);
         }
 
-        #region State Machine
+
 
         public void SetState(PlayerState newState)
         {
@@ -122,9 +120,6 @@ namespace Player
             m_animController.SetAiming(value);
         }
 
-        #endregion
-
-        #region Movement
 
         private void HandleMovement()
         {
@@ -162,10 +157,6 @@ namespace Player
 
             m_animController.Jump();
         }
-
-        #endregion
-
-        #region Aim & Rig
 
         private void UpdateRig()
         {
@@ -213,10 +204,6 @@ namespace Player
             m_crosshair.SetEnemyTarget(false);
         }
 
-        #endregion
-
-        #region Animation
-
         private void HandleAnimations()
         {
             m_animController.SetMove(m_moveInput.magnitude);
@@ -230,9 +217,6 @@ namespace Player
                 m_animController.Shoot();
         }
 
-        #endregion
-
-        #region Health Events
 
         private void OnHealthChanged(float current, float max)
         {
@@ -260,6 +244,5 @@ namespace Player
             m_actions.Player.Disable();
         }
 
-        #endregion
     }
 }
