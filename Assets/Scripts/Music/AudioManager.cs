@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("UI Sounds")]
     [SerializeField] private AudioClip buttonHoverSound;
-    [SerializeField] private AudioClip buttonClickSound;
+    [SerializeField] private AudioClip[] buttonClickSounds;
     [SerializeField] private AudioClip sliderSound;
     [SerializeField] private AudioClip popupOpenSound;
     [SerializeField] private AudioClip popupCloseSound;
@@ -41,7 +42,22 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayButtonHover() => PlaySFX(buttonHoverSound);
-    public void PlayButtonClick() => PlaySFX(buttonClickSound);
+
+    public void PlayButtonClick(int index = 0)
+    {
+        if (buttonClickSounds != null && buttonClickSounds.Length > 0)
+        {
+            if (index >= 0 && index < buttonClickSounds.Length)
+            {
+                PlaySFX(buttonClickSounds[index]);
+            }
+            else
+            {
+                PlaySFX(buttonClickSounds[0]);
+            }
+        }
+    }
+
     public void PlaySliderSound() => PlaySFX(sliderSound);
     public void PlayPopupOpen() => PlaySFX(popupOpenSound);
     public void PlayPopupClose() => PlaySFX(popupCloseSound);

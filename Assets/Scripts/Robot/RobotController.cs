@@ -354,11 +354,13 @@ public class RobotController : MonoBehaviour
     public void GoToFirstArtifact()
     {
         TryStartTrip(0);
+        AudioManager.Instance.PlayButtonClick(0);
     }
 
     public void GoToSecondArtifact()
     {
         TryStartTrip(1);
+        AudioManager.Instance.PlayButtonClick(0);
     }
 
     private void TryStartTrip(int index)
@@ -376,7 +378,8 @@ public class RobotController : MonoBehaviour
         if (!target)
             return;
 
-        if (!Artifact.isArtefact1Delivered && index == 1) return;
+        if (!Artifact.isArtefact1Delivered && index == 1) { AudioManager.Instance.PlayButtonClick(3); return;  }
+       
         if (player != null)
         {
             float targetDistanceFromPlayer =
@@ -388,7 +391,7 @@ public class RobotController : MonoBehaviour
                 return;
             }
         }
-
+        AudioManager.Instance.PlayButtonClick(2);
         nextTripIndex = index;
 
         agent.isStopped = false;

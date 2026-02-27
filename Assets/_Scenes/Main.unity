@@ -6670,7 +6670,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &762053386
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17165,7 +17165,11 @@ MonoBehaviour:
   musicSource: {fileID: 0}
   sfxSource: {fileID: 273655921}
   buttonHoverSound: {fileID: 8300000, guid: a250238f13604fe4f811783acd2d66ba, type: 3}
-  buttonClickSound: {fileID: 0}
+  buttonClickSounds:
+  - {fileID: 8300000, guid: ac197c5e89a0b234e8104bae4887fb28, type: 3}
+  - {fileID: 8300000, guid: 16d8b9699eefd974489f795a900a7cb4, type: 3}
+  - {fileID: 8300000, guid: 255893bf6390c4f4fb39a79bd1f71429, type: 3}
+  - {fileID: 8300000, guid: fef97ed2ed947874a9d3676556b03cf1, type: 3}
   sliderSound: {fileID: 0}
   popupOpenSound: {fileID: 0}
   popupCloseSound: {fileID: 0}

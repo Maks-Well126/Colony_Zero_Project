@@ -14,6 +14,8 @@ public class TestMouseDirections : MonoBehaviour
     private Color m_highlightColor;
     private Color m_defaultColor;
 
+    private MouseDirectionChecker.MouseDirection m_lastDirection = MouseDirectionChecker.MouseDirection.Center;
+
     void Start()
     {
         if (ColorUtility.TryParseHtmlString("#00FCFF", out m_highlightColor))
@@ -25,36 +27,46 @@ public class TestMouseDirections : MonoBehaviour
         }
 
         m_defaultColor = Color.white;
+        m_lastDirection = MouseDirectionChecker.MouseDirection.Center;
     }
 
     void Update()
     {
-        MouseDirectionChecker.MouseDirection direction =
+        MouseDirectionChecker.MouseDirection currentDirection =
             MouseDirectionChecker.GetMouseDirection(threshold, deadZone);
 
         ResetAllColors();
 
-        switch (direction)
+        if (currentDirection != MouseDirectionChecker.MouseDirection.Center)
         {
-            case MouseDirectionChecker.MouseDirection.Right:
-                m_rightImage.color = m_highlightColor;
-                break;
+            switch (currentDirection)
+            {
+                case MouseDirectionChecker.MouseDirection.Right:
+                    m_rightImage.color = m_highlightColor;
+                    break;
+                case MouseDirectionChecker.MouseDirection.Left:
+                    m_leftImage.color = m_highlightColor;
+                    break;
+                case MouseDirectionChecker.MouseDirection.Up:
+                    m_upImage.color = m_highlightColor;
+                    break;
+                case MouseDirectionChecker.MouseDirection.Down:
+                    m_downImage.color = m_highlightColor;
+                    break;
+            }
 
-            case MouseDirectionChecker.MouseDirection.Left:
-                m_leftImage.color = m_highlightColor;
-                break;
-
-            case MouseDirectionChecker.MouseDirection.Up:
-                m_upImage.color = m_highlightColor;
-                break;
-
-            case MouseDirectionChecker.MouseDirection.Down:
-                m_downImage.color = m_highlightColor;
-                break;
-
-            case MouseDirectionChecker.MouseDirection.Center:
-                break;
+            if (currentDirection != m_lastDirection)
+            {
+                PlayHoverSound();
+            }
         }
+
+        m_lastDirection = currentDirection;
+    }
+
+    private void PlayHoverSound()
+    {
+        AudioManager.Instance.PlayButtonHover();
     }
 
     private void ResetAllColors()

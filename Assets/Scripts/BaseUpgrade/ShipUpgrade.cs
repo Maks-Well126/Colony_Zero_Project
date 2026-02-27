@@ -37,6 +37,7 @@ public class ShipUpgrade : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                AudioManager.Instance.PlayButtonClick(2);
                 UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint);
                 isLevel1Built = true;
             }
@@ -45,8 +46,16 @@ public class ShipUpgrade : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
+                AudioManager.Instance.PlayButtonClick(2);
                 UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
                 isLevel2Built = true;
+            }
+        }
+        if (!(Artifact.isArtefact1Delivered && !isLevel1Built))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                AudioManager.Instance.PlayButtonClick(3);                
             }
         }
     }
