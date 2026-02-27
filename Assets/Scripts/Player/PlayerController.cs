@@ -36,7 +36,6 @@ namespace Player
         {
             m_controller = GetComponent<CharacterController>();
 
-            // Инициализация здоровья из конфига
             m_health.Initialize(m_config.MaxHealth);
 
             m_health.HealthChanged += OnHealthChanged;
@@ -226,6 +225,9 @@ namespace Player
         private void OnDamaged()
         {
             if (m_isDead)
+                return;
+
+            if (m_health.CurrentHealth <= 0f)
                 return;
 
             m_animController.TriggerHit();
