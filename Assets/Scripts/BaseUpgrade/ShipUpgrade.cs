@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class ShipUpgrade : MonoBehaviour
 {
@@ -17,6 +18,20 @@ public class ShipUpgrade : MonoBehaviour
     private bool isLevel1Built = false;
     private bool isLevel2Built = false;
     private bool m_debugMode = true;
+
+    private void Awake()
+    {
+        isLevel1Built = Save.LoadLevel1State();
+        isLevel2Built = Save.LoadLevel2State();
+    }
+    private void Start()
+    {
+        if (isLevel1Built)
+        {
+            Instantiate(m_buildingPrefab, m_buildingSpawnPoint.position, m_buildingSpawnPoint.rotation);
+            Instantiate(m_buildingPrefab2, m_buildingSpawnPoint2.position, m_buildingSpawnPoint2.rotation);
+        }
+    }
 
     private void Update()
     {
@@ -38,40 +53,37 @@ public class ShipUpgrade : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 AudioManager.Instance.PlayButtonClick(2);
-                UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint);
+                UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint, m_buildingPrefab2, m_buildingSpawnPoint2);
                 isLevel1Built = true;
+               
+                Save.SaveLevel1State(true);
             }
         }
         else if (Artifact.isArtefact2Delivered && !isLevel2Built)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                AudioManager.Instance.PlayButtonClick(2);
-                UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
-                isLevel2Built = true;
+                
+                // AudioManager.Instance.PlayButtonClick(2);
+                // UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
+                isLevel2Built = true;                
+                Save.SaveLevel2State(true);
             }
-        }
-        if (!(Artifact.isArtefact1Delivered && !isLevel1Built))
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                AudioManager.Instance.PlayButtonClick(3);                
-            }
-        }
+        }        
     }
 
     private void HandleUI()
     {
         if (Input.GetKeyDown(KeyCode.E) && playerNearby)
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
             m_radialUI.gameObject.SetActive(true);
         }
         else if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
             m_radialUI.gameObject.SetActive(false);
         }
         else if (!playerNearby && m_radialUI.activeSelf)
@@ -80,12 +92,10 @@ public class ShipUpgrade : MonoBehaviour
         }
     }
 
-    private void UpgradeShip(GameObject prefab, Transform position)
+    private void UpgradeShip(GameObject prefab, Transform position, GameObject prefab2, Transform position2)
     {
-        if (prefab != null && position != null)
-        {
-            Instantiate(prefab, position.position, position.rotation);
-        }
+        Instantiate(prefab, position.position, position.rotation);
+        Instantiate(prefab2, position2.position, position2.rotation);
     }
 
     private void OnTriggerEnter(Collider other)
