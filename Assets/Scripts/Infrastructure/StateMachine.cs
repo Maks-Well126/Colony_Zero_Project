@@ -62,11 +62,13 @@ public class PauseState : IState
     private readonly StateMachine m_stateMachine;
     private readonly PauseMenuView m_view;
     private readonly PlayerCameraController m_cameraController;
+    private readonly PlayerController m_player;
 
-    public PauseState(StateMachine stateMachine, PauseMenuView view, PlayerCameraController cameraController)
+    public PauseState(StateMachine stateMachine, PauseMenuView view,PlayerController player, PlayerCameraController cameraController)
     {
-        m_stateMachine = stateMachine;
         m_view = view;
+        m_player = player;
+        m_stateMachine = stateMachine;
         m_cameraController = cameraController;
 
         m_view.gameObject.SetActive(false);
@@ -75,6 +77,7 @@ public class PauseState : IState
     public void Enter()
     {
         Time.timeScale = 0f;
+        m_player.EnableControl(false);
 
         m_view.gameObject.SetActive(true);
         m_view.ResumeClicked += OnResume;
@@ -88,6 +91,7 @@ public class PauseState : IState
     public void Exit()
     {
         Time.timeScale = 1f;
+        m_player.EnableControl(true);
 
         m_view.ResumeClicked -= OnResume;
         m_view.ExitClicked -= OnExit;
@@ -139,6 +143,7 @@ public class DeadState : IState
     public void Enter()
     {
         Time.timeScale = 0f;
+        m_player.EnableControl(false);
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -146,12 +151,15 @@ public class DeadState : IState
         m_deadScreenView.gameObject.SetActive(true);
         m_deadScreenView.RespawnClicked += OnRespawnClicked;
         m_cameraController.enabled = false;
+        m_spawner.ClearAll();
     }
 
     public void Exit()
     {
         m_deadScreenView.gameObject.SetActive(false);
         Time.timeScale = 1f;
+        m_player.EnableControl(true);
+
         m_deadScreenView.RespawnClicked -= OnRespawnClicked;
         m_spawner.ClearAll();
         m_cameraController.enabled = true;

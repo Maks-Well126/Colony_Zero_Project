@@ -22,7 +22,7 @@ public class Bootstrap : MonoBehaviour
 
         m_stateMachine.Initialize(
         new GameplayState(m_spawner),
-        new PauseState(m_stateMachine, m_pauseMenu, m_playerCamera),
+        new PauseState(m_stateMachine, m_pauseMenu,m_player, m_playerCamera),
         new DeadState(m_stateMachine, m_player, m_spawnPoint, m_spawner, m_deadScreen, m_playerCamera)
         );
 

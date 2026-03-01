@@ -975,6 +975,10 @@ PrefabInstance:
       propertyPath: m_aimTarget
       value: 
       objectReference: {fileID: 436131681}
+    - target: {fileID: 5961593465379477290, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_SkinWidth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 6285453440351075976, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_LocalPosition.x
       value: 101.3519

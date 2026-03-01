@@ -83,7 +83,7 @@ namespace Player
             UpdateAimTarget();
             CheckCrosshairTarget();
 
-            m_animController.SetGrounded(m_controller.isGrounded);
+        //    m_animController.SetGrounded(m_controller.isGrounded);
         }
 
         public void EnableControl(bool value)
@@ -92,6 +92,15 @@ namespace Player
                 m_actions.Player.Enable();
             else
                 m_actions.Player.Disable();
+        }
+        private void OnDisable()
+        {
+            m_actions?.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            m_actions?.Dispose();
         }
 
 
@@ -131,42 +140,52 @@ namespace Player
         }
 
 
-        private void HandleMovement()
-        {
-            float speed = m_isRunning ? m_config.RunSpeed : m_config.MoveSpeed;
+private void HandleMovement()
+{
+    float speed = m_isRunning ? m_config.RunSpeed : m_config.MoveSpeed;
 
-            Vector3 move =
-                m_camera.Forward * m_moveInput.y +
-                m_camera.transform.right * m_moveInput.x;
+    Vector3 move =
+        m_camera.Forward * m_moveInput.y +
+        m_camera.transform.right * m_moveInput.x;
 
-            move.y = 0f;
+    move.y = 0f;
 
-            m_controller.Move(move * speed * Time.deltaTime);
+    // Применяем горизонтальное движение
+    m_controller.Move(move * speed * Time.deltaTime);
 
-            if (m_controller.isGrounded)
-            {
-                if (m_verticalVelocity < 0f)
-                    m_verticalVelocity = -2f;
-            }
-            else
-            {
-                m_verticalVelocity += m_config.Gravity * Time.deltaTime;
-            }
+    // Применяем гравитацию ВСЕГДА
+    m_verticalVelocity += m_config.Gravity * Time.deltaTime;
 
-            m_controller.Move(Vector3.up * m_verticalVelocity * Time.deltaTime);
-        }
+    // Двигаем по вертикали
+    m_controller.Move(Vector3.up * m_verticalVelocity * Time.deltaTime);
+
+    // Проверяем землю ПОСЛЕ движения
+    if (m_controller.isGrounded)
+    {
+        if (m_verticalVelocity < 0f)
+            m_verticalVelocity = -0.5f; // маленькое прижатие к земле
+    }
+
+    m_animController.SetGrounded(m_controller.isGrounded);
+}
 
         private void OnJump(InputAction.CallbackContext ctx)
-        {
-            if (!m_controller.isGrounded || m_isDead)
-                return;
+{
+    if (m_isDead)
+        return;
 
-            m_verticalVelocity = Mathf.Sqrt(
-                m_config.JumpHeight * -2f * m_config.Gravity
-            );
+    if (m_controller == null)
+        return;
 
-            m_animController.Jump();
-        }
+    if (!m_controller.isGrounded)
+        return;
+
+    m_verticalVelocity = Mathf.Sqrt(
+        m_config.JumpHeight * -2f * m_config.Gravity
+    );
+
+    m_animController.Jump();
+}
 
         private void UpdateRig()
         {
