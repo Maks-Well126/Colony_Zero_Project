@@ -17,21 +17,47 @@ public sealed class SpawnerEnemy : MonoBehaviour
     [Header("Respawn Settings")]
     [SerializeField] private float m_respawnDelay = 5f;
 
-    private void Start()
-    {
-        SpawnAll();
-    }
+    private bool m_isActive;
 
-    public void SpawnAll()
+    public void Spawn()
     {
+        m_isActive = true;
+
         foreach (var point in m_spawnPoints)
         {
             SpawnEnemy(point);
         }
     }
 
+    // public void Stop()
+    // {
+    //     m_isActive = false;
+    //     StopAllCoroutines();
+    // }
+
+    public void ClearAll()
+    {
+        foreach (var enemy in FindObjectsOfType<Enemy>())
+        {
+            Destroy(enemy.gameObject);
+        }
+    }
+
     private void SpawnEnemy(Transform spawnPoint)
     {
+        if (!m_isActive)
+            return;
+
+        float checkRadius = 1f;
+        Collider[] colliders = Physics.OverlapSphere(spawnPoint.position, checkRadius);
+        foreach (var col in colliders)
+        {
+            if (col.TryGetComponent<Enemy>(out _))
+            {
+                return;
+            }
+        }
+
         var data = GetEnemyData();
 
         var enemyInstance = Instantiate(
@@ -55,15 +81,22 @@ public sealed class SpawnerEnemy : MonoBehaviour
     private void OnEnemyDied(Enemy enemy, Transform spawnPoint)
     {
         Destroy(enemy.gameObject, 4f);
+
+        if (!m_isActive)
+            return;
+
         StartCoroutine(RespawnAfterDelay(spawnPoint));
     }
 
     private IEnumerator RespawnAfterDelay(Transform spawnPoint)
     {
         yield return new WaitForSeconds(m_respawnDelay);
+
+        if (!m_isActive)
+            yield break;
+
         SpawnEnemy(spawnPoint);
     }
-
 
     private EnemyData GetEnemyData()
     {

@@ -26,11 +26,9 @@ public class WeaponSystem : MonoBehaviour
 
     private void Start()
     {
-        // Создаём оба оружия ОДИН РАЗ
         m_primaryInstance = CreateWeapon(m_primaryWeapon);
         m_secondaryInstance = CreateWeapon(m_secondaryWeapon);
 
-        // Активируем только основное
         SetActiveWeapon(m_primaryInstance);
     }
 

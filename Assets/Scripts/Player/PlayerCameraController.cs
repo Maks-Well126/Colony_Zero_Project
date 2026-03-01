@@ -51,9 +51,6 @@ namespace Player
 
             m_actions.Player.Aim.performed += _ => m_isAiming = true;
             m_actions.Player.Aim.canceled += _ => m_isAiming = false;
-
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         private void LateUpdate()
@@ -102,10 +99,8 @@ namespace Player
 
             m_cameraRoot.localRotation = Quaternion.Euler(finalPitch, 0f, 0f);
 
-            // Игрок вращается ТОЛЬКО от мыши
             m_player.Rotate(Vector3.up * mouseX);
 
-            // Горизонтальная отдача применяется к камере, а не к игроку
             m_cameraRoot.localRotation *= Quaternion.Euler(0f, finalYawOffset, 0f);
         }
 

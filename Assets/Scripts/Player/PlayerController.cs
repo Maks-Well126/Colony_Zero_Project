@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
+using System;
 
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
+        public event Action PlayerDied;
+
         [Header("Config")]
         [SerializeField] private PlayerConfig m_config;
 
@@ -81,6 +84,14 @@ namespace Player
             CheckCrosshairTarget();
 
             m_animController.SetGrounded(m_controller.isGrounded);
+        }
+
+        public void EnableControl(bool value)
+        {
+            if (value)
+                m_actions.Player.Enable();
+            else
+                m_actions.Player.Disable();
         }
 
 
@@ -236,14 +247,40 @@ namespace Player
 
         private void OnDeath()
         {
-            m_isDead = true;
+            if (m_isDead) return;
 
-            SetState(PlayerState.Idle);
+            m_isDead = true;
+            EnableControl(false);
+            SetState(PlayerState.Dead);
 
             m_animController.TriggerDeath();
             m_vignette.OnDeath();
 
             m_actions.Player.Disable();
+        }
+        public void OnDeathAnimationFinished()
+        {
+            EnableControl(false);
+
+            PlayerDied?.Invoke();
+        }
+
+        public void Respawn(Vector3 spawnPosition)
+        {
+            m_isDead = false;
+
+            m_health.Initialize(m_config.MaxHealth);
+
+            m_animController.ResetDeath();
+
+            m_controller.enabled = false;
+            transform.position = spawnPosition;
+            m_controller.enabled = true;
+
+            m_verticalVelocity = 0f;
+
+            EnableControl(true);
+            SetState(PlayerState.Idle);
         }
 
     }

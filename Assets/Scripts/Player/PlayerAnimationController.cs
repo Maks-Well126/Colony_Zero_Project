@@ -83,5 +83,10 @@ namespace Player
             return stateInfo.IsName("Hit");
         }
 
+        public void ResetDeath()
+        {
+            m_animator.Play("Idle", 0, 0f);
+        }
+
     }
 }
