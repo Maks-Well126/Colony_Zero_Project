@@ -9,10 +9,11 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private SpawnerEnemy m_spawner;
     [SerializeField] private PlayerController m_player;
     [SerializeField] private Transform m_spawnPoint;
+    [SerializeField] private PlayerCameraController m_playerCamera;
 
     private StateMachine m_stateMachine;
     private PlayerInputActions m_actions;
-    private PlayerCameraController m_cameraController;
+
 
 
     private void Awake()
@@ -20,9 +21,9 @@ public class Bootstrap : MonoBehaviour
         m_stateMachine = new StateMachine();
 
         m_stateMachine.Initialize(
-            new GameplayState(m_spawner),
-            new PauseState(m_stateMachine, m_pauseMenu),
-            new DeadState(m_stateMachine, m_player, m_spawnPoint, m_spawner, m_deadScreen)
+        new GameplayState(m_spawner),
+        new PauseState(m_stateMachine, m_pauseMenu, m_playerCamera),
+        new DeadState(m_stateMachine, m_player, m_spawnPoint, m_spawner, m_deadScreen, m_playerCamera)
         );
 
         m_player.PlayerDied += OnPlayerDied;

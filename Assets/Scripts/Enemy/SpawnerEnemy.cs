@@ -28,16 +28,11 @@ public sealed class SpawnerEnemy : MonoBehaviour
             SpawnEnemy(point);
         }
     }
-
-    // public void Stop()
-    // {
-    //     m_isActive = false;
-    //     StopAllCoroutines();
-    // }
-
+    
     public void ClearAll()
     {
-        foreach (var enemy in FindObjectsOfType<Enemy>())
+        var enemies = GameObject.FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        foreach (var enemy in enemies)
         {
             Destroy(enemy.gameObject);
         }

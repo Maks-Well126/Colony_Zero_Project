@@ -24,6 +24,4 @@ public class WeaponInstance : MonoBehaviour
     {
         CurrentAmmo = Config.MagazineSize;
     }
-
-    
 }

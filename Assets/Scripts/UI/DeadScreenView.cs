@@ -14,7 +14,7 @@ public class DeadScreenView : MonoBehaviour
         m_respawnButton.onClick.AddListener(() => RespawnClicked?.Invoke());
         m_exitButton.onClick.AddListener(ExitMainMenu);
     }
-   
+
     private void ExitMainMenu()
     {
         SceneManager.LoadScene("MainMenuScene");

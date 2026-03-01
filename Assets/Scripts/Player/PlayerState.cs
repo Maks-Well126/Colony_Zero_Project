@@ -1,8 +1,8 @@
 public enum PlayerState
-    {
-        Idle,
-        Aiming,
-        Shooting,
-        Reloading,
-        Dead
-    }
+{
+    Idle,
+    Aiming,
+    Shooting,
+    Reloading,
+    Dead
+}

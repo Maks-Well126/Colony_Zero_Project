@@ -10,7 +10,7 @@ public class StateMachine
     private IState m_state;
     private Dictionary<Type, IState> m_states = new();
     public IState CurrentState => m_state;
-    
+
 
     public void Initialize(params IState[] states)
     {
@@ -63,12 +63,12 @@ public class PauseState : IState
     private readonly PauseMenuView m_view;
     private readonly PlayerCameraController m_cameraController;
 
-
-    public PauseState(StateMachine stateMachine, PauseMenuView view)
+    public PauseState(StateMachine stateMachine, PauseMenuView view, PlayerCameraController cameraController)
     {
         m_stateMachine = stateMachine;
         m_view = view;
-      //  m_cameraController = cameraController;
+        m_cameraController = cameraController;
+
         m_view.gameObject.SetActive(false);
     }
 
@@ -82,8 +82,7 @@ public class PauseState : IState
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-       // m_cameraController.enabled = false;
-
+        m_cameraController.enabled = false;
     }
 
     public void Exit()
@@ -93,7 +92,11 @@ public class PauseState : IState
         m_view.ResumeClicked -= OnResume;
         m_view.ExitClicked -= OnExit;
         m_view.gameObject.SetActive(false);
-     //   m_cameraController.enabled = true;
+
+        m_cameraController.enabled = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void OnResume() =>
@@ -113,19 +116,22 @@ public class DeadState : IState
     private readonly Transform m_spawnPoint;
     private readonly SpawnerEnemy m_spawner;
     private readonly DeadScreenView m_deadScreenView;
+    private readonly PlayerCameraController m_cameraController;
 
     public DeadState(
         StateMachine stateMachine,
         PlayerController player,
         Transform spawnPoint,
         SpawnerEnemy spawner,
-        DeadScreenView deadScreenView)
+        DeadScreenView deadScreenView,
+        PlayerCameraController cameraController)
     {
         m_stateMachine = stateMachine;
         m_player = player;
         m_spawnPoint = spawnPoint;
         m_spawner = spawner;
         m_deadScreenView = deadScreenView;
+        m_cameraController = cameraController;
 
         m_deadScreenView.gameObject.SetActive(false);
     }
@@ -139,7 +145,7 @@ public class DeadState : IState
 
         m_deadScreenView.gameObject.SetActive(true);
         m_deadScreenView.RespawnClicked += OnRespawnClicked;
-
+        m_cameraController.enabled = false;
     }
 
     public void Exit()
@@ -148,6 +154,7 @@ public class DeadState : IState
         Time.timeScale = 1f;
         m_deadScreenView.RespawnClicked -= OnRespawnClicked;
         m_spawner.ClearAll();
+        m_cameraController.enabled = true;
     }
     private void OnRespawnClicked()
     {

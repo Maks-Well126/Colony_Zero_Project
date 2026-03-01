@@ -140,7 +140,6 @@ namespace Player
                 instance.CurrentAmmo,
                 instance.Config.MagazineSize
             );
-            
         }
 
         private void SpawnMuzzleFlash()
