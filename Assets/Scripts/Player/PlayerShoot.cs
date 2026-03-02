@@ -1,86 +1,190 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 namespace Player
 {
     public class PlayerShoot : MonoBehaviour
     {
-        [SerializeField] private WeaponConfig m_weaponConfig;
         [SerializeField] private Camera m_camera;
-        [SerializeField] private Transform m_muzzlePoint;
+        [SerializeField] private PlayerController m_playerController;
+        [SerializeField] private PlayerCameraController m_cameraController;
+        [SerializeField] private WeaponSystem m_weaponSystem;
+        [SerializeField] private WeaponUIController m_weaponUI;
 
-        private float m_lastShootTime;
         private PlayerInputActions m_actions;
-        private PlayerCameraController m_cameraController;
-        
+        private PlayerState m_currentState;
+        private bool m_isReloading;
+        private float m_lastShootTime;
 
         private void Awake()
         {
             m_actions = new PlayerInputActions();
             m_actions.Player.Enable();
-            m_actions.Player.Shoot.performed += _ => TryShoot();
 
-            m_cameraController = m_camera.GetComponent<PlayerCameraController>();
+            m_actions.Player.Shoot.performed += _ => TryShoot();
+            m_actions.Player.Reload.performed += _ => TryReload();
         }
 
         private void TryShoot()
         {
-            if (Time.time < m_lastShootTime + m_weaponConfig.FireRate)
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
                 return;
 
-            if (!m_cameraController.IsAiming)
+            WeaponConfig weapon = instance.Config;
+
+            if (m_playerController.CurrentState != PlayerState.Aiming)
                 return;
+
+            if (Time.time < m_lastShootTime + weapon.FireRate)
+                return;
+
+            if (instance.CurrentAmmo <= 0)
+            {
+                StartCoroutine(Reload());
+                return;
+            }
 
             m_lastShootTime = Time.time;
+
+            m_playerController.SetState(PlayerState.Shooting);
             Shoot();
         }
 
         private void Shoot()
         {
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
+                return;
+
+            WeaponConfig weapon = instance.Config;
+
+            instance.ConsumeAmmo();
+
             if (Physics.Raycast(
                 m_camera.transform.position,
                 m_camera.transform.forward,
                 out RaycastHit hit,
-                m_weaponConfig.Range))
+                weapon.Range))
             {
                 if (hit.collider.TryGetComponent(out HealthComponent health))
                 {
-                    health.TakeDamage(m_weaponConfig.Damage);
+                    health.TakeDamage(weapon.Damage);
                 }
             }
 
             m_cameraController.ApplyRecoil(
-                m_weaponConfig.RecoilX,
-                m_weaponConfig.RecoilY,
-                m_weaponConfig.RecoilRecoverySpeed
+                weapon.RecoilX,
+                weapon.RecoilY,
+                weapon.RecoilRecoverySpeed
             );
 
             SpawnMuzzleFlash();
+            m_playerController.TriggerShootAnimation();
 
-
-            if (m_weaponConfig.ShootSound != null)
+            if (weapon.ShootSound != null && instance.MuzzlePoint != null)
             {
                 AudioSource.PlayClipAtPoint(
-                    m_weaponConfig.ShootSound,
-                    m_muzzlePoint.position
+                    weapon.ShootSound,
+                    instance.MuzzlePoint.position
                 );
             }
+
+            if (instance.CurrentAmmo <= 0)
+            {
+                StartCoroutine(Reload());
+            }
+            else
+            {
+                m_playerController.SetState(PlayerState.Aiming);
+            }
+
+            m_weaponUI.UpdateAmmo(
+                instance.CurrentAmmo,
+                weapon.MagazineSize
+            );
+
+        }
+
+        private void TryReload()
+        {
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
+                return;
+
+            if (m_playerController.CurrentState == PlayerState.Reloading)
+                return;
+
+            if (instance.CurrentAmmo == instance.Config.MagazineSize)
+                return;
+
+            StartCoroutine(Reload());
+        }
+
+        private IEnumerator Reload()
+        {
+            if (m_isReloading)
+                yield break;
+
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
+                yield break;
+
+            m_isReloading = true;
+
+            m_playerController.SetState(PlayerState.Reloading);
+
+            float delay = instance.Config.ReloadSoundDelay;
+            float totalTime = instance.Config.ReloadTime;
+
+            if (delay > 0f)
+                yield return new WaitForSeconds(delay);
+
+            if (instance.Config.ReloadSound != null)
+            {
+                AudioSource.PlayClipAtPoint(
+                    instance.Config.ReloadSound,
+                    transform.position
+                );
+            }
+
+            float remainingTime = Mathf.Max(0f, totalTime - delay);
+            if (remainingTime > 0f)
+                yield return new WaitForSeconds(remainingTime);
+
+            instance.Reload();
+
+            m_playerController.SetState(PlayerState.Idle);
+
+            m_weaponUI.UpdateAmmo(
+                instance.CurrentAmmo,
+                instance.Config.MagazineSize
+            );
+
+            m_isReloading = false;
         }
 
         private void SpawnMuzzleFlash()
         {
-            if (m_weaponConfig.MuzzleFlashPrefab == null || m_muzzlePoint == null)
+            WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
+            if (instance == null)
+                return;
+
+            if (instance.Config.MuzzleFlashPrefab == null)
+                return;
+
+            if (instance.MuzzlePoint == null)
                 return;
 
             GameObject flash = Instantiate(
-                m_weaponConfig.MuzzleFlashPrefab,
-                m_muzzlePoint.position,
-                m_muzzlePoint.rotation
+                instance.Config.MuzzleFlashPrefab,
+                instance.MuzzlePoint.position,
+                instance.MuzzlePoint.rotation,
+                instance.MuzzlePoint
             );
 
-            flash.transform.SetParent(m_muzzlePoint);
-
-            Destroy(flash, m_weaponConfig.TimeMuzzle); 
+            Destroy(flash, instance.Config.TimeMuzzle);
         }
     }
 }

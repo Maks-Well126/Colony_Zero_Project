@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/Bramble.prefab.meta
 guid: 89ac2d7b3001d224e9511a35b32cc967
+========
+guid: ea90d91f17b8ca34a8c4e512e2ff491e
+>>>>>>>> Player:Assets/Art/UI/MainMenuPanel.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

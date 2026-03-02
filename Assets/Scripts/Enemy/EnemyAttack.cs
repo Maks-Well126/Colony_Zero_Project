@@ -32,7 +32,6 @@ public sealed class EnemyAttack : MonoBehaviour
     {
         if (!m_isInitialized || m_timer > 0 || !m_target) return false;
 
-        // запускаем событие для анимации
         OnAttackStarted?.Invoke();
 
         if (m_target.TryGetComponent(out HealthComponent health))

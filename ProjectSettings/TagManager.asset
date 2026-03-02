@@ -4,10 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Obsticle
-  - Artifact
-  - Obstacle
-  - Base
+  - Enemy
   layers:
   - Default
   - TransparentFX

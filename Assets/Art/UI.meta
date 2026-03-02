@@ -1,5 +1,9 @@
 fileFormatVersion: 2
-guid: 9583b3650ecffbf4484d1096c52dc1dd
+<<<<<<<< HEAD:Assets/Art/Player/source anim/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Scripts.meta
+guid: cdd80744915fe64449dc34f838532ffe
+========
+guid: 2ac57797f3c6dc44389c306a279321aa
+>>>>>>>> Player:Assets/Art/UI.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
