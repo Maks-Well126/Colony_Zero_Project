@@ -67,6 +67,8 @@ public class RobotController : MonoBehaviour
         // Поиск игрока по тегу, если не назначен в инспекторе
         if (player == null)
             FindPlayerByTag();
+
+        Artifact.isArtefact1Delivered = Save.LoadLevel1State();
     }
 
     private void FindPlayerByTag()
