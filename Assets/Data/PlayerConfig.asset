@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9a498ecd4431b4fbb93c85737e8bd9, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: Assembly-CSharp::PlayerConfig
-  m_maxHealth: 20
+  m_maxHealth: 20000
   m_moveSpeed: 5
   m_runSpeed: 9
   m_jumpHeight: 1.5

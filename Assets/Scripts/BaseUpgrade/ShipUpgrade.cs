@@ -50,18 +50,18 @@ public class ShipUpgrade : MonoBehaviour
             }
         }
     }
-
+//TODO поменять закрытие радиального меню
     private void HandleUI()
     {
         if (Input.GetKeyDown(KeyCode.E) && playerNearby)
         {
-            Cursor.visible = true;
+          //  Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             m_radialUI.gameObject.SetActive(true);
         }
-        else if (Input.GetKeyDown(KeyCode.Escape))
+        else if (Input.GetKeyDown(KeyCode.Z))
         {
-            Cursor.visible = false;
+    //        Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             m_radialUI.gameObject.SetActive(false);
         }

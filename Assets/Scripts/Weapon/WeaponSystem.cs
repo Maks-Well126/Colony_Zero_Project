@@ -21,7 +21,17 @@ public class WeaponSystem : MonoBehaviour
     {
         m_actions = new PlayerInputActions();
         m_actions.Player.Enable();
-        m_actions.Player.SwitchWeapon.performed += _ => SwitchWeapon();
+        m_actions.Player.SwitchWeapon.performed += OnSwitchWeapon;
+    }
+
+    private void OnSwitchWeapon(InputAction.CallbackContext context)
+    {
+        SwitchWeapon();
+    }
+
+    private void OnDestroy()
+    {
+        m_actions.Player.SwitchWeapon.performed -= OnSwitchWeapon;
     }
 
     private void Start()
@@ -46,21 +56,35 @@ public class WeaponSystem : MonoBehaviour
 
     private void SetActiveWeapon(WeaponInstance weapon)
     {
+        if (weapon == null)
+            return;
+
         if (m_currentWeaponInstance != null)
             m_currentWeaponInstance.gameObject.SetActive(false);
 
         m_currentWeaponInstance = weapon;
+
+        if (m_currentWeaponInstance == null)
+            return;
+
         m_currentWeaponInstance.gameObject.SetActive(true);
 
-        m_weaponUI.UpdateAmmo(
-            m_currentWeaponInstance.CurrentAmmo,
-            m_currentWeaponInstance.Config.MagazineSize
-        );
+        if (m_weaponUI != null)
+        {
+            m_weaponUI.UpdateAmmo(
+                m_currentWeaponInstance.CurrentAmmo,
+                m_currentWeaponInstance.Config.MagazineSize
+            );
 
-        m_weaponUI.UpdateWeaponUI(
-            m_currentWeaponInstance.Config,
-            GetInactiveWeapon().Config
-        );
+            var inactive = GetInactiveWeapon();
+            if (inactive != null)
+            {
+                m_weaponUI.UpdateWeaponUI(
+                    m_currentWeaponInstance.Config,
+                    inactive.Config
+                );
+            }
+        }
     }
 
     private WeaponInstance GetInactiveWeapon()
