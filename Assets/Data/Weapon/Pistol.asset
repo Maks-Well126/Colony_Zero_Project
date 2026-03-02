@@ -25,3 +25,5 @@ MonoBehaviour:
   m_recoilRecoverySpeed: 5
   m_magazineSize: 5
   m_reloadTime: 1.5
+  m_reloadSound: {fileID: 8300000, guid: 5e7f633dda3117f4f90253f51ee065f0, type: 3}
+  m_reloadSoundDelay: 0.25

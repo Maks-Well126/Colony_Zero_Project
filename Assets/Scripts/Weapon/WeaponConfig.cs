@@ -27,12 +27,16 @@ public sealed class WeaponConfig : ScriptableObject
     [Header("Ammo")]
     [SerializeField] private int m_magazineSize = 30;
     [SerializeField] private float m_reloadTime = 1.5f;
+    [SerializeField] private AudioClip m_reloadSound;
+    [SerializeField][Min(0f)] private float m_reloadSoundDelay = 0.3f;
 
     public GameObject WeaponPrefab => m_weaponPrefab;
     public Sprite WeaponIcon => m_weaponIcon;
 
     public int MagazineSize => m_magazineSize;
     public float ReloadTime => m_reloadTime;
+    public AudioClip ReloadSound => m_reloadSound;
+    public float ReloadSoundDelay => m_reloadSoundDelay;
 
     public float TimeMuzzle => m_timeMuzzle;
     public GameObject MuzzleFlashPrefab => m_muzzleFlashPrefab;

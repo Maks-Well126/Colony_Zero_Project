@@ -11,8 +11,8 @@ public sealed class SpawnerEnemy : MonoBehaviour
     [Header("Spawn Points")]
     [SerializeField] private Transform[] m_spawnPoints;
 
-    [Header("Player")]
-    [SerializeField] private Transform m_playerTransform;
+    [Header("Targets")]
+    [SerializeField] private Transform[] m_targets;
 
     [Header("Respawn Settings")]
     [SerializeField] private float m_respawnDelay = 5f;
@@ -28,7 +28,7 @@ public sealed class SpawnerEnemy : MonoBehaviour
             SpawnEnemy(point);
         }
     }
-    
+
     public void ClearAll()
     {
         var enemies = GameObject.FindObjectsByType<Enemy>(FindObjectsSortMode.None);
@@ -61,7 +61,8 @@ public sealed class SpawnerEnemy : MonoBehaviour
             spawnPoint.rotation
         );
 
-        enemyInstance.Initialize(data, m_playerTransform);
+        Transform target = GetRandomTarget();
+        enemyInstance.Initialize(data, target);
 
         Action<Enemy> handler = null;
         handler = enemy =>
@@ -71,6 +72,13 @@ public sealed class SpawnerEnemy : MonoBehaviour
         };
 
         enemyInstance.Died += handler;
+    }
+    private Transform GetRandomTarget()
+    {
+        if (m_targets == null || m_targets.Length == 0)
+            return null;
+
+        return m_targets[Random.Range(0, m_targets.Length)];
     }
 
     private void OnEnemyDied(Enemy enemy, Transform spawnPoint)

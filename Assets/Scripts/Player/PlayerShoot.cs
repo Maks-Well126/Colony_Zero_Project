@@ -14,7 +14,7 @@ namespace Player
 
         private PlayerInputActions m_actions;
         private PlayerState m_currentState;
-
+        private bool m_isReloading;
         private float m_lastShootTime;
 
         private void Awake()
@@ -124,22 +124,48 @@ namespace Player
 
         private IEnumerator Reload()
         {
+            if (m_isReloading)
+                yield break;
+
             WeaponInstance instance = m_weaponSystem.GetCurrentWeaponInstance();
             if (instance == null)
                 yield break;
 
+            m_isReloading = true;
+
             m_playerController.SetState(PlayerState.Reloading);
 
-            yield return new WaitForSeconds(instance.Config.ReloadTime);
+            float delay = instance.Config.ReloadSoundDelay;
+            float totalTime = instance.Config.ReloadTime;
+
+            // Ждём до момента воспроизведения звука
+            if (delay > 0f)
+                yield return new WaitForSeconds(delay);
+
+            // 🔊 Воспроизводим звук
+            if (instance.Config.ReloadSound != null)
+            {
+                AudioSource.PlayClipAtPoint(
+                    instance.Config.ReloadSound,
+                    transform.position
+                );
+            }
+
+            // Ждём оставшееся время перезарядки
+            float remainingTime = Mathf.Max(0f, totalTime - delay);
+            if (remainingTime > 0f)
+                yield return new WaitForSeconds(remainingTime);
 
             instance.Reload();
 
-            m_playerController.SetState(PlayerState.Idle);
+            m_playerController.SetState(PlayerState.Aiming);
 
             m_weaponUI.UpdateAmmo(
                 instance.CurrentAmmo,
                 instance.Config.MagazineSize
             );
+
+            m_isReloading = false;
         }
 
         private void SpawnMuzzleFlash()

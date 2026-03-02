@@ -21,6 +21,7 @@ namespace Player
         [SerializeField] private Transform m_aimTarget;
         [SerializeField] private HealthComponent m_health;
         [SerializeField] private DamageVignetteController m_vignette;
+        [SerializeField] private FootstepSystem m_footstepSystem;
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
@@ -78,6 +79,12 @@ namespace Player
                 return;
 
             HandleMovement();
+            m_footstepSystem.TryPlayStep(
+            m_isRunning,
+            m_controller.isGrounded,
+            m_moveInput.magnitude
+            );
+            
             HandleAnimations();
             UpdateRig();
             UpdateAimTarget();

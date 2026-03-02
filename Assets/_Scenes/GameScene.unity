@@ -975,6 +975,10 @@ PrefabInstance:
       propertyPath: m_aimTarget
       value: 
       objectReference: {fileID: 436131681}
+    - target: {fileID: 5822233542044633782, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_footstepSystem
+      value: 
+      objectReference: {fileID: 1139813623}
     - target: {fileID: 5961593465379477290, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_SkinWidth
       value: 0.02
@@ -1056,6 +1060,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6501709214403174785, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1139813621}
+    - targetCorrespondingSourceObject: {fileID: 6501709214403174785, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1139813624}
+    - targetCorrespondingSourceObject: {fileID: 6501709214403174785, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1139813623}
   m_SourcePrefab: {fileID: 100100000, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
 --- !u!4 &436131681 stripped
 Transform:
@@ -1866,6 +1876,120 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55a4ba72253659649a05653122ff9d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+--- !u!114 &1139813623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195869527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c7b5c86c4a3a624e943667cfc0cc28d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepSystem
+  m_database: {fileID: 11400000, guid: 6e621384a1df05c43ae6c9ae2f11e3f2, type: 2}
+  m_rayOrigin: {fileID: 567940900}
+  m_rayDistance: 2
+  m_walkStepDistance: 2
+  m_runStepDistance: 1.4
+--- !u!82 &1139813624
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195869527}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &1223280547 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6234155507414181387, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
@@ -2324,7 +2448,8 @@ MonoBehaviour:
   - {fileID: 107704405}
   - {fileID: 302259513}
   - {fileID: 522681372}
-  m_playerTransform: {fileID: 567940900}
+  m_targets:
+  - {fileID: 567940900}
   m_respawnDelay: 5
 --- !u!4 &1794514937
 Transform:
