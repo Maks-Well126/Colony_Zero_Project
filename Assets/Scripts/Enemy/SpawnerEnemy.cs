@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using Random = UnityEngine.Random;
+using System.Collections.Generic;
 
 public sealed class SpawnerEnemy : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public sealed class SpawnerEnemy : MonoBehaviour
 
     [Header("Respawn Settings")]
     [SerializeField] private float m_respawnDelay = 5f;
+
+    private Dictionary<Transform, Enemy> m_spawnedEnemies = new();
 
     private bool m_isActive;
 
@@ -43,14 +46,10 @@ public sealed class SpawnerEnemy : MonoBehaviour
         if (!m_isActive)
             return;
 
-        float checkRadius = 1f;
-        Collider[] colliders = Physics.OverlapSphere(spawnPoint.position, checkRadius);
-        foreach (var col in colliders)
+        if (m_spawnedEnemies.TryGetValue(spawnPoint, out var existingEnemy))
         {
-            if (col.TryGetComponent<Enemy>(out _))
-            {
+            if (existingEnemy != null)
                 return;
-            }
         }
 
         var data = GetEnemyData();
@@ -64,10 +63,13 @@ public sealed class SpawnerEnemy : MonoBehaviour
         Transform target = GetRandomTarget();
         enemyInstance.Initialize(data, target);
 
+        m_spawnedEnemies[spawnPoint] = enemyInstance;
+
         Action<Enemy> handler = null;
         handler = enemy =>
         {
             enemy.Died -= handler;
+            m_spawnedEnemies.Remove(spawnPoint);
             OnEnemyDied(enemy, spawnPoint);
         };
 
