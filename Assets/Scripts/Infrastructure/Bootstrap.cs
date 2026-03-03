@@ -11,6 +11,8 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private Transform m_spawnPoint;
     [SerializeField] private PlayerCameraController m_playerCamera;
 
+    [SerializeField] private GameObject m_RadialMenu;
+
     private StateMachine m_stateMachine;
     private PlayerInputActions m_actions;
 
@@ -37,6 +39,7 @@ public class Bootstrap : MonoBehaviour
     }
     private void OnPausePressed()
     {
+        if (m_RadialMenu.gameObject.activeSelf) return;
         if (m_stateMachine.CurrentState is GameplayState)
         {
             m_stateMachine.ChangedState<PauseState>();

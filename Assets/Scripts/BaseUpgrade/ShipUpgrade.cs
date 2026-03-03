@@ -79,16 +79,12 @@ public class ShipUpgrade : MonoBehaviour
             UnityEngine.Cursor.visible = true;
             UnityEngine.Cursor.lockState = CursorLockMode.None;
             m_radialUI.gameObject.SetActive(true);
-        }
-        else if (Input.GetKeyDown(KeyCode.Z))
-        {
-            UnityEngine.Cursor.visible = false;
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-            m_radialUI.gameObject.SetActive(false);
-        }
+        }        
         else if (!playerNearby && m_radialUI.activeSelf)
         {
             m_radialUI.gameObject.SetActive(false);
+            UnityEngine.Cursor.visible = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

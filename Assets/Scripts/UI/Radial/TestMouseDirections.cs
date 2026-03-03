@@ -11,6 +11,8 @@ public class TestMouseDirections : MonoBehaviour
     [SerializeField] private Image m_leftImage;
     [SerializeField] private Image m_rightImage;
 
+    [SerializeField] private GameObject m_Radial;
+
     private Color m_highlightColor;
     private Color m_defaultColor;
 
@@ -43,6 +45,7 @@ public class TestMouseDirections : MonoBehaviour
             {
                 case MouseDirectionChecker.MouseDirection.Right:
                     m_rightImage.color = m_highlightColor;
+                    if (Input.GetMouseButtonDown(0)) m_Radial.gameObject.SetActive(false);
                     break;
                 case MouseDirectionChecker.MouseDirection.Left:
                     m_leftImage.color = m_highlightColor;
@@ -62,6 +65,12 @@ public class TestMouseDirections : MonoBehaviour
         }
 
         m_lastDirection = currentDirection;
+        if (Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            m_Radial.gameObject.SetActive(false);
+        } 
     }
 
     private void PlayHoverSound()
