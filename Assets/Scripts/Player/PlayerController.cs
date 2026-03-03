@@ -74,7 +74,7 @@ namespace Player
 
 
         private void Update()
-        {
+        {            
             if (m_isDead)
                 return;
 
@@ -145,7 +145,14 @@ namespace Player
             m_camera.SetAiming(value);
             m_animController.SetAiming(value);
         }
+        public void HealToFull()
+        {
+            if (m_isDead)
+                return;
 
+            m_health.HealToFull();
+           
+        }
 
         private void HandleMovement()
         {
@@ -300,4 +307,5 @@ namespace Player
         }
 
     }
+    
 }

@@ -7,6 +7,7 @@ public class DamageVignetteController : MonoBehaviour
     [SerializeField] private Volume m_volume;
     [SerializeField] private float m_smoothSpeed = 5f;
     [SerializeField] private float m_maxIntensity = 0.45f;
+    [SerializeField] private HealthComponent m_health; 
 
     private Vignette m_vignette;
     private float m_targetIntensity;
@@ -48,5 +49,14 @@ public class DamageVignetteController : MonoBehaviour
     public void OnDeath()
     {
         m_targetIntensity = m_maxIntensity;
+    }
+    private void OnEnable()
+    {
+        m_health.HealthChanged += OnHealthChanged;
+    }
+
+    private void OnDisable()
+    {
+        m_health.HealthChanged -= OnHealthChanged;
     }
 }

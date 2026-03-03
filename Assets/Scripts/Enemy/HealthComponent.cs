@@ -51,4 +51,16 @@ public sealed class HealthComponent : MonoBehaviour
             Died?.Invoke();
         }
     }
+    private void Update()
+    {
+       // Debug.Log(m_currentHealth);
+    }
+    public void HealToFull()
+    {
+        if (m_isDead)
+            return;
+
+        m_currentHealth = m_maxHealth;
+        HealthChanged?.Invoke(m_currentHealth, m_maxHealth);
+    }
 }
