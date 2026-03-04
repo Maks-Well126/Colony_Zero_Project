@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using static DialogeSystem;
 
 public class ShipUpgrade : MonoBehaviour
 {
@@ -55,7 +56,8 @@ public class ShipUpgrade : MonoBehaviour
                 AudioManager.Instance.PlayButtonClick(2);
                 UpgradeShip(m_buildingPrefab, m_buildingSpawnPoint, m_buildingPrefab2, m_buildingSpawnPoint2);
                 isLevel1Built = true;
-               
+                DialogeSystem.StartDialoge(DialogType.Build);
+
                 Save.SaveLevel1State(true);
             }
         }
@@ -63,7 +65,7 @@ public class ShipUpgrade : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                
+                DialogeSystem.StartDialoge(DialogType.Build);
                 // AudioManager.Instance.PlayButtonClick(2);
                 // UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
                 isLevel2Built = true;                

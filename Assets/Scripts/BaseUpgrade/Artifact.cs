@@ -1,4 +1,5 @@
 using UnityEngine;
+using static DialogeSystem;
 
 public class Artifact : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Artifact : MonoBehaviour
         if (Save.LoadLevel2State()) Destroy(m_artifact2.gameObject);
 
     }
+    
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Base"))
@@ -26,6 +28,7 @@ public class Artifact : MonoBehaviour
             isArtefact1Delivered = true;
             m_deliveredCount++;
             Destroy(gameObject);
+            DialogeSystem.StartDialoge(DialogType.Artef1Delivered);
             return;
         }
 
@@ -33,6 +36,7 @@ public class Artifact : MonoBehaviour
         {
             isArtefact2Delivered = true;
             m_deliveredCount++;
+            DialogeSystem.StartDialoge(DialogType.Artef2Delivered);
             Destroy(gameObject);
             return;
         }
