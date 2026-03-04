@@ -1,147 +1,77 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿// using UnityEngine;
+// using UnityEngine.UI;
 
-public class ProgressBar : MonoBehaviour
-{
-    [SerializeField] private GameObject m_prefab;
-    [SerializeField] private Vector3 m_offset = new Vector3(0, 1.5f, 0);
-    [SerializeField] private float m_scale = 0.003f;
-    [SerializeField] private bool m_faceCamera = true;
-    [SerializeField] private float m_rotationSpeed = 10f;
-    [SerializeField] private Vector2 m_canvasSize = new Vector2(200, 30);
+// [RequireComponent(typeof(CanvasGroup))]
+// public sealed class ProgressBar : MonoBehaviour
+// {
+//     [SerializeField] private Image m_fillImage;
+//     [SerializeField] private float m_fadeSpeed = 8f;
 
-    private GameObject m_instance;
-    private Slider m_slider;
-    private Canvas m_canvas;
-    private Transform m_target;
-    private Camera m_camera;
-    private bool m_isActive;
+//     private CanvasGroup m_canvasGroup;
+//     private bool m_isVisible;
+//     private float m_targetAlpha;
 
-    public void Show(Transform target)
-    {
-        if (m_isActive) Hide();
+//     public bool IsVisible => m_isVisible;
 
-        m_target = target;
-        m_isActive = true;
-        if (m_camera == null) FindCamera();
-        if (m_prefab == null || m_camera == null) return;
+//     private void Awake()
+//     {
+//         m_canvasGroup = GetComponent<CanvasGroup>();
 
-        CreateInstance();
-        SetupComponents();
-    }
+//         if (m_fillImage == null)
+//             m_fillImage = GetComponentInChildren<Image>();
 
-    public void SetProgress(float value) => m_slider?.SetValue(value);
-    public void Hide() => DestroyInstance();
-    public bool IsActive => m_isActive;
+//         Initialize();
+//     }
 
-    private void FindCamera() => m_camera = Camera.main;
+//     private void Initialize()
+//     {
+//         m_fillImage.type = Image.Type.Filled;
+//         m_fillImage.fillAmount = 0f;
 
-    private void CreateInstance()
-    {
-        m_instance = Instantiate(m_prefab, m_target.position + m_offset, Quaternion.identity);
-        m_instance.transform.SetParent(m_target);
-        m_instance.transform.localPosition = m_offset;
-        m_instance.transform.localScale = Vector3.one * m_scale;
-    }
+//         m_canvasGroup.alpha = 0f;
+//         m_targetAlpha = 0f;
+//         m_isVisible = false;
+//     }
 
-    private void SetupComponents()
-    {
-        m_slider = m_instance.GetComponentInChildren<Slider>();
-        if (m_slider == null)
-        {
-            Debug.LogError("ProgressBar: Slider not found!");
-            DestroyInstance();
-            return;
-        }
+//     private void Update()
+//     {
+//         // Плавный fade
+//         if (Mathf.Abs(m_canvasGroup.alpha - m_targetAlpha) > 0.01f)
+//         {
+//             m_canvasGroup.alpha = Mathf.Lerp(
+//                 m_canvasGroup.alpha,
+//                 m_targetAlpha,
+//                 Time.deltaTime * m_fadeSpeed
+//             );
+//         }
+//     }
 
-        m_slider.Setup(0, 1, 0);
-        SetupCanvas();
-    }
+//     public void Show()
+//     {
+//         if (m_isVisible) return;
 
-    private void SetupCanvas()
-    {
-        m_canvas = m_instance.GetComponentInChildren<Canvas>();
-        if (m_canvas == null) return;
+//         m_isVisible = true;
+//         m_fillImage.fillAmount = 0f;
+//         m_targetAlpha = 1f;
+//     }
 
-        m_canvas.renderMode = RenderMode.WorldSpace;
-        m_canvas.worldCamera = m_camera;
+//     public void Hide()
+//     {
+//         if (!m_isVisible) return;
 
-        var rectTransform = m_canvas.GetComponent<RectTransform>();
-        if (rectTransform != null)
-        {
-            rectTransform.sizeDelta = m_canvasSize;
-            rectTransform.SetCenterPivot();
-        }
+//         m_isVisible = false;
+//         m_targetAlpha = 0f;
+//     }
 
-        if (m_faceCamera) UpdateCanvasRotation();
-    }
+//     public void SetProgress(float value)
+//     {
+//         if (!m_isVisible) return;
 
-    private void UpdateCanvasRotation()
-    {
-        if (m_canvas == null || m_camera == null) return;
+//         m_fillImage.fillAmount = Mathf.Clamp01(value);
+//     }
 
-        var direction = m_camera.transform.position - m_canvas.transform.position;
-        if (direction == Vector3.zero) return;
-
-        m_canvas.transform.rotation = Quaternion.LookRotation(-direction);
-    }
-
-    private void DestroyInstance()
-    {
-        if (m_instance == null) return;
-
-        Destroy(m_instance);
-        m_instance = null;
-        m_slider = null;
-        m_canvas = null;
-        m_target = null;
-        m_isActive = false;
-    }
-
-    private void LateUpdate()
-    {
-        if (!m_isActive || !m_faceCamera || m_canvas == null || m_camera == null) return;
-
-        UpdatePosition();
-        UpdateRotation();
-    }
-
-    private void UpdatePosition()
-    {
-        if (m_target == null) return;
-        m_instance.transform.position = m_target.position + m_offset;
-    }
-
-    private void UpdateRotation()
-    {
-        var direction = m_camera.transform.position - m_canvas.transform.position;
-        if (direction == Vector3.zero) return;
-
-        var targetRotation = Quaternion.LookRotation(-direction);
-        m_canvas.transform.rotation = Quaternion.Slerp(
-            m_canvas.transform.rotation,
-            targetRotation,
-            m_rotationSpeed * Time.deltaTime
-        );
-    }
-}
-
-// Extension методы для удобства
-public static class ProgressBarExtensions
-{
-    public static void SetValue(this Slider slider, float value) => 
-        slider.value = Mathf.Clamp01(value);
-    
-    public static void Setup(this Slider slider, float min, float max, float value)
-    {
-        slider.minValue = min;
-        slider.maxValue = max;
-        slider.value = value;
-    }
-    
-    public static void SetCenterPivot(this RectTransform rectTransform)
-    {
-        rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = 
-            new Vector2(0.5f, 0.5f);
-    }
-}
+//     public void ResetProgress()
+//     {
+//         m_fillImage.fillAmount = 0f;
+//     }
+// }

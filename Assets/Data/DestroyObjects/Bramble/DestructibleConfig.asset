@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DestructibleConfig
   m_EditorClassIdentifier: Assembly-CSharp::DestructibleConfig
   m_destroyTime: 2
-  m_loopSound: {fileID: 8300000, guid: 642771746886ce241ae228e89ea10369, type: 3}
-  m_completeSound: {fileID: 8300000, guid: a66d734be8517d04b8eb9b6154a5965e, type: 3}
+  m_loopSound: {fileID: 8300000, guid: 0d2de4872d9f0214f8b4a6d98883c880, type: 3}
+  m_completeSound: {fileID: 8300000, guid: 70f0536454179dd419ecf9a0c14f7984, type: 3}

@@ -1,13 +1,28 @@
 using UnityEngine;
 
-public sealed class Destructible : MonoBehaviour
+[RequireComponent(typeof(Collider))]
+public class Destructible : MonoBehaviour
 {
-    [SerializeField] private DestructibleConfig m_config;
-    [SerializeField] private ProgressBar m_progressBar;
-    [SerializeField] private SoundController m_sound;
+    // [Header("Settings")]
+    // [SerializeField] private float m_destroyTime = 2f;
+
+   // [Header("Audio")]
+   // [SerializeField] private AudioClip m_processSound;
+    //[SerializeField] private AudioClip m_completeSound;
+    [SerializeField] private DestructibleConfig m_config; 
 
     private float m_timer;
     private bool m_isDestroying;
+    
+
+    private AudioSource m_audioSource;
+
+    private void Awake()
+    {
+        m_audioSource = gameObject.AddComponent<AudioSource>();
+        m_audioSource.playOnAwake = false;
+        m_audioSource.loop = true;
+    }
 
     public void StartDestroy()
     {
@@ -16,8 +31,12 @@ public sealed class Destructible : MonoBehaviour
         m_isDestroying = true;
         m_timer = 0f;
 
-        m_progressBar?.Show(transform);
-        m_sound?.PlayLoop(m_config.LoopSound);
+        if (m_config.LoopSound != null)
+        {
+            m_audioSource.clip = m_config.LoopSound;
+            m_audioSource.loop = true;
+            m_audioSource.Play();
+        }
     }
 
     public void UpdateDestroy(float deltaTime)
@@ -25,40 +44,32 @@ public sealed class Destructible : MonoBehaviour
         if (!m_isDestroying) return;
 
         m_timer += deltaTime;
-        UpdateProgress();
 
-        if (IsComplete) CompleteDestroy();
+        if (m_timer >= m_config.DestroyTime)
+        {
+            CompleteDestroy();
+        }
     }
 
     public void CancelDestroy()
     {
         if (!m_isDestroying) return;
 
-        ResetState();
-        m_progressBar?.Hide();
-        m_sound?.Stop();
-    }
+        m_isDestroying = false;
+        m_timer = 0f;
 
-    private void UpdateProgress()
-    {
-        float progress = m_timer / m_config.DestroyTime;
-        m_progressBar?.SetProgress(progress);
+        m_audioSource.Stop();
     }
 
     private void CompleteDestroy()
     {
-        m_sound?.PlayOneShot(m_config.CompleteSound);
-        m_progressBar?.Hide();
+        m_audioSource.Stop();
+
+        if (m_config.CompleteSound != null)
+        {
+            AudioSource.PlayClipAtPoint(m_config.CompleteSound, transform.position);
+        }
+
         Destroy(gameObject);
     }
-
-    private void ResetState()
-    {
-        m_isDestroying = false;
-        m_timer = 0f;
-    }
-
-    private bool IsComplete => m_timer >= m_config.DestroyTime;
-    public bool IsDestroying => m_isDestroying;
-    public float DestroyProgress => m_isDestroying ? Mathf.Clamp01(m_timer / m_config.DestroyTime) : 0f;
 }
