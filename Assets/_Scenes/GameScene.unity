@@ -3262,15 +3262,15 @@ PrefabInstance:
       objectReference: {fileID: 819414600}
     - target: {fileID: 8569412945693032247, guid: e37d7924143318a4daa60a5bfe85df54, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 160.8
+      value: 178.4
       objectReference: {fileID: 0}
     - target: {fileID: 8569412945693032247, guid: e37d7924143318a4daa60a5bfe85df54, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.9
+      value: 0.45
       objectReference: {fileID: 0}
     - target: {fileID: 8569412945693032247, guid: e37d7924143318a4daa60a5bfe85df54, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 818.3
+      value: 793.16
       objectReference: {fileID: 0}
     - target: {fileID: 8569412945693032247, guid: e37d7924143318a4daa60a5bfe85df54, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12578,7 +12578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogeSystem
   m_dialogText: {fileID: 2009987416}
-  m_speedText: 0.07
+  m_speedText: 0.06
   m_audioSource: {fileID: 214666669}
   m_dialogs:
   - type: 0
@@ -18558,7 +18558,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.07700001, y: 0.02648716}
   m_AnchorMax: {x: 0.8364376, y: 0.2417821}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0}
+  m_AnchoredPosition: {x: 0.00012207031, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2009987416

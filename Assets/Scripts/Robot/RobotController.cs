@@ -44,7 +44,7 @@ public class RobotController : MonoBehaviour
 
     private RobotState currentState = RobotState.Idle;
     private int nextTripIndex = 0; // 0 = first, 1 = second
-
+    private bool isInObstacleTrigger;
     // Для запоминания цели, когда робот остановился из-за дистанции
     private Transform pendingDestination;
     private RobotState pendingState;
@@ -276,6 +276,9 @@ public class RobotController : MonoBehaviour
 
     private void HandleStateLogic()
     {
+        if (isInObstacleTrigger)
+            return;
+
         if (currentState == RobotState.Idle)
             return;
 
@@ -311,8 +314,7 @@ public class RobotController : MonoBehaviour
 
         nextTripIndex = (nextTripIndex == 0) ? 1 : 0;
         currentState = RobotState.Idle;
-
-        // Очищаем pendingDestination если был
+        
         if (pendingDestination != null)
         {
             Destroy(pendingDestination.gameObject);
@@ -401,9 +403,29 @@ public class RobotController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Obstacle"))
+        {
+            isInObstacleTrigger = true;
+            agent.isStopped = true;
+            return;
+        }
+
         if (other.CompareTag("Artifact"))
         {
             OnArtifactPick?.Invoke(other.gameObject);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Obstacle"))
+        {
+            isInObstacleTrigger = false;
+
+            if (currentState != RobotState.Idle)
+            {
+                agent.isStopped = false;
+            }
         }
     }
 
