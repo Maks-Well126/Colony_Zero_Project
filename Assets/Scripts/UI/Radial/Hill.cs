@@ -4,6 +4,8 @@ using Player;
 public class Hill : MonoBehaviour
 {
     [SerializeField] private PlayerController m_player;
+    [SerializeField] private RobotController m_robot;
+
     private void Update()
     {
         MouseDirectionChecker.MouseDirection direction =
@@ -13,6 +15,7 @@ public class Hill : MonoBehaviour
         {
             Debug.Log("ssssssss");
             m_player.HealToFull();
+            m_robot.RepairRobotAtBase();
         }
         
     }

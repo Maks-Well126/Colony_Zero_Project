@@ -36,6 +36,11 @@ public class RobotController : MonoBehaviour
     [Header("Distance Limit")]
     [SerializeField] private float maxDistanceFromPlayer = 10f; // Максимальная дистанция от игрока
     [SerializeField] private float resumeDistanceFromPlayer = 8f; // Дистанция, при которой робот возобновляет движение
+    [Header("HP")]
+    [SerializeField] private HealthComponent m_health;
+    [SerializeField] private float m_startHealth = 200f;
+    [SerializeField] private float m_upgradeAmount = 100f;
+    [SerializeField] private float m_repairAmount = 100f;
 
     private RobotState currentState = RobotState.Idle;
     private int nextTripIndex = 0; // 0 = first, 1 = second
@@ -48,6 +53,8 @@ public class RobotController : MonoBehaviour
     private Quaternion startRotation;
 
     private float currentSteer;
+    private bool m_isUpgraded;
+    private bool m_isBroken;
 
     public event Action<GameObject> OnArtifactPick;
 
@@ -69,6 +76,9 @@ public class RobotController : MonoBehaviour
             FindPlayerByTag();
 
         Artifact.isArtefact1Delivered = Save.LoadLevel1State();
+        m_health.Initialize(m_startHealth);
+
+        m_health.Died += OnRobotBroken;
     }
 
     private void FindPlayerByTag()
@@ -89,6 +99,56 @@ public class RobotController : MonoBehaviour
 
         // Проверка дистанции от игрока
         CheckDistanceFromPlayer();
+    }
+
+
+
+    private void OnRobotBroken()
+    {
+        m_isBroken = true;
+        agent.isStopped = true;
+        currentState = RobotState.Idle;
+
+        Debug.Log("Robot is broken!");
+    }
+    public void UpgradeHealth()
+    {
+        if (m_health == null || m_isUpgraded)
+            return;
+
+        m_health.IncreaseMaxHealth(m_upgradeAmount); // +100 к Max HP
+        m_isUpgraded = true;
+
+        // Лечим сразу до нового максимума
+        m_health.HealToMax();
+
+        Debug.Log("Robot upgraded - Max HP: " + m_health.MaxHealth);
+    }
+
+    // 2️⃣ Починка в поле (частичная)
+    public void RepairRobotInField()
+    {
+        if (!m_isBroken || m_health == null)
+            return;
+
+        m_health.Heal(m_repairAmount, revive: true); // +100 HP и снимаем флаг смерти
+        m_isBroken = false;
+        agent.isStopped = false;
+
+        Debug.Log("Robot partially repaired in field - Current HP: " + m_health.CurrentHealth);
+    }
+
+    // 3️⃣ Полная починка на базе (до текущего MaxHP)
+    public void RepairRobotAtBase()
+    {
+        if (m_health == null)
+            return;
+
+        m_health.HealToMax(revive: true);
+        m_isBroken = false;
+        agent.isStopped = false;
+
+        Debug.Log("Robot fully repaired at base - Current HP: " + m_health.CurrentHealth);
     }
 
     // ================= DISTANCE CHECK =================
@@ -174,13 +234,16 @@ public class RobotController : MonoBehaviour
         interactCanvas.SetActive(dist <= interactRange);
 
         if (dist <= interactRange &&
-            Keyboard.current.eKey.wasPressedThisFrame &&
-            currentState == RobotState.Idle)
+            Keyboard.current.eKey.wasPressedThisFrame)
         {
-            if (IsObstacleAhead())
+            if (m_isBroken)
+            {
+                RepairRobotInField();
                 return;
+            }
 
-            StartNextTrip();
+            // if (currentState == RobotState.Idle)
+            //     StartNextTrip();
         }
     }
 
