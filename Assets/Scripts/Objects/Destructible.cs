@@ -1,39 +1,45 @@
 using UnityEngine;
+using System.Collections;
 
-[RequireComponent(typeof(Collider))]
 public class Destructible : MonoBehaviour
 {
-    // [Header("Settings")]
-    // [SerializeField] private float m_destroyTime = 2f;
+    [Header("Destroy Settings")]
+    [SerializeField] private float m_destroyTime = 2f;
 
-   // [Header("Audio")]
-   // [SerializeField] private AudioClip m_processSound;
-    //[SerializeField] private AudioClip m_completeSound;
-    [SerializeField] private DestructibleConfig m_config; 
+    [Header("Sink Settings")]
+    [SerializeField] private float m_sinkDistance = 2f;
+    [SerializeField] private float m_sinkSpeed = 2f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip m_processSound;
+    [SerializeField] private AudioClip m_completeSound;
 
     private float m_timer;
     private bool m_isDestroying;
-    
+    private bool m_isSinking;
 
     private AudioSource m_audioSource;
+    private Collider m_collider;
 
     private void Awake()
     {
         m_audioSource = gameObject.AddComponent<AudioSource>();
         m_audioSource.playOnAwake = false;
         m_audioSource.loop = true;
+
+        m_collider = GetComponent<Collider>();
     }
 
     public void StartDestroy()
     {
-        if (m_isDestroying) return;
+        if (m_isDestroying || m_isSinking) return;
 
         m_isDestroying = true;
         m_timer = 0f;
 
-        if (m_config.LoopSound != null)
+        if (m_processSound != null)
         {
-            m_audioSource.clip = m_config.LoopSound;
+            m_audioSource.clip = m_processSound;
             m_audioSource.loop = true;
             m_audioSource.Play();
         }
@@ -41,11 +47,11 @@ public class Destructible : MonoBehaviour
 
     public void UpdateDestroy(float deltaTime)
     {
-        if (!m_isDestroying) return;
+        if (!m_isDestroying || m_isSinking) return;
 
         m_timer += deltaTime;
 
-        if (m_timer >= m_config.DestroyTime)
+        if (m_timer >= m_destroyTime)
         {
             CompleteDestroy();
         }
@@ -53,21 +59,45 @@ public class Destructible : MonoBehaviour
 
     public void CancelDestroy()
     {
-        if (!m_isDestroying) return;
+        if (!m_isDestroying || m_isSinking) return;
 
         m_isDestroying = false;
         m_timer = 0f;
-
         m_audioSource.Stop();
     }
 
     private void CompleteDestroy()
     {
+        m_isDestroying = false;
+        m_isSinking = true;
+
         m_audioSource.Stop();
 
-        if (m_config.CompleteSound != null)
+        if (m_completeSound != null)
         {
-            AudioSource.PlayClipAtPoint(m_config.CompleteSound, transform.position);
+            AudioSource.PlayClipAtPoint(m_completeSound, transform.position);
+        }
+
+        if (m_collider != null)
+            m_collider.enabled = false;
+
+        StartCoroutine(SinkAndDestroy());
+    }
+
+    private IEnumerator SinkAndDestroy()
+    {
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = startPos + Vector3.down * m_sinkDistance;
+
+        while (transform.position.y > targetPos.y)
+        {
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                targetPos,
+                m_sinkSpeed * Time.deltaTime
+            );
+
+            yield return null;
         }
 
         Destroy(gameObject);
