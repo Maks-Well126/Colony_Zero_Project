@@ -1757,6 +1757,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (7)
@@ -2267,6 +2271,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (8)
@@ -4968,6 +4976,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant
@@ -5238,6 +5250,108 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 490202, guid: d8a3ebd1a20b09448a065e73d1980a27, type: 3}
   m_PrefabInstance: {fileID: 522518925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &524732654
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 365838309}
+    m_Modifications:
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_Pivot.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4620224500075123236, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+      propertyPath: m_Name
+      value: SwapGun
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+--- !u!224 &524732655 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3779067021416687597, guid: f1d3d41a832037449aa97cbb1f2a755c, type: 3}
+  m_PrefabInstance: {fileID: 524732654}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &537304305
 PrefabInstance:
@@ -5851,6 +5965,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 463402, guid: be721e74f11fd91498afac149d638812, type: 3}
   m_PrefabInstance: {fileID: 594865109}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &597546877 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 420144117520139268, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+  m_PrefabInstance: {fileID: 8513474588006903807}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &598951736
 GameObject:
@@ -7023,6 +7142,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (6)
@@ -8280,6 +8403,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (1)
@@ -8939,6 +9066,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (3)
@@ -9000,6 +9131,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+--- !u!82 &981211534 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 8846861684689547521, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+  m_PrefabInstance: {fileID: 8513474588006903807}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &982252124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11101,6 +11237,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (9)
@@ -14601,6 +14741,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (5)
@@ -15829,6 +15973,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6823500222473156391, guid: be70bc1708338be418d998712bdb9daf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 351541764}
+    - targetCorrespondingSourceObject: {fileID: 6823500222473156391, guid: be70bc1708338be418d998712bdb9daf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 524732655}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be70bc1708338be418d998712bdb9daf, type: 3}
 --- !u!114 &1546521681 stripped
@@ -17217,6 +17364,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (4)
@@ -17356,6 +17507,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 893dfb2c3fdf5c64d91b8117155a0b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PlayerController
+--- !u!114 &1654078193 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5010233089169738593, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+  m_PrefabInstance: {fileID: 1870378866}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a4ba72253659649a05653122ff9d45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
 --- !u!1001 &1658359039
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18211,6 +18373,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (2)
@@ -19501,6 +19667,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1010269125}
     m_Modifications:
+    - target: {fileID: 4995749547535519015, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
+      propertyPath: m_playerHealth
+      value: 
+      objectReference: {fileID: 1654078193}
     - target: {fileID: 6227196511037054939, guid: 831a56e397dce6d4396ed6e5fb105bf9, type: 3}
       propertyPath: m_Name
       value: HealingPlant (10)
@@ -22680,8 +22850,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: musicVolume
-      value: 0.08
+      value: 0.025
       objectReference: {fileID: 0}
+    - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+      propertyPath: musicSourceA
+      value: 
+      objectReference: {fileID: 597546877}
+    - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+      propertyPath: musicSourceB
+      value: 
+      objectReference: {fileID: 981211534}
+    - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+      propertyPath: 'MusicSounds.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
+      propertyPath: 'MusicSounds.Array.data[2]'
+      value: 
+      objectReference: {fileID: 8300000, guid: ce9aa07170b90894ba29581d35c2cb2b, type: 3}
     - target: {fileID: 8846861684689547521, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: m_Volume
       value: 0.05

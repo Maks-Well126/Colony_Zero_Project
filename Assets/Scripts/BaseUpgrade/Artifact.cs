@@ -32,7 +32,12 @@ public class Artifact : MonoBehaviour
             return;
         }
 
-        if (m_deliveredCount == 1)
+        if (Save.LoadLevel1State())
+        {
+            m_deliveredCount += 1;
+        }
+
+        if (m_deliveredCount >= 1)
         {
             isArtefact2Delivered = true;
             m_deliveredCount++;
