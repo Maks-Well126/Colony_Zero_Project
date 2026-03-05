@@ -2451,7 +2451,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!82 &214666669
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15815,7 +15815,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8842747358445713047, guid: be70bc1708338be418d998712bdb9daf, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30.000366
+      value: -30.000305
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20021,6 +20021,10 @@ PrefabInstance:
     - target: {fileID: 6501709214403174785, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_Name
       value: Player Croc
+      objectReference: {fileID: 0}
+    - target: {fileID: 7333507256953032658, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_walkStepDistance
+      value: 2.22
       objectReference: {fileID: 0}
     - target: {fileID: 7677328644663466349, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_IsActive

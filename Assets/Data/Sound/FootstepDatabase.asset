@@ -13,4 +13,13 @@ MonoBehaviour:
   m_Name: FootstepDatabase
   m_EditorClassIdentifier: Assembly-CSharp::FootstepDatabase
   m_surfaces:
+  - {fileID: 11400000, guid: aebe406b9000d064996f7458115b60da, type: 2}
   - {fileID: 11400000, guid: a327f653e50203745bbbe44e501c150f, type: 2}
+  - {fileID: 11400000, guid: b087a8512ac626c4383bff5dd3d81265, type: 2}
+  - {fileID: 11400000, guid: 37b7a578fb03f5a429327b2215921118, type: 2}
+  - {fileID: 11400000, guid: 5445a1871b5e39e4d923d9752c73e9f9, type: 2}
+  - {fileID: 11400000, guid: 4004ca061c3849e4eb0bedaea7e12b45, type: 2}
+  - {fileID: 11400000, guid: 5d2508eb51146014aaa2f209eb55de26, type: 2}
+  - {fileID: 11400000, guid: d2d5cb1764424ef4e8baf440da3a864a, type: 2}
+  - {fileID: 11400000, guid: 0f9614be20a4dcb4fbaca954a2aa5a1d, type: 2}
+  - {fileID: 11400000, guid: bbc1c6d1e906fba4284ce98b7dcbb367, type: 2}
