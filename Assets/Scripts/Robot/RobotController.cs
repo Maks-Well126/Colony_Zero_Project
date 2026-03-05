@@ -254,6 +254,7 @@ public class RobotController : MonoBehaviour
         }
 
         AudioManager.Instance.PlayButtonClick(2);
+        AudioManager.Instance.PlayMusic(1);
 
         nextTripIndex = index;
 

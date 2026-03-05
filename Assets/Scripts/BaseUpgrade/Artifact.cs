@@ -22,7 +22,7 @@ public class Artifact : MonoBehaviour
     {
         if (!other.CompareTag("Base"))
             return;
-       
+        AudioManager.Instance.PlayMusic(0);
         if (m_deliveredCount == 0)
         {
             isArtefact1Delivered = true;
