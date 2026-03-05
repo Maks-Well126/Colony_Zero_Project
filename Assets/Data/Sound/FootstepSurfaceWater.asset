@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FootstepSurface
   m_layerName: Tidal_Pools_B
   m_clips:
-  - {fileID: 8300000, guid: adf4e7fa93007bd49937217a0922f285, type: 3}
-  - {fileID: 8300000, guid: b9a5f4a46006d6f429a02ea0fadc4809, type: 3}
-  - {fileID: 8300000, guid: 6755e20b5c79018438c8aed7439dcfed, type: 3}
-  - {fileID: 8300000, guid: caf48be4d869fe24f85866b95cdbe017, type: 3}
+  - {fileID: 8300000, guid: 9ea11a2d13d536e4e8441a0f5895995c, type: 3}
+  - {fileID: 8300000, guid: 203ac8b6f07070e4f93f1c1a6fff06c3, type: 3}
+  - {fileID: 8300000, guid: ac6649006dbee9e4685752e124111da7, type: 3}
+  - {fileID: 8300000, guid: f42914d98b070f741b2feee96a2988ee, type: 3}
   m_minPitch: 0.95
   m_maxPitch: 1.05
