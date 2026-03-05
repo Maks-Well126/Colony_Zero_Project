@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class RobotController : MonoBehaviour
@@ -45,7 +46,9 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float m_startHealth = 200f;
     [SerializeField] private float m_upgradeAmount = 100f;
     [SerializeField] private float m_repairAmount = 100f;
-   
+    [SerializeField] private Image m_LineHPBar;
+    [SerializeField] private Image m_poraChinit;
+
     [SerializeField] private RobotPickupTrigger pickupTrigger;
 
     private RobotState currentState = RobotState.Idle;
@@ -115,8 +118,15 @@ public class RobotController : MonoBehaviour
         AnimateWheels();
         UpdateMoveSound();
         CheckDistance();
+        HealthBar();
     }
-   
+
+    private void HealthBar()
+    {        
+        m_LineHPBar.fillAmount = m_health.CurrentHealth / 200;
+        if(m_health.CurrentHealth <= 0) m_poraChinit.gameObject.SetActive(true);
+        else m_poraChinit.gameObject.SetActive(false);
+    }
 
     private void OnArtifactPicked(GameObject artifact)
     {
