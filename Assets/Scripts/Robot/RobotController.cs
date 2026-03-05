@@ -29,7 +29,10 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float interactRange = 3f;
 
     [Header("Audio")]
-    [SerializeField] private AudioSource moveAudio;
+    [SerializeField] private AudioSource AudioSource;
+    [SerializeField] private AudioSource AudioSourceDamage;
+    [SerializeField] private AudioClip mooveClip;
+    [SerializeField] private AudioClip damageClip;
     [SerializeField] private float moveSoundSmooth = 3f;
 
     [Header("Obstacle Detection")]
@@ -88,6 +91,7 @@ public class RobotController : MonoBehaviour
 
         m_health.Initialize(m_startHealth);
         m_health.Died += OnRobotBroken;
+        m_health.Damaged += OnRobotDamaged;
     }
 
     private void FindPlayerByTag()
@@ -144,21 +148,31 @@ public class RobotController : MonoBehaviour
 
     private void UpdateMoveSound()
     {
-        if (!moveAudio)
+        if (AudioSource == null || mooveClip == null)
             return;
 
         bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
 
         float targetVolume = agent.velocity.magnitude / agent.speed;
 
-        moveAudio.volume = Mathf.Lerp(
-            moveAudio.volume,
+        AudioSource.volume = Mathf.Lerp(
+            AudioSource.volume,
             isMoving ? targetVolume : 0f,
             Time.deltaTime * moveSoundSmooth
         );
 
-        if (isMoving && !moveAudio.isPlaying)
-            moveAudio.Play();
+        if (isMoving && !AudioSource.isPlaying)
+        {
+            AudioSource.clip = mooveClip;
+            AudioSource.Play();
+        }
+    }
+    private void OnRobotDamaged()
+    {
+        if (AudioSourceDamage != null && damageClip != null)
+        {
+            AudioSourceDamage.PlayOneShot(damageClip);
+        }
     }
 
     // ================= ROBOT DAMAGE =================
