@@ -72,6 +72,10 @@ namespace Player
                 {
                     health.TakeDamage(weapon.Damage);
                 }
+                if (hit.collider.TryGetComponent(out HealingPlant plant))
+                {
+                    plant.Hit();
+                }
             }
 
             m_cameraController.ApplyRecoil(
