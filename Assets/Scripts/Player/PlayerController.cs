@@ -2,10 +2,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using System;
+using Random = UnityEngine.Random;
 
 namespace Player
 {
-  //  [RequireComponent(typeof(CharacterController))]
+    //  [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
         public event Action PlayerDied;
@@ -22,6 +23,10 @@ namespace Player
         [SerializeField] private HealthComponent m_health;
         [SerializeField] private DamageVignetteController m_vignette;
         [SerializeField] private FootstepSystem m_footstepSystem;
+        [SerializeField] private float m_hitFeedbackCooldown = 0.25f;
+        [SerializeField] private AudioSource m_audioSource;
+
+        private float m_lastHitFeedbackTime;
 
         private CharacterController m_controller;
         private PlayerInputActions m_actions;
@@ -74,7 +79,7 @@ namespace Player
 
 
         private void Update()
-        {            
+        {
             if (m_isDead)
                 return;
 
@@ -84,7 +89,7 @@ namespace Player
             m_controller.isGrounded,
             m_moveInput.magnitude
             );
-            
+
             HandleAnimations();
             UpdateRig();
             UpdateAimTarget();
@@ -100,7 +105,7 @@ namespace Player
             else
                 m_actions.Player.Disable();
         }
-         
+
         private void OnDisable()
         {
             m_actions?.Disable();
@@ -151,7 +156,7 @@ namespace Player
                 return;
 
             m_health.HealToFull();
-           
+
         }
 
         private void HandleMovement()
@@ -264,8 +269,17 @@ namespace Player
             if (m_health.CurrentHealth <= 0f)
                 return;
 
+            if (Time.time - m_lastHitFeedbackTime < m_hitFeedbackCooldown)
+                return;
+
+            m_lastHitFeedbackTime = Time.time;
+
             m_animController.TriggerHit();
-            m_vignette.FlashDamage();
+            m_vignette?.FlashDamage();
+
+            
+            var clip = m_config.HitSounds[Random.Range(0, m_config.HitSounds.Length)];
+            m_audioSource.PlayOneShot(clip);
         }
 
         private void OnDeath()
@@ -278,6 +292,11 @@ namespace Player
 
             m_animController.TriggerDeath();
             m_vignette.OnDeath();
+
+            if (m_config.DeadAudio != null && m_audioSource != null)
+            {
+                m_audioSource.PlayOneShot(m_config.DeadAudio);
+            }
 
             m_actions.Player.Disable();
         }
@@ -307,5 +326,5 @@ namespace Player
         }
 
     }
-    
+
 }

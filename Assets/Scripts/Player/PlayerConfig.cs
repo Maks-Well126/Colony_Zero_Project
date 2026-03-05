@@ -15,6 +15,12 @@ public sealed class PlayerConfig : ScriptableObject
     [Header("Aim")]
     [SerializeField][Min(1f)] private float m_aimDistance = 10f;
     [SerializeField][Min(1f)] private float m_rigSmoothSpeed = 8f;
+    [Header("Audio")]
+    [SerializeField] private AudioClip[] m_hitSounds;
+    [SerializeField] private AudioClip m_deadAudio;
+
+    public AudioClip[] HitSounds => m_hitSounds;
+    public AudioClip DeadAudio => m_deadAudio;
 
     public float MaxHealth => m_maxHealth;
 

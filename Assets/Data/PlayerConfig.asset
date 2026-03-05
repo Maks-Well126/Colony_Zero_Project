@@ -19,3 +19,8 @@ MonoBehaviour:
   m_gravity: -20
   m_aimDistance: 10
   m_rigSmoothSpeed: 8
+  m_hitSounds:
+  - {fileID: 8300000, guid: 794be7c4bd9e64c9bbb9776937807a9e, type: 3}
+  - {fileID: 8300000, guid: aa48101fd9bd24b82af88afb182a9bf5, type: 3}
+  - {fileID: 8300000, guid: ed042c87951ed40268592d7ca7a2de59, type: 3}
+  m_deadAudio: {fileID: 8300000, guid: 5d72ee7fecf3d4c479e4f2b39d511f96, type: 3}
