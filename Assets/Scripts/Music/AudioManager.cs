@@ -28,7 +28,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField][Range(0f, 1f)] private float sfxVolume = 1f;
-    [SerializeField][Range(0f, 1f)] private float musicVolume = 0.05f;
+    [SerializeField][Range(0f, 1f)] private float musicVolume = 0.025f;
     [SerializeField] private float fadeTime = 2f;
 
     private AudioSource currentSource;

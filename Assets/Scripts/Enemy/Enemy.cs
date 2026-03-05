@@ -9,6 +9,7 @@ public sealed class Enemy : MonoBehaviour
     [SerializeField] private EnemyAttack m_attack;
     [SerializeField] private HealthComponent m_health;
     [SerializeField] private EnemyAnimator m_animator;
+    [SerializeField] private EnemyAmbientAudio m_ambientAudio;
 
     private EnemyData m_data;
     private Transform m_player;
@@ -51,6 +52,8 @@ public sealed class Enemy : MonoBehaviour
         m_health.Initialize(data.health);
         m_movement.Initialize(data.moveSpeed, player);
         m_attack.Initialize(data.damage, data.attackCooldown, player);
+        if (m_ambientAudio)
+            m_ambientAudio.Initialize(player);
 
         m_stateMachine.ChangeState(EnemyState.Idle);
     }
@@ -117,6 +120,10 @@ public sealed class Enemy : MonoBehaviour
 
     private void OnDied()
     {
+        EnemyAmbientAudio ambient = GetComponent<EnemyAmbientAudio>();
+        if (ambient)
+            ambient.enabled = false;
+
         m_stateMachine.ChangeState(EnemyState.Dead);
         Died?.Invoke(this);
     }
