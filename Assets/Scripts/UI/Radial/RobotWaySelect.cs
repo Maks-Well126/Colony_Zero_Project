@@ -18,7 +18,12 @@ public class RobotWaySelect : MonoBehaviour
         {
             m_wayPanell.gameObject.SetActive(true);
         }
-        //if (Input.GetKeyDown(KeyCode.Escape))  m_wayPanell.gameObject.SetActive(false);
+        if (Input.GetKeyDown(KeyCode.Escape) && m_wayPanell.gameObject.activeSelf) 
+        {
+            m_wayPanell.gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }  
     }
 
     public void ExitButton()

@@ -6795,6 +6795,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43fe982e111d7a14090d65a8e3eb3b0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Artifact
+--- !u!1 &827612656 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4483799626392114083, guid: 2276668af56fc8243b4e655230c1a223, type: 3}
+  m_PrefabInstance: {fileID: 1070946578}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -7020,6 +7025,10 @@ PrefabInstance:
       propertyPath: m_spawner
       value: 
       objectReference: {fileID: 763927139}
+    - target: {fileID: 2057130258469518129, guid: 402a7517c7e125040a8a41a5ef04f1fd, type: 3}
+      propertyPath: m_robotMap
+      value: 
+      objectReference: {fileID: 827612656}
     - target: {fileID: 2057130258469518129, guid: 402a7517c7e125040a8a41a5ef04f1fd, type: 3}
       propertyPath: m_pauseMenu
       value: 
