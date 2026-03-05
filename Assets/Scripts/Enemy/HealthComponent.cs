@@ -31,17 +31,6 @@ public sealed class HealthComponent : MonoBehaviour
         m_currentHealth -= damage;
         m_currentHealth = Mathf.Clamp(m_currentHealth, 0f, m_maxHealth);
 
-        //if(m_currentHealth <= 0)
-        //{
-        //    m_isDead = true;
-        //    Died?.Invoke();
-        //}
-        //else
-        //{
-        //    Damaged?.Invoke();
-        //    HealthChanged?.Invoke(m_currentHealth, m_maxHealth);
-        //}
-
         Damaged?.Invoke();
         HealthChanged?.Invoke(m_currentHealth, m_maxHealth);
 

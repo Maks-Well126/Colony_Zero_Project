@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(NavMeshAgent))]
 public class RobotController : MonoBehaviour
 {
-
     [Header("NavMesh")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Transform firstDestinationPoint;
@@ -29,34 +28,45 @@ public class RobotController : MonoBehaviour
     [SerializeField] private GameObject interactCanvas;
     [SerializeField] private float interactRange = 3f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource moveAudio;
+    [SerializeField] private float moveSoundSmooth = 3f;
+
     [Header("Obstacle Detection")]
     [SerializeField] private float obstacleCheckDistance = 1.5f;
     [SerializeField] private LayerMask obstacleLayer;
 
-    [Header("Distance Limit")]
-    [SerializeField] private float maxDistanceFromPlayer = 10f; // Максимальная дистанция от игрока
-    [SerializeField] private float resumeDistanceFromPlayer = 8f; // Дистанция, при которой робот возобновляет движение
     [Header("HP")]
     [SerializeField] private HealthComponent m_health;
     [SerializeField] private float m_startHealth = 200f;
     [SerializeField] private float m_upgradeAmount = 100f;
     [SerializeField] private float m_repairAmount = 100f;
 
+    [SerializeField] private RobotPlayerRangeTrigger playerRange;
+    [SerializeField] private RobotPickupTrigger pickupTrigger;
+
     private RobotState currentState = RobotState.Idle;
-    private int nextTripIndex = 0; // 0 = first, 1 = second
+    private int nextTripIndex = 0;
+
     private bool isInObstacleTrigger;
-    // Для запоминания цели, когда робот остановился из-за дистанции
-    private Transform pendingDestination;
-    private RobotState pendingState;
+    private bool playerNearby;
 
     private Vector3 startPosition;
     private Quaternion startRotation;
 
     private float currentSteer;
+
     private bool m_isUpgraded;
     private bool m_isBroken;
+    private bool m_playerNearby;
 
     public event Action<GameObject> OnArtifactPick;
+
+    private void Awake()
+    {
+        playerRange.OnPlayerRangeChanged += OnPlayerRangeChanged;
+        pickupTrigger.OnArtifactPick += OnArtifactPicked;
+    }
 
     private void Start()
     {
@@ -71,23 +81,23 @@ public class RobotController : MonoBehaviour
         if (interactCanvas)
             interactCanvas.SetActive(false);
 
-        // Поиск игрока по тегу, если не назначен в инспекторе
         if (player == null)
             FindPlayerByTag();
 
         Artifact.isArtefact1Delivered = Save.LoadLevel1State();
-        m_health.Initialize(m_startHealth);
 
+        m_health.Initialize(m_startHealth);
         m_health.Died += OnRobotBroken;
     }
 
     private void FindPlayerByTag()
     {
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
         if (playerObject != null)
             player = playerObject.transform;
         else
-            Debug.LogWarning("Player not found with tag 'Player'! Please assign player manually in inspector.");
+            Debug.LogWarning("Player not found with tag Player");
     }
 
     private void Update()
@@ -96,12 +106,62 @@ public class RobotController : MonoBehaviour
         HandleStateLogic();
         HandleRotation();
         AnimateWheels();
-
-        // Проверка дистанции от игрока
-        CheckDistanceFromPlayer();
+        UpdateMoveSound();
     }
 
+    // ================= PLAYER RANGE =================
 
+    public void SetPlayerNearby(bool value)
+    {
+        playerNearby = value;
+
+        if (!playerNearby)
+        {
+            agent.isStopped = true;
+        }
+        else
+        {
+            if (currentState != RobotState.Idle)
+                agent.isStopped = false;
+        }
+    }
+    private void OnPlayerRangeChanged(bool value)
+    {
+        playerNearby = value;
+
+        if (!playerNearby)
+            agent.isStopped = true;
+        else
+            agent.isStopped = false;
+    }
+
+    private void OnArtifactPicked(GameObject artifact)
+    {
+        Debug.Log("Artifact picked: " + artifact.name);
+    }
+
+    // ================= SOUND =================
+
+    private void UpdateMoveSound()
+    {
+        if (!moveAudio)
+            return;
+
+        bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+
+        float targetVolume = agent.velocity.magnitude / agent.speed;
+
+        moveAudio.volume = Mathf.Lerp(
+            moveAudio.volume,
+            isMoving ? targetVolume : 0f,
+            Time.deltaTime * moveSoundSmooth
+        );
+
+        if (isMoving && !moveAudio.isPlaying)
+            moveAudio.Play();
+    }
+
+    // ================= ROBOT DAMAGE =================
 
     private void OnRobotBroken()
     {
@@ -111,34 +171,28 @@ public class RobotController : MonoBehaviour
 
         Debug.Log("Robot is broken!");
     }
+
     public void UpgradeHealth()
     {
         if (m_health == null || m_isUpgraded)
             return;
 
-        m_health.IncreaseMaxHealth(m_upgradeAmount); // +100 к Max HP
+        m_health.IncreaseMaxHealth(m_upgradeAmount);
         m_isUpgraded = true;
 
-        // Лечим сразу до нового максимума
         m_health.HealToMax();
-
-        Debug.Log("Robot upgraded - Max HP: " + m_health.MaxHealth);
     }
 
-    // 2️⃣ Починка в поле (частичная)
     public void RepairRobotInField()
     {
         if (!m_isBroken || m_health == null)
             return;
 
-        m_health.Heal(m_repairAmount, revive: true); // +100 HP и снимаем флаг смерти
+        m_health.Heal(m_repairAmount, revive: true);
         m_isBroken = false;
         agent.isStopped = false;
-
-        Debug.Log("Robot partially repaired in field - Current HP: " + m_health.CurrentHealth);
     }
 
-    // 3️⃣ Полная починка на базе (до текущего MaxHP)
     public void RepairRobotAtBase()
     {
         if (m_health == null)
@@ -147,80 +201,6 @@ public class RobotController : MonoBehaviour
         m_health.HealToMax(revive: true);
         m_isBroken = false;
         agent.isStopped = false;
-
-        Debug.Log("Robot fully repaired at base - Current HP: " + m_health.CurrentHealth);
-    }
-
-    // ================= DISTANCE CHECK =================
-
-    private void CheckDistanceFromPlayer()
-    {
-        if (player == null)
-            return;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        // Если робот слишком далеко от игрока - останавливаем его
-        if (distanceToPlayer > maxDistanceFromPlayer && currentState != RobotState.Idle)
-        {
-            StopRobot();
-        }
-        // Если робот остановлен из-за дистанции и игрок подошел ближе resumeDistance - возобновляем движение
-        else if (distanceToPlayer <= resumeDistanceFromPlayer && pendingDestination != null)
-        {
-            ResumeMovement();
-        }
-    }
-
-    private void StopRobot()
-    {
-        if (currentState == RobotState.Idle)
-            return;
-
-        // Запоминаем, куда должен был ехать робот
-        if (agent.hasPath)
-        {
-            pendingDestination = new GameObject("PendingDestination").transform;
-            pendingDestination.position = agent.destination;
-
-            // Запоминаем состояние
-            if (currentState == RobotState.MovingToFirst)
-                pendingState = RobotState.MovingToFirst;
-            else if (currentState == RobotState.MovingToSecond)
-                pendingState = RobotState.MovingToSecond;
-            else if (currentState == RobotState.Returning)
-                pendingState = RobotState.Returning;
-        }
-
-        // Останавливаем навмеш агента
-        agent.isStopped = true;
-
-        // Возвращаем робота в состояние Idle
-        currentState = RobotState.Idle;
-
-        Debug.Log("Robot stopped - too far from player!");
-    }
-
-    private void ResumeMovement()
-    {
-        if (pendingDestination == null)
-            return;
-
-        // Проверяем, не слишком ли далеко целевая точка от игрока сейчас
-        float targetDistanceFromPlayer = Vector3.Distance(pendingDestination.position, player.position);
-        if (targetDistanceFromPlayer <= maxDistanceFromPlayer)
-        {
-            // Возобновляем движение
-            agent.isStopped = false;
-            agent.SetDestination(pendingDestination.position);
-            currentState = pendingState;
-
-            // Очищаем временные данные
-            Destroy(pendingDestination.gameObject);
-            pendingDestination = null;
-
-            Debug.Log("Robot resumed movement - player is close enough!");
-        }
     }
 
     // ================= INPUT =================
@@ -241,35 +221,58 @@ public class RobotController : MonoBehaviour
                 RepairRobotInField();
                 return;
             }
-
-            // if (currentState == RobotState.Idle)
-            //     StartNextTrip();
         }
     }
 
-    private void StartNextTrip()
+    // ================= TRIP =================
+
+    public void GoToFirstArtifact()
     {
-        Transform target = (nextTripIndex == 0)
-            ? firstDestinationPoint
-            : secondDestinationPoint;
+        TryStartTrip(0);
+        AudioManager.Instance.PlayButtonClick(0);
+    }
+
+    public void GoToSecondArtifact()
+    {
+        TryStartTrip(1);
+        AudioManager.Instance.PlayButtonClick(0);
+    }
+
+    private void TryStartTrip(int index)
+    {
+        if (!playerNearby)
+        {
+            Debug.Log("Player is too far from robot!");
+            return;
+        }
+
+        if (currentState != RobotState.Idle)
+            return;
+
+        if (IsObstacleAhead())
+            return;
+
+        Transform target =
+            index == 0 ? firstDestinationPoint : secondDestinationPoint;
 
         if (!target)
             return;
 
-        // Проверяем, не слишком ли далеко целевая точка от игрока
-        float targetDistanceFromPlayer = Vector3.Distance(target.position, player.position);
-        if (targetDistanceFromPlayer > maxDistanceFromPlayer)
+        if (!Artifact.isArtefact1Delivered && index == 1)
         {
-            Debug.Log("Destination is too far from player!");
+            AudioManager.Instance.PlayButtonClick(3);
             return;
         }
+
+        AudioManager.Instance.PlayButtonClick(2);
+
+        nextTripIndex = index;
 
         agent.isStopped = false;
         agent.SetDestination(target.position);
 
-        currentState = (nextTripIndex == 0)
-            ? RobotState.MovingToFirst
-            : RobotState.MovingToSecond;
+        currentState =
+            index == 0 ? RobotState.MovingToFirst : RobotState.MovingToSecond;
     }
 
     // ================= STATE MACHINE =================
@@ -312,14 +315,8 @@ public class RobotController : MonoBehaviour
         agent.isStopped = true;
         transform.rotation = startRotation;
 
-        nextTripIndex = (nextTripIndex == 0) ? 1 : 0;
+        nextTripIndex = nextTripIndex == 0 ? 1 : 0;
         currentState = RobotState.Idle;
-        
-        if (pendingDestination != null)
-        {
-            Destroy(pendingDestination.gameObject);
-            pendingDestination = null;
-        }
     }
 
     // ================= OBSTACLE =================
@@ -340,7 +337,8 @@ public class RobotController : MonoBehaviour
             return;
 
         Vector3 moveDir = agent.velocity.normalized;
-        Quaternion targetRotation = Quaternion.LookRotation(moveDir, Vector3.up);
+
+        Quaternion targetRotation = Quaternion.LookRotation(moveDir);
 
         transform.rotation = Quaternion.Slerp(
             transform.rotation,
@@ -368,7 +366,9 @@ public class RobotController : MonoBehaviour
         if (!wheel)
             return;
 
-        wheel.Rotate(Vector3.right, speed * wheelRotateSpeed * Time.deltaTime, Space.Self);
+        wheel.Rotate(Vector3.right,
+            speed * wheelRotateSpeed * Time.deltaTime,
+            Space.Self);
     }
 
     private void SteerFrontWheels()
@@ -376,14 +376,21 @@ public class RobotController : MonoBehaviour
         if (!agent.hasPath)
             return;
 
-        Vector3 localTarget = transform.InverseTransformPoint(agent.steeringTarget);
+        Vector3 localTarget =
+            transform.InverseTransformPoint(agent.steeringTarget);
+
         float targetSteer = Mathf.Clamp(
             localTarget.x / Mathf.Max(localTarget.magnitude, 0.1f),
             -1f,
             1f
         );
 
-        currentSteer = Mathf.Lerp(currentSteer, targetSteer, steerSmooth * Time.deltaTime);
+        currentSteer = Mathf.Lerp(
+            currentSteer,
+            targetSteer,
+            steerSmooth * Time.deltaTime
+        );
+
         float steerAngle = currentSteer * maxWheelTurnAngle;
 
         SetWheelSteer(frontLeft, steerAngle);
@@ -396,7 +403,12 @@ public class RobotController : MonoBehaviour
             return;
 
         Vector3 euler = wheel.localEulerAngles;
-        wheel.localRotation = Quaternion.Euler(euler.x, angle, euler.z);
+
+        wheel.localRotation = Quaternion.Euler(
+            euler.x,
+            angle,
+            euler.z
+        );
     }
 
     // ================= TRIGGERS =================
@@ -423,70 +435,8 @@ public class RobotController : MonoBehaviour
             isInObstacleTrigger = false;
 
             if (currentState != RobotState.Idle)
-            {
                 agent.isStopped = false;
-            }
         }
-    }
-
-    private void OnDestroy()
-    {
-        // Очищаем временный объект при уничтожении робота
-        if (pendingDestination != null)
-            Destroy(pendingDestination.gameObject);
-    }
-
-    // ================= UI BUTTON CONTROL =================
-
-    public void GoToFirstArtifact()
-    {
-        TryStartTrip(0);
-        AudioManager.Instance.PlayButtonClick(0);
-    }
-
-    public void GoToSecondArtifact()
-    {
-        TryStartTrip(1);
-        AudioManager.Instance.PlayButtonClick(0);
-    }
-
-    private void TryStartTrip(int index)
-    {
-        if (currentState != RobotState.Idle)
-            return;
-
-        if (IsObstacleAhead())
-            return;
-
-        Transform target = (index == 0)
-            ? firstDestinationPoint
-            : secondDestinationPoint;
-
-        if (!target)
-            return;
-
-        if (!Artifact.isArtefact1Delivered && index == 1) { AudioManager.Instance.PlayButtonClick(3); return;  }
-       
-        if (player != null)
-        {
-            float targetDistanceFromPlayer =
-                Vector3.Distance(target.position, player.position);
-
-            if (targetDistanceFromPlayer > maxDistanceFromPlayer)
-            {
-                Debug.Log("Destination is too far from player!");
-                return;
-            }
-        }
-        AudioManager.Instance.PlayButtonClick(2);
-        nextTripIndex = index;
-
-        agent.isStopped = false;
-        agent.SetDestination(target.position);
-
-        currentState = (index == 0)
-            ? RobotState.MovingToFirst
-            : RobotState.MovingToSecond;
     }
 
     private enum RobotState
