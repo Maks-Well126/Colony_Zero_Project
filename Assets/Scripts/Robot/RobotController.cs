@@ -24,6 +24,7 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float steerSmooth = 4f;
 
     [Header("Interaction")]
+    [SerializeField] private Transform m_checkDistObject;
     [SerializeField] private Transform player;
     [SerializeField] private GameObject interactCanvas;
     [SerializeField] private float interactRange = 3f;
@@ -44,15 +45,18 @@ public class RobotController : MonoBehaviour
     [SerializeField] private float m_startHealth = 200f;
     [SerializeField] private float m_upgradeAmount = 100f;
     [SerializeField] private float m_repairAmount = 100f;
-
-    [SerializeField] private RobotPlayerRangeTrigger playerRange;
+   
     [SerializeField] private RobotPickupTrigger pickupTrigger;
 
     private RobotState currentState = RobotState.Idle;
     private int nextTripIndex = 0;
 
     private bool isInObstacleTrigger;
-    private bool playerNearby;
+
+    [SerializeField] private float stopDistance = 12f;
+    [SerializeField] private float resumeDistance = 10f;
+
+    private bool stoppedByDistance;
 
     private Vector3 startPosition;
     private Quaternion startRotation;
@@ -66,8 +70,7 @@ public class RobotController : MonoBehaviour
     public event Action<GameObject> OnArtifactPick;
 
     private void Awake()
-    {
-        playerRange.OnPlayerRangeChanged += OnPlayerRangeChanged;
+    {        
         pickupTrigger.OnArtifactPick += OnArtifactPicked;
     }
 
@@ -111,33 +114,9 @@ public class RobotController : MonoBehaviour
         HandleRotation();
         AnimateWheels();
         UpdateMoveSound();
+        CheckDistance();
     }
-
-    // ================= PLAYER RANGE =================
-
-    public void SetPlayerNearby(bool value)
-    {
-        playerNearby = value;
-
-        if (!playerNearby)
-        {
-            agent.isStopped = true;
-        }
-        else
-        {
-            if (currentState != RobotState.Idle)
-                agent.isStopped = false;
-        }
-    }
-    private void OnPlayerRangeChanged(bool value)
-    {
-        playerNearby = value;
-
-        if (!playerNearby)
-            agent.isStopped = true;
-        else
-            agent.isStopped = false;
-    }
+   
 
     private void OnArtifactPicked(GameObject artifact)
     {
@@ -254,11 +233,7 @@ public class RobotController : MonoBehaviour
 
     private void TryStartTrip(int index)
     {
-        if (!playerNearby)
-        {
-            Debug.Log("Player is too far from robot!");
-            return;
-        }
+        
 
         if (currentState != RobotState.Idle)
             return;
@@ -431,6 +406,7 @@ public class RobotController : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
+            Debug.Log("www");
             isInObstacleTrigger = true;
             agent.isStopped = true;
             return;
@@ -446,13 +422,34 @@ public class RobotController : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
+            Debug.Log("Zxc");
             isInObstacleTrigger = false;
 
             if (currentState != RobotState.Idle)
                 agent.isStopped = false;
         }
     }
+    private void CheckDistance()
+    {
+        if (player == null)
+            return;
 
+        float dist = Vector3.Distance(m_checkDistObject.position, player.position);
+
+        if (dist > stopDistance && !stoppedByDistance)
+        {
+            stoppedByDistance = true;
+            agent.isStopped = true;
+        }
+
+        if (dist < resumeDistance && stoppedByDistance)
+        {
+            stoppedByDistance = false;
+
+            if (currentState != RobotState.Idle)
+                agent.isStopped = false;
+        }
+    }
     private enum RobotState
     {
         Idle,

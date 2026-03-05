@@ -42,7 +42,7 @@ public sealed class HealthComponent : MonoBehaviour
     }
      private void Update()
     {
-        Debug.Log(m_currentHealth);
+       // Debug.Log(m_currentHealth);
     }
     public void Heal(float amount, bool revive = false)
 {
