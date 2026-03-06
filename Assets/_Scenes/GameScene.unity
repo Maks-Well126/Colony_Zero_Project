@@ -13571,6 +13571,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 9111296126603074476, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
+      propertyPath: interactRange
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9111296126603074476, guid: 3d0d342ed0c0f9042b0b49e8279fe856, type: 3}
       propertyPath: pickupTrigger
       value: 
       objectReference: {fileID: 1396048785}
@@ -15955,7 +15959,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8842747358445713047, guid: be70bc1708338be418d998712bdb9daf, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 36.59961
+      value: 36.599792
       objectReference: {fileID: 0}
     - target: {fileID: 8842747358445713047, guid: be70bc1708338be418d998712bdb9daf, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -20148,6 +20152,10 @@ PrefabInstance:
       propertyPath: m_weaponSystem
       value: 
       objectReference: {fileID: 1646820719}
+    - target: {fileID: 5357096895257404631, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5722515691675818455, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -22806,7 +22814,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 420144117520139268, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: m_Volume
-      value: 0.05
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2978009948483063303, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -22854,7 +22862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: musicVolume
-      value: 0.1
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: musicSourceA
@@ -22867,7 +22875,7 @@ PrefabInstance:
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: 'MusicSounds.Array.data[1]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8300000, guid: 67ffe0c190396a545950358715218889, type: 3}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: 'MusicSounds.Array.data[2]'
       value: 

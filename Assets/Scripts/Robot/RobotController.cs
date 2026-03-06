@@ -123,7 +123,8 @@ public class RobotController : MonoBehaviour
 
     private void HealthBar()
     {        
-        m_LineHPBar.fillAmount = m_health.CurrentHealth / 200;
+        m_LineHPBar.fillAmount =
+            m_health.CurrentHealth / m_health.MaxHealth;
         if(m_health.CurrentHealth <= 0) m_poraChinit.gameObject.SetActive(true);
         else m_poraChinit.gameObject.SetActive(false);
     }
@@ -191,7 +192,11 @@ public class RobotController : MonoBehaviour
         if (!m_isBroken || m_health == null)
             return;
 
+        if (m_health.CurrentHealth > 0)
+            return;
+
         m_health.Heal(m_repairAmount, revive: true);
+
         m_isBroken = false;
         agent.isStopped = false;
     }
