@@ -22862,7 +22862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: musicVolume
-      value: 0.02
+      value: 0.457
       objectReference: {fileID: 0}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: musicSourceA
@@ -22875,7 +22875,7 @@ PrefabInstance:
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: 'MusicSounds.Array.data[1]'
       value: 
-      objectReference: {fileID: 8300000, guid: 67ffe0c190396a545950358715218889, type: 3}
+      objectReference: {fileID: 8300000, guid: 7f9f35efbf8633047ac82b2f91ccd539, type: 3}
     - target: {fileID: 7723762358498579888, guid: 3aea7ccc646420141a63e22d50eb04bf, type: 3}
       propertyPath: 'MusicSounds.Array.data[2]'
       value: 
