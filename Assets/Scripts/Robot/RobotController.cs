@@ -68,12 +68,13 @@ public class RobotController : MonoBehaviour
 
     private bool m_isUpgraded;
     private bool m_isBroken;
-    private bool m_playerNearby;
+
+    public bool IsBroken => m_isBroken;
 
     public event Action<GameObject> OnArtifactPick;
 
     private void Awake()
-    {        
+    {
         pickupTrigger.OnArtifactPick += OnArtifactPicked;
     }
 
@@ -106,8 +107,6 @@ public class RobotController : MonoBehaviour
 
         if (playerObject != null)
             player = playerObject.transform;
-        else
-            Debug.LogWarning("Player not found with tag Player");
     }
 
     private void Update()
@@ -121,70 +120,61 @@ public class RobotController : MonoBehaviour
         HealthBar();
     }
 
-    private void HealthBar()
-    {        
-        m_LineHPBar.fillAmount =
-            m_health.CurrentHealth / m_health.MaxHealth;
-        if(m_health.CurrentHealth <= 0) m_poraChinit.gameObject.SetActive(true);
-        else m_poraChinit.gameObject.SetActive(false);
-    }
+    // ================= CENTRAL STOP CONTROL =================
 
-    private void OnArtifactPicked(GameObject artifact)
+    private void UpdateAgentState()
     {
-        Debug.Log("Artifact picked: " + artifact.name);
-    }
-
-    // ================= SOUND =================
-
-    private void UpdateMoveSound()
-    {
-        if (AudioSource == null || mooveClip == null)
+        if (agent == null)
             return;
 
-        bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+        bool shouldStop =
+            m_isBroken ||
+            isInObstacleTrigger ||
+            stoppedByDistance;
 
-        float targetVolume = agent.velocity.magnitude / agent.speed;
+        agent.isStopped = shouldStop;
 
-        AudioSource.volume = Mathf.Lerp(
-            AudioSource.volume,
-            isMoving ? targetVolume : 0f,
-            Time.deltaTime * moveSoundSmooth
-        );
-
-        if (isMoving && !AudioSource.isPlaying)
+        if (!shouldStop && agent.hasPath == false && currentState != RobotState.Idle)
         {
-            AudioSource.clip = mooveClip;
-            AudioSource.Play();
+            ResumePath();
         }
     }
+
+    private void ResumePath()
+    {
+        Transform target =
+            nextTripIndex == 0 ? firstDestinationPoint : secondDestinationPoint;
+
+        if (currentState == RobotState.Returning)
+            agent.SetDestination(startPosition);
+        else if (target != null)
+            agent.SetDestination(target.position);
+    }
+
+    // ================= HEALTH =================
+
+    private void HealthBar()
+    {
+        m_LineHPBar.fillAmount =
+            m_health.CurrentHealth / m_health.MaxHealth;
+
+        m_poraChinit.gameObject.SetActive(m_health.CurrentHealth <= 0);
+    }
+
     private void OnRobotDamaged()
     {
         if (AudioSourceDamage != null && damageClip != null)
-        {
             AudioSourceDamage.PlayOneShot(damageClip);
-        }
     }
-
-    // ================= ROBOT DAMAGE =================
 
     private void OnRobotBroken()
     {
         m_isBroken = true;
-        agent.isStopped = true;
         currentState = RobotState.Idle;
 
+        UpdateAgentState();
+
         Debug.Log("Robot is broken!");
-    }
-
-    public void UpgradeHealth()
-    {
-        if (m_health == null || m_isUpgraded)
-            return;
-
-        m_health.IncreaseMaxHealth(m_upgradeAmount);
-        m_isUpgraded = true;
-
-        m_health.HealToMax();
     }
 
     public void RepairRobotInField()
@@ -198,7 +188,8 @@ public class RobotController : MonoBehaviour
         m_health.Heal(m_repairAmount, revive: true);
 
         m_isBroken = false;
-        agent.isStopped = false;
+
+        UpdateAgentState();
     }
 
     public void RepairRobotAtBase()
@@ -207,8 +198,21 @@ public class RobotController : MonoBehaviour
             return;
 
         m_health.HealToMax(revive: true);
+
         m_isBroken = false;
-        agent.isStopped = false;
+
+        UpdateAgentState();
+    }
+
+    public void UpgradeHealth()
+    {
+        if (m_health == null || m_isUpgraded)
+            return;
+
+        m_health.IncreaseMaxHealth(m_upgradeAmount);
+        m_isUpgraded = true;
+
+        m_health.HealToMax();
     }
 
     // ================= INPUT =================
@@ -225,10 +229,7 @@ public class RobotController : MonoBehaviour
             Keyboard.current.eKey.wasPressedThisFrame)
         {
             if (m_isBroken)
-            {
                 RepairRobotInField();
-                return;
-            }
         }
     }
 
@@ -248,8 +249,6 @@ public class RobotController : MonoBehaviour
 
     private void TryStartTrip(int index)
     {
-        
-
         if (currentState != RobotState.Idle)
             return;
 
@@ -273,20 +272,18 @@ public class RobotController : MonoBehaviour
 
         nextTripIndex = index;
 
-        agent.isStopped = false;
         agent.SetDestination(target.position);
 
         currentState =
             index == 0 ? RobotState.MovingToFirst : RobotState.MovingToSecond;
+
+        UpdateAgentState();
     }
 
     // ================= STATE MACHINE =================
 
     private void HandleStateLogic()
     {
-        if (isInObstacleTrigger)
-            return;
-
         if (currentState == RobotState.Idle)
             return;
 
@@ -317,11 +314,12 @@ public class RobotController : MonoBehaviour
 
     private void FinishTrip()
     {
-        agent.isStopped = true;
         transform.rotation = startRotation;
 
         nextTripIndex = nextTripIndex == 0 ? 1 : 0;
         currentState = RobotState.Idle;
+
+        UpdateAgentState();
     }
 
     // ================= OBSTACLE =================
@@ -422,9 +420,8 @@ public class RobotController : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
-            Debug.Log("www");
             isInObstacleTrigger = true;
-            agent.isStopped = true;
+            UpdateAgentState();
             return;
         }
 
@@ -438,13 +435,11 @@ public class RobotController : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
-            Debug.Log("Zxc");
             isInObstacleTrigger = false;
-
-            if (currentState != RobotState.Idle)
-                agent.isStopped = false;
+            UpdateAgentState();
         }
     }
+
     private void CheckDistance()
     {
         if (player == null)
@@ -455,17 +450,45 @@ public class RobotController : MonoBehaviour
         if (dist > stopDistance && !stoppedByDistance)
         {
             stoppedByDistance = true;
-            agent.isStopped = true;
+            UpdateAgentState();
         }
 
         if (dist < resumeDistance && stoppedByDistance)
         {
             stoppedByDistance = false;
-
-            if (currentState != RobotState.Idle)
-                agent.isStopped = false;
+            UpdateAgentState();
         }
     }
+
+    private void OnArtifactPicked(GameObject artifact)
+    {
+        Debug.Log("Artifact picked: " + artifact.name);
+    }
+
+    // ================= SOUND =================
+
+    private void UpdateMoveSound()
+    {
+        if (AudioSource == null || mooveClip == null)
+            return;
+
+        bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+
+        float targetVolume = agent.velocity.magnitude / agent.speed;
+
+        AudioSource.volume = Mathf.Lerp(
+            AudioSource.volume,
+            isMoving ? targetVolume : 0f,
+            Time.deltaTime * moveSoundSmooth
+        );
+
+        if (isMoving && !AudioSource.isPlaying)
+        {
+            AudioSource.clip = mooveClip;
+            AudioSource.Play();
+        }
+    }
+
     private enum RobotState
     {
         Idle,
