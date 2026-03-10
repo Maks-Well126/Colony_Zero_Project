@@ -120,6 +120,12 @@ public class RobotController : MonoBehaviour
         HealthBar();
     }
 
+    private void OnDestroy()
+    {
+        if (pickupTrigger != null)
+            pickupTrigger.OnArtifactPick -= OnArtifactPicked;
+    }
+
     // ================= CENTRAL STOP CONTROL =================
 
     private void UpdateAgentState()
