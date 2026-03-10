@@ -10,9 +10,25 @@ public class PauseMenuView : MonoBehaviour
     public event Action ResumeClicked;
     public event Action ExitClicked;
 
-    private void Awake()
+    private void OnEnable()
     {
-        m_resumeButton.onClick.AddListener(() => ResumeClicked?.Invoke());
-        m_exitButton.onClick.AddListener(() => ExitClicked?.Invoke());
+        m_resumeButton.onClick.AddListener(OnResumeClicked);
+        m_exitButton.onClick.AddListener(OnExitClicked);
+    }
+
+    private void OnDisable()
+    {
+        m_resumeButton.onClick.RemoveListener(OnResumeClicked);
+        m_exitButton.onClick.RemoveListener(OnExitClicked);
+    }
+
+    private void OnResumeClicked()
+    {
+        ResumeClicked?.Invoke();
+    }
+
+    private void OnExitClicked()
+    {
+        ExitClicked?.Invoke();
     }
 }

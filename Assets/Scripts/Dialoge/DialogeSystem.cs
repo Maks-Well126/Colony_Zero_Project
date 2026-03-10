@@ -91,4 +91,11 @@ public class DialogeSystem : MonoBehaviour
 
         m_dialogText.text = "";
     }
+
+    private void OnDestroy()
+    {
+        if (m_instance == this)
+            m_instance = null;
+        StopAllCoroutines();
+    }
 }

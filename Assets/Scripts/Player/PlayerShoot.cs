@@ -190,5 +190,15 @@ namespace Player
 
             Destroy(flash, instance.Config.TimeMuzzle);
         }
+
+        private void OnDestroy()
+        {
+            if (m_actions != null)
+            {
+                m_actions.Player.Shoot.performed -= _ => TryShoot();
+                m_actions.Player.Reload.performed -= _ => TryReload();
+                m_actions.Dispose();
+            }
+        }
     }
 }
