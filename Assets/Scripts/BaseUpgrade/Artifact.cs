@@ -27,7 +27,7 @@ public class Artifact : MonoBehaviour
         {
             isArtefact1Delivered = true;
             m_deliveredCount++;
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
             DialogeSystem.StartDialoge(DialogType.Artef1Delivered);
             return;
         }
@@ -42,7 +42,7 @@ public class Artifact : MonoBehaviour
             isArtefact2Delivered = true;
             m_deliveredCount++;
             DialogeSystem.StartDialoge(DialogType.Artef2Delivered);
-            Destroy(gameObject);
+            Destroy(gameObject, 0.1f);
             return;
         }
     }
