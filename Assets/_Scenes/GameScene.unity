@@ -14816,7 +14816,7 @@ MonoBehaviour:
   - type: 0
     text: 
     clip: {fileID: 0}
-  m_sentencesPerPage: 1
+  m_sentencesPerPage: 2
 --- !u!114 &1430881151
 MonoBehaviour:
   m_ObjectHideFlags: 0

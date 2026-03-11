@@ -120,4 +120,10 @@ public class DialogeSystem : MonoBehaviour
             yield return new WaitForSeconds(m_speedText);
         }
     }
+    private void OnDestroy()
+    {
+        if (m_instance == this)
+            m_instance = null;
+        StopAllCoroutines();
+    }
 }
