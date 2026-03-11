@@ -35,7 +35,11 @@ namespace Player
         private Vector2 m_recoil;
         private Vector2 m_recoilVelocity;
         private float m_currentRecoverySpeed;
-
+        public float Sensitivity
+        {
+            get => m_sensitivity;
+            set => m_sensitivity = value;
+        }
         public bool IsAiming => m_isAiming;
         public Vector3 Forward => m_camera.transform.forward;
 
