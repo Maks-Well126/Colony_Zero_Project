@@ -8,7 +8,7 @@ public class RobotGripper : MonoBehaviour
     [SerializeField] private float rotateSpeed = 90f;
 
     [Header("Pick rotation")]
-    [SerializeField] private float pickYawAngle = 45f; // óãîë ïîâîðîòà ïî Y
+    [SerializeField] private float pickYawAngle = 45f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Y
 
     [SerializeField] private RobotController controller;
 
@@ -23,6 +23,14 @@ public class RobotGripper : MonoBehaviour
             controller.OnArtifactPick += HandlePick;
         }
     }
+    private void OnDestroy()
+    {
+        if (controller != null)
+        {
+            controller.OnArtifactPick -= HandlePick;
+        }
+    }
+    
 
     private void HandlePick(GameObject artifact)
     {
@@ -31,11 +39,11 @@ public class RobotGripper : MonoBehaviour
 
     private IEnumerator PickRoutine(GameObject artifact)
     {
-        // --- ÖÅËÅÂÎÉ ÏÎÂÎÐÎÒ ÒÎËÜÊÎ ÏÎ Y ---
+        // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Y ---
         Quaternion targetRotation =
             initialRotation * Quaternion.Euler(0f, pickYawAngle, 0f);
 
-        // Ïîâîðîò ê óãëó
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½
         while (Quaternion.Angle(craneArm.localRotation, targetRotation) > 0.5f)
         {
             craneArm.localRotation = Quaternion.RotateTowards(
@@ -46,7 +54,7 @@ public class RobotGripper : MonoBehaviour
             yield return null;
         }
 
-        // --- ÏÎÄÁÎÐ ÀÐÒÅÔÀÊÒÀ ---
+        // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
         artifact.transform.SetParent(pickPosition);
         artifact.transform.localPosition = Vector3.zero;
         artifact.transform.localRotation = Quaternion.identity;
@@ -57,7 +65,7 @@ public class RobotGripper : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // --- ÂÎÇÂÐÀÒ Â ÈÑÕÎÄÍÎÅ ÏÎËÎÆÅÍÈÅ ---
+        // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
         while (Quaternion.Angle(craneArm.localRotation, initialRotation) > 0.5f)
         {
             craneArm.localRotation = Quaternion.RotateTowards(

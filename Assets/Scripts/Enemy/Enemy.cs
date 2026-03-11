@@ -18,8 +18,7 @@ public sealed class Enemy : MonoBehaviour
     private void Awake()
     {
         m_stateMachine = new EnemyStateMachine();
-
-        m_attack.OnAttackStarted += () => m_animator.PlayAttack();
+        m_attack.OnAttackStarted += OnAttackStarted;
     }
 
     private void OnEnable()
@@ -34,6 +33,7 @@ public sealed class Enemy : MonoBehaviour
         m_health.Died -= OnDied;
         m_health.Damaged -= OnDamaged;
         m_stateMachine.StateChanged -= OnStateChanged;
+        m_attack.OnAttackStarted -= OnAttackStarted;
     }
 
     private void Update()
@@ -42,6 +42,10 @@ public sealed class Enemy : MonoBehaviour
             return;
 
         UpdateState();
+    }
+    private void OnAttackStarted()
+    {
+        m_animator.PlayAttack();
     }
 
     public void Initialize(EnemyData data, Transform player)

@@ -107,4 +107,9 @@ public sealed class SpawnerEnemy : MonoBehaviour
     {
         return m_enemies[Random.Range(0, m_enemies.Length)];
     }
+
+    private void OnDestroy()
+    {
+        m_spawnedEnemies.Clear();
+    }
 }

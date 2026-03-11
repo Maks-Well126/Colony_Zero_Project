@@ -53,4 +53,13 @@ public class Bootstrap : MonoBehaviour
     {
         m_stateMachine.ChangedState<DeadState>();
     }
+
+    private void OnDestroy()
+    {
+        if (m_actions != null)
+        {
+            m_actions.Player.Pause.performed -= ctx => OnPausePressed();
+            m_actions.Dispose();
+        }
+    }
 }
