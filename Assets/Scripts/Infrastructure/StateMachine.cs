@@ -9,26 +9,28 @@ public class StateMachine
 {
     private IState m_state;
     private Dictionary<Type, IState> m_states = new();
-    public IState CurrentState => m_state;
 
+    public IState CurrentState => m_state;
 
     public void Initialize(params IState[] states)
     {
-        if (m_states.Count > 0) return;
+        m_states.Clear();
 
         foreach (var state in states)
-        {
-            m_states.Add(state.GetType(), state);
-        }
+            m_states[state.GetType()] = state;
     }
 
-    public void ChangedState<T>()
-        where T : IState
+    public void ChangedState<T>() where T : IState
     {
+        var newState = m_states[typeof(T)];
+
+        if (m_state == newState)
+            return;
+
         m_state?.Exit();
-        {
-            m_state = m_states[typeof(T)];
-        }
+
+        m_state = newState;
+
         m_state.Enter();
     }
 }
@@ -109,6 +111,14 @@ public class PauseState : IState
     private void OnExit()
     {
         Time.timeScale = 1f;
+        m_player.EnableControl(false);
+
+        m_view.ResumeClicked -= OnResume;
+        m_view.ExitClicked -= OnExit;
+        m_view.gameObject.SetActive(false);
+
+        m_cameraController.enabled = true;
+
         SceneManager.LoadScene("MainMenuScene");
     }
 }

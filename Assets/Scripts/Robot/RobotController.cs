@@ -125,7 +125,7 @@ public class RobotController : MonoBehaviour
         if (pickupTrigger != null)
             pickupTrigger.OnArtifactPick -= OnArtifactPicked;
             
-        m_health.Died -= OnRobotBroken;
+        //m_health.Died -= OnRobotBroken;
         m_health.Damaged -= OnRobotDamaged;
     }
 

@@ -6,7 +6,6 @@ using Random = UnityEngine.Random;
 
 namespace Player
 {
-    //  [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
         public event Action PlayerDied;
@@ -40,7 +39,6 @@ namespace Player
         private float m_currentRigWeight;
         private bool m_isDead;
 
-
         private void Awake()
         {
             m_controller = GetComponent<CharacterController>();
@@ -52,7 +50,6 @@ namespace Player
             m_health.Died += OnDeath;
 
             m_actions = new PlayerInputActions();
-            m_actions.Player.Enable();
 
             m_actions.Player.Move.performed += ctx => m_moveInput = ctx.ReadValue<Vector2>();
             m_actions.Player.Move.canceled += _ => m_moveInput = Vector2.zero;
@@ -77,6 +74,27 @@ namespace Player
             };
         }
 
+        private void OnEnable()
+        {
+            m_actions.Player.Enable();
+        }
+
+        private void OnDisable()
+        {
+            m_actions.Player.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            if (m_actions != null)
+            {
+                if (m_actions.Player.enabled)
+                    m_actions.Player.Disable();
+
+                m_actions.Dispose();
+                m_actions = null;
+            }
+        }
 
         private void Update()
         {
@@ -84,10 +102,11 @@ namespace Player
                 return;
 
             HandleMovement();
+
             m_footstepSystem.TryPlayStep(
-            m_isRunning,
-            m_controller.isGrounded,
-            m_moveInput.magnitude
+                m_isRunning,
+                m_controller.isGrounded,
+                m_moveInput.magnitude
             );
 
             HandleAnimations();
@@ -105,17 +124,6 @@ namespace Player
             else
                 m_actions.Player.Disable();
         }
-
-        private void OnDisable()
-        {
-            m_actions?.Disable();
-        }
-
-        private void OnDestroy()
-        {
-            m_actions?.Dispose();
-        }
-
 
         public void SetState(PlayerState newState)
         {
@@ -150,13 +158,13 @@ namespace Player
             m_camera.SetAiming(value);
             m_animController.SetAiming(value);
         }
+
         public void HealToFull()
         {
             if (m_isDead)
                 return;
 
             m_health.HealToFull();
-
         }
 
         private void HandleMovement()
@@ -255,7 +263,6 @@ namespace Player
                 m_animController.Shoot();
         }
 
-
         private void OnHealthChanged(float current, float max)
         {
             m_vignette.OnHealthChanged(current, max);
@@ -277,7 +284,6 @@ namespace Player
             m_animController.TriggerHit();
             m_vignette?.FlashDamage();
 
-            
             var clip = m_config.HitSounds[Random.Range(0, m_config.HitSounds.Length)];
             m_audioSource.PlayOneShot(clip);
         }
@@ -287,6 +293,7 @@ namespace Player
             if (m_isDead) return;
 
             m_isDead = true;
+
             EnableControl(false);
             SetState(PlayerState.Dead);
 
@@ -294,16 +301,12 @@ namespace Player
             m_vignette.OnDeath();
 
             if (m_config.DeadAudio != null && m_audioSource != null)
-            {
                 m_audioSource.PlayOneShot(m_config.DeadAudio);
-            }
-
-            m_actions.Player.Disable();
         }
+
         public void OnDeathAnimationFinished()
         {
             EnableControl(false);
-
             PlayerDied?.Invoke();
         }
 
@@ -324,7 +327,5 @@ namespace Player
             EnableControl(true);
             SetState(PlayerState.Idle);
         }
-
     }
-
 }

@@ -12,6 +12,9 @@ public class RobotRepairInteract : MonoBehaviour, IInteractable
 
     public string GetInteractionText()
     {
+        // only show interact text when the robot actually needs repair
+        if (repair == null || !repair.CanRepair)
+            return string.Empty;
         return "Hold E to repair robot";
     }
 

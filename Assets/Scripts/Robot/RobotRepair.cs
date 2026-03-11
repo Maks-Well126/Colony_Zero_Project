@@ -25,6 +25,8 @@ public class RobotRepair : MonoBehaviour
         audioSource.loop = true;
     }
 
+    public bool CanRepair => m_robot != null && m_robot.IsBroken && !m_isRepairing;
+
     public void StartRepair()
     {
         if (m_isRepairing || !m_robot.IsBroken)

@@ -26,11 +26,20 @@ public class InteractionSystem : MonoBehaviour
 
     private void CheckInteractable()
     {
-        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        ray.origin += ray.direction * 0.1f;
 
         if (Physics.Raycast(ray, out RaycastHit hit, distance, interactLayer))
         {
-            current = hit.collider.GetComponent<IInteractable>();
+            if (hit.collider.CompareTag("Player"))
+            {
+                current = null;
+            }
+            else
+            {
+                current = hit.collider.GetComponent<IInteractable>()
+                          ?? hit.collider.GetComponentInParent<IInteractable>();
+            }
         }
         else
         {

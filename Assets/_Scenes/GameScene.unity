@@ -18040,7 +18040,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 229152a1854c9934a82f4cdd32438f91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractionSystem
-  distance: 3
+  distance: 4
   interactLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -20474,7 +20474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6285453440351075976, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.413
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6285453440351075976, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
       propertyPath: m_LocalPosition.z
@@ -20524,7 +20524,8 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3735779552595110334, guid: 33d26d360115f59408fcde0ca7d248fc, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
