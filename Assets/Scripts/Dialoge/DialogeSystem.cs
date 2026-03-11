@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DialogeSystem : MonoBehaviour
 {
@@ -32,13 +33,17 @@ public class DialogeSystem : MonoBehaviour
     [SerializeField] private AudioSource m_audioSource;
     [SerializeField] private DialogData[] m_dialogs = new DialogData[11];
 
+    [Header("Dialog Settings")]
+    [SerializeField] private int m_sentencesPerPage = 1; 
+
     private static DialogeSystem m_instance;
     private Coroutine m_currentCoroutine;
 
     private void Awake()
     {
         m_instance = this;
-    }   
+    }
+
     public static void StartDialoge(DialogType type)
     {
         if (m_instance == null) return;
@@ -69,8 +74,42 @@ public class DialogeSystem : MonoBehaviour
             m_audioSource.Play();
         }
 
-        m_currentCoroutine = StartCoroutine(WriteSentence(data.text));
-        StartCoroutine(ClearAfterAudio());
+        m_currentCoroutine = StartCoroutine(WriteDialog(data.text));
+    }
+
+    private IEnumerator WriteDialog(string text)
+    {
+        string[] sentences = text.Split('.');
+
+        List<string> buffer = new List<string>();
+
+        for (int i = 0; i < sentences.Length; i++)
+        {
+            string sentence = sentences[i].Trim();
+
+            if (string.IsNullOrEmpty(sentence))
+                continue;
+
+            buffer.Add(sentence + ".");
+
+            if (buffer.Count >= m_sentencesPerPage)
+            {
+                yield return StartCoroutine(WriteSentence(string.Join(" ", buffer)));
+
+                yield return new WaitForSeconds(1f);
+
+                m_dialogText.text = "";
+                buffer.Clear();
+            }
+        }
+
+        if (buffer.Count > 0)
+        {
+            yield return StartCoroutine(WriteSentence(string.Join(" ", buffer)));
+        }
+
+        yield return new WaitForSeconds(1f);
+        m_dialogText.text = "";
     }
 
     private IEnumerator WriteSentence(string sentence)
@@ -80,15 +119,5 @@ public class DialogeSystem : MonoBehaviour
             m_dialogText.text += c;
             yield return new WaitForSeconds(m_speedText);
         }
-    }
-
-    private IEnumerator ClearAfterAudio()
-    {
-        if (m_audioSource.clip == null)
-            yield break;
-
-        yield return new WaitWhile(() => m_audioSource.isPlaying);
-
-        m_dialogText.text = "";
     }
 }
