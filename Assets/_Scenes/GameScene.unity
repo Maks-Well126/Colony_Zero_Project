@@ -6887,6 +6887,10 @@ PrefabInstance:
       propertyPath: m_Radial
       value: 
       objectReference: {fileID: 169948869}
+    - target: {fileID: 6631729066333744630, guid: 20ed204e72bf87a41b6f7e1d002cd3e6, type: 3}
+      propertyPath: m_radial
+      value: 
+      objectReference: {fileID: 169948869}
     - target: {fileID: 7575219991594241213, guid: 20ed204e72bf87a41b6f7e1d002cd3e6, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -10123,6 +10127,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1160014912}
+    - target: {fileID: 2024328775603688323, guid: 2276668af56fc8243b4e655230c1a223, type: 3}
+      propertyPath: m_radial
+      value: 
+      objectReference: {fileID: 169948869}
     - target: {fileID: 6072707902872738905, guid: 2276668af56fc8243b4e655230c1a223, type: 3}
       propertyPath: m_Name
       value: RobotWay

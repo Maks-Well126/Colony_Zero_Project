@@ -5,13 +5,14 @@ public class TestMouseDirections : MonoBehaviour
 {
     public float threshold = 0.3f;
     public float deadZone = 50f;
+    [Header("Radial Prefab")]
+    [SerializeField] private GameObject m_radial;
 
+    [Header("Radial Image")]
     [SerializeField] private Image m_upImage;
     [SerializeField] private Image m_downImage;
     [SerializeField] private Image m_leftImage;
     [SerializeField] private Image m_rightImage;
-
-    [SerializeField] private GameObject m_Radial;
 
     private Color m_highlightColor;
     private Color m_defaultColor;
@@ -38,14 +39,14 @@ public class TestMouseDirections : MonoBehaviour
             MouseDirectionChecker.GetMouseDirection(threshold, deadZone);
 
         ResetAllColors();
-
+        
         if (currentDirection != MouseDirectionChecker.MouseDirection.Center)
         {
             switch (currentDirection)
             {
                 case MouseDirectionChecker.MouseDirection.Right:
                     m_rightImage.color = m_highlightColor;
-                    if (Input.GetMouseButtonDown(0)) m_Radial.gameObject.SetActive(false);
+                    if (Input.GetMouseButtonDown(0)) m_radial.gameObject.SetActive(false);
                     break;
                 case MouseDirectionChecker.MouseDirection.Left:
                     m_leftImage.color = m_highlightColor;
@@ -69,7 +70,7 @@ public class TestMouseDirections : MonoBehaviour
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            m_Radial.gameObject.SetActive(false);
+            m_radial.gameObject.SetActive(false);
         } 
     }
 

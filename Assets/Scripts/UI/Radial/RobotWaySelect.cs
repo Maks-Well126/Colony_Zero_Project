@@ -3,6 +3,7 @@ using UnityEngine;
 public class RobotWaySelect : MonoBehaviour
 {
     [SerializeField] private GameObject m_wayPanell;
+    [SerializeField] private GameObject m_radial;
 
     private void Start()
     {
@@ -14,7 +15,7 @@ public class RobotWaySelect : MonoBehaviour
         MouseDirectionChecker.MouseDirection direction =
            MouseDirectionChecker.GetMouseDirection(0.3f, 50);
 
-        if (direction == MouseDirectionChecker.MouseDirection.Right && Input.GetMouseButtonDown(0))
+        if (direction == MouseDirectionChecker.MouseDirection.Right && Input.GetMouseButtonDown(0) && m_radial.gameObject.activeSelf)
         {
             m_wayPanell.gameObject.SetActive(true);
         }
