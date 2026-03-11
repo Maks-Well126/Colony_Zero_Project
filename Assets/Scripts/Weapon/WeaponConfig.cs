@@ -29,6 +29,13 @@ public sealed class WeaponConfig : ScriptableObject
     [SerializeField] private float m_reloadTime = 1.5f;
     [SerializeField] private AudioClip m_reloadSound;
     [SerializeField][Min(0f)] private float m_reloadSoundDelay = 0.3f;
+    
+    [Header("Audio Volume")]
+    [SerializeField][Range(0f, 1f)] private float m_shootVolume = 1f;
+    [SerializeField][Range(0f, 1f)] private float m_reloadVolume = 1f;
+
+    public float ShootVolume => m_shootVolume;
+    public float ReloadVolume => m_reloadVolume;
 
     public GameObject WeaponPrefab => m_weaponPrefab;
     public Sprite WeaponIcon => m_weaponIcon;

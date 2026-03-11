@@ -19,9 +19,17 @@ public class Settings : MonoBehaviour
     [SerializeField] private Slider m_sliderSensitivity;
 
     [SerializeField] private AudioMixer m_mixer;
-    private void Start()
+    private void Awake()
     {
         m_settingsPanel.gameObject.SetActive(false);
+
+        ApplyInitialSettings();
+    }
+    private void ApplyInitialSettings()
+    {
+        SetSensitivity(m_sliderSensitivity.value);
+
+        SetVolume(m_sliderVolume.value);
     }
 
     private void OnEnable()

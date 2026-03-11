@@ -37,6 +37,9 @@ public class RobotController : MonoBehaviour
     [SerializeField] private AudioClip damageClip;
     [SerializeField] private float moveSoundSmooth = 3f;
 
+    [Header("Audio Mixer")]
+    [SerializeField] private UnityEngine.Audio.AudioMixerGroup masterGroup;
+
     [Header("Obstacle Detection")]
     [SerializeField] private float obstacleCheckDistance = 1.5f;
     [SerializeField] private LayerMask obstacleLayer;
@@ -477,26 +480,34 @@ public class RobotController : MonoBehaviour
     // ================= SOUND =================
 
     private void UpdateMoveSound()
+{
+    if (AudioSource == null || mooveClip == null || agent == null)
+        return;
+    if (AudioSource.outputAudioMixerGroup != masterGroup && masterGroup != null)
+        AudioSource.outputAudioMixerGroup = masterGroup;
+
+    bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
+
+    float targetVolume = isMoving ? agent.velocity.magnitude / agent.speed : 0f;
+
+    AudioSource.volume = Mathf.Lerp(
+        AudioSource.volume,
+        targetVolume,
+        Time.deltaTime * moveSoundSmooth
+    );
+
+    if (isMoving && !AudioSource.isPlaying)
     {
-        if (AudioSource == null || mooveClip == null)
-            return;
-
-        bool isMoving = agent.velocity.magnitude > 0.1f && !agent.isStopped;
-
-        float targetVolume = agent.velocity.magnitude / agent.speed;
-
-        AudioSource.volume = Mathf.Lerp(
-            AudioSource.volume,
-            isMoving ? targetVolume : 0f,
-            Time.deltaTime * moveSoundSmooth
-        );
-
-        if (isMoving && !AudioSource.isPlaying)
-        {
-            AudioSource.clip = mooveClip;
-            AudioSource.Play();
-        }
+        AudioSource.clip = mooveClip;
+        AudioSource.loop = true;
+        AudioSource.Play();
     }
+
+    else if (!isMoving && AudioSource.isPlaying && AudioSource.volume <= 0.01f)
+    {
+        AudioSource.Stop();
+    }
+}
 
     private enum RobotState
     {

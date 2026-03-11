@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.Audio;
 
 namespace Player
 {
@@ -11,6 +12,7 @@ namespace Player
         [SerializeField] private PlayerCameraController m_cameraController;
         [SerializeField] private WeaponSystem m_weaponSystem;
         [SerializeField] private WeaponUIController m_weaponUI;
+        [SerializeField] private AudioMixerGroup masterGroup; // присвоить Master из AudioMixer
 
         private PlayerInputActions m_actions;
         private PlayerState m_currentState;
@@ -89,9 +91,10 @@ namespace Player
 
             if (weapon.ShootSound != null && instance.MuzzlePoint != null)
             {
-                AudioSource.PlayClipAtPoint(
+                PlayClipAtPointMaster(
                     weapon.ShootSound,
-                    instance.MuzzlePoint.position
+                    instance.MuzzlePoint.position,
+                    weapon.ShootVolume
                 );
             }
 
@@ -147,9 +150,10 @@ namespace Player
 
             if (instance.Config.ReloadSound != null)
             {
-                AudioSource.PlayClipAtPoint(
+                PlayClipAtPointMaster(
                     instance.Config.ReloadSound,
-                    transform.position
+                    transform.position,
+                    instance.Config.ReloadVolume
                 );
             }
 
@@ -189,6 +193,20 @@ namespace Player
             );
 
             Destroy(flash, instance.Config.TimeMuzzle);
+        }
+        private void PlayClipAtPointMaster(AudioClip clip, Vector3 position, float volume)
+        {
+            if (clip == null) return;
+
+            GameObject tempGO = new GameObject("TempAudio");
+            tempGO.transform.position = position;
+            AudioSource aSource = tempGO.AddComponent<AudioSource>();
+            aSource.clip = clip;
+            aSource.outputAudioMixerGroup = masterGroup; // подключаем к Master
+            aSource.spatialBlend = 1f; // 3D звук
+            aSource.volume = volume;   // индивидуальная громкость через инспектор
+            aSource.Play();
+            Destroy(tempGO, clip.length);
         }
 
         private void OnDestroy()
