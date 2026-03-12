@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Player;
+using UnityEngine.Audio;
 
 public class DinoBackgroundSequence : MonoBehaviour
 {
@@ -20,24 +21,31 @@ public class DinoBackgroundSequence : MonoBehaviour
     [SerializeField] private AudioClip walkSound;
     [SerializeField] private AudioClip roarSound;
     [SerializeField] private AudioClip deathSound;
+    [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
     private AudioSource m_audioSource;
     private bool m_started;
 
     private void Awake()
+{
+    m_audioSource = gameObject.AddComponent<AudioSource>();
+
+    if (sfxMixerGroup != null)
+        m_audioSource.outputAudioMixerGroup = sfxMixerGroup;
+
+    transform.position = pointA.position;
+    transform.LookAt(pointB);
+
+    if (walkAudioSource != null)
     {
-        m_audioSource = gameObject.AddComponent<AudioSource>();
+        walkAudioSource.loop = true;
+        walkAudioSource.clip = walkSound;
+        walkAudioSource.playOnAwake = false;
 
-        transform.position = pointA.position;
-        transform.LookAt(pointB);
-
-        if (walkAudioSource != null)
-        {
-            walkAudioSource.loop = true;
-            walkAudioSource.clip = walkSound;
-            walkAudioSource.playOnAwake = false;
-        }
+        if (sfxMixerGroup != null)
+            walkAudioSource.outputAudioMixerGroup = sfxMixerGroup;
     }
+}
 
     public void StartSequence()
     {

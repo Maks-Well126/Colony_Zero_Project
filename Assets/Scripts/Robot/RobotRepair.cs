@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class RobotRepair : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class RobotRepair : MonoBehaviour
     [SerializeField] private AudioClip m_processSound;
 
     [SerializeField] private RobotController m_robot;
+    [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
     private float m_timer;
     private bool m_isRepairing;
@@ -19,6 +21,9 @@ public class RobotRepair : MonoBehaviour
     {
         if (m_robot == null)
             m_robot = GetComponent<RobotController>();
+            
+        if (sfxMixerGroup != null)
+            audioSource.outputAudioMixerGroup = sfxMixerGroup;    
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
