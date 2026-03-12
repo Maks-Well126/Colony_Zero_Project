@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 public class Destructible : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Destructible : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AudioClip m_processSound;
     [SerializeField] private AudioClip m_completeSound;
+    [SerializeField] private AudioMixerGroup m_outputGroup;
 
     private float m_timer;
     private bool m_isDestroying;
@@ -26,6 +28,9 @@ public class Destructible : MonoBehaviour
         m_audioSource = gameObject.AddComponent<AudioSource>();
         m_audioSource.playOnAwake = false;
         m_audioSource.loop = true;
+
+        if (m_outputGroup != null)
+            m_audioSource.outputAudioMixerGroup = m_outputGroup;
 
         m_collider = GetComponent<Collider>();
     }
@@ -75,7 +80,14 @@ public class Destructible : MonoBehaviour
 
         if (m_completeSound != null)
         {
-            AudioSource.PlayClipAtPoint(m_completeSound, transform.position);
+            AudioSource source = new GameObject("TempAudio").AddComponent<AudioSource>();
+            source.transform.position = transform.position;
+
+            source.clip = m_completeSound;
+            source.outputAudioMixerGroup = m_outputGroup;
+            source.Play();
+
+            Destroy(source.gameObject, m_completeSound.length);
         }
 
         if (m_collider != null)
