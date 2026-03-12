@@ -13,6 +13,7 @@ public class ShipUpgrade : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject m_radialUI;
+    [SerializeField] private GameObject m_podskazka;
 
     private bool playerNearby;
     private bool isLevel1Built = false;
@@ -98,6 +99,7 @@ public class ShipUpgrade : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            m_podskazka.gameObject.SetActive(false);            
             playerNearby = true;
         }
     }
