@@ -34,10 +34,7 @@ public class ShipUpgrade : MonoBehaviour
     }
 
     private void Update()
-    {
-        Debug.Log("save" + Save.LoadLevel1State());
-        Debug.Log("save1" + Save.LoadLevel2State());
-        Debug.Log("lvl1BUild"  + isLevel1Built);
+    {        
         MouseDirectionChecker.MouseDirection direction =
             MouseDirectionChecker.GetMouseDirection(0.3f, 50);
 
