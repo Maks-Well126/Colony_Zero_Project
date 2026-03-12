@@ -42,6 +42,7 @@ public class Artifact : MonoBehaviour
         {
             isArtefact2Delivered = true;
             m_deliveredCount++;
+            Save.SaveLevel2State(true);
             DialogeSystem.StartDialoge(DialogType.Artef2Delivered);
             Destroy(gameObject, 0.1f);
             return;

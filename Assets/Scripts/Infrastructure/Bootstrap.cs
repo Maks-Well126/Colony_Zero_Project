@@ -1,4 +1,5 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Audio;
 using Player;
 
 public class Bootstrap : MonoBehaviour
@@ -14,6 +15,8 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private GameObject m_RadialMenu;
     [SerializeField] private GameObject m_robotMap;
 
+    [SerializeField] private AudioMixer m_audioMixer;
+
     private StateMachine m_stateMachine;
     private PlayerInputActions m_actions;
 
@@ -25,11 +28,13 @@ public class Bootstrap : MonoBehaviour
 
         m_stateMachine.Initialize(
         new GameplayState(m_spawner),
-        new PauseState(m_stateMachine, m_pauseMenu,m_player, m_playerCamera),
+        new PauseState(m_stateMachine, m_pauseMenu, m_player, m_playerCamera),
         new DeadState(m_stateMachine, m_player, m_spawnPoint, m_spawner, m_deadScreen, m_playerCamera)
         );
 
         m_player.PlayerDied += OnPlayerDied;
+
+        Settings.InitializeAudio(m_audioMixer, m_playerCamera);
 
         m_stateMachine.ChangedState<GameplayState>();
 
@@ -41,8 +46,8 @@ public class Bootstrap : MonoBehaviour
     private void OnPausePressed()
     {
         if (m_RadialMenu.gameObject.activeSelf) return;
-        if (m_robotMap.activeSelf) return;      
-        
+        if (m_robotMap.activeSelf) return;
+
         if (m_stateMachine.CurrentState is GameplayState)
         {
             m_stateMachine.ChangedState<PauseState>();

@@ -16,6 +16,7 @@ public class Intro : MonoBehaviour
 
     void Start()
     {
+        videoPlayer.SetDirectAudioMute(0, true);
         StartCoroutine(LoadGameScene());
 
         if (videoPlayer != null)

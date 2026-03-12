@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 using static DialogeSystem;
 
 public class ShipUpgrade : MonoBehaviour
@@ -36,6 +35,9 @@ public class ShipUpgrade : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log("save" + Save.LoadLevel1State());
+        Debug.Log("save1" + Save.LoadLevel2State());
+        Debug.Log("lvl1BUild"  + isLevel1Built);
         MouseDirectionChecker.MouseDirection direction =
             MouseDirectionChecker.GetMouseDirection(0.3f, 50);
 
@@ -66,8 +68,7 @@ public class ShipUpgrade : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 DialogeSystem.StartDialoge(DialogType.Build);
-                // AudioManager.Instance.PlayButtonClick(2);
-                // UpgradeShip(m_buildingPrefab2, m_buildingSpawnPoint2);
+                SceneManager.LoadScene("End");
                 isLevel2Built = true;                
                 Save.SaveLevel2State(true);
             }

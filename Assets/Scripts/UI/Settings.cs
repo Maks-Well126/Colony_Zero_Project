@@ -19,10 +19,35 @@ public class Settings : MonoBehaviour
     [SerializeField] private Slider m_sliderSensitivity;
 
     [SerializeField] private AudioMixer m_mixer;
+
+    private const string SENSITIVITY_KEY = "Sensitivity";
+    private const string VOLUME_KEY = "Volume";
+    private const float DEFAULT_VOLUME = -20f;
+    private const float DEFAULT_SENSITIVITY = 0.1f;
+
+    private static AudioMixer s_mixer;
+    private static PlayerCameraController s_cameraController;
+
+    public static void InitializeAudio(AudioMixer mixer, PlayerCameraController cameraController)
+    {
+        s_mixer = mixer;
+        s_cameraController = cameraController;
+
+        float savedVolume = PlayerPrefs.GetFloat(VOLUME_KEY, DEFAULT_VOLUME);
+        float savedSensitivity = PlayerPrefs.GetFloat(SENSITIVITY_KEY, DEFAULT_SENSITIVITY);
+
+        s_mixer.SetFloat("MyExposedParam", savedVolume);
+        s_cameraController.Sensitivity = savedSensitivity / 2;
+    }
+
     private void Awake()
     {
         m_settingsPanel.gameObject.SetActive(false);
+    }
 
+    private void Start()
+    {
+        LoadSettings();
         ApplyInitialSettings();
     }
     private void ApplyInitialSettings()
@@ -30,6 +55,12 @@ public class Settings : MonoBehaviour
         SetSensitivity(m_sliderSensitivity.value);
 
         SetVolume(m_sliderVolume.value);
+    }
+
+    private void LoadSettings()
+    {
+        m_sliderSensitivity.value = PlayerPrefs.GetFloat(SENSITIVITY_KEY, DEFAULT_SENSITIVITY);
+        m_sliderVolume.value = PlayerPrefs.GetFloat(VOLUME_KEY, DEFAULT_VOLUME);
     }
 
     private void OnEnable()
@@ -48,12 +79,14 @@ public class Settings : MonoBehaviour
     }
     private void SetSensitivity(float value)
     {
-        m_cameraController.Sensitivity = m_sliderSensitivity.value / 2;
+        m_cameraController.Sensitivity = value / 2;
+        PlayerPrefs.SetFloat(SENSITIVITY_KEY, value);
     }
 
     private void SetVolume(float value)
     {
         m_mixer.SetFloat("MyExposedParam", value);
+        PlayerPrefs.SetFloat(VOLUME_KEY, value);
     }
 
     private void OpenSettings()
