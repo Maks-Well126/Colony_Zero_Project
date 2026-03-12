@@ -7,9 +7,7 @@ public class TerrainRoadNavMesh : MonoBehaviour
 {
     [Header("Terrain Settings")]
     public Terrain terrain;
-    [Tooltip("Первый индекс текстуры дороги")]
     public int roadTextureIndex1 = 0;
-    [Tooltip("Второй индекс текстуры дороги")]
     public int roadTextureIndex2 = 1;
     [Range(0f, 1f)] public float threshold = 0.5f;
     public float cellSize = 4f;
@@ -55,7 +53,6 @@ public class TerrainRoadNavMesh : MonoBehaviour
                 float roadAmount1 = alphamaps[alphaZ, alphaX, roadTextureIndex1];
                 float roadAmount2 = alphamaps[alphaZ, alphaX, roadTextureIndex2];
 
-                // Если ни одна из двух текстур не достигает порога — пропускаем
                 if (roadAmount1 < threshold && roadAmount2 < threshold) continue;
 
                 // Создаём плоскость
@@ -64,13 +61,16 @@ public class TerrainRoadNavMesh : MonoBehaviour
                 cell.transform.SetParent(transform);
 
                 // Позиция по высоте террейна с groundOffset
-                float terrainHeight = terrain.SampleHeight(new Vector3(terrainPos.x + worldX + cellSize / 2f, 0, terrainPos.z + worldZ + cellSize / 2f)) + terrainPos.y;
-                Vector3 cellPos = new Vector3(
-                    terrainPos.x + worldX + cellSize / 2f,
-                    terrainHeight + volumeHeight / 2f + groundOffset,
-                    terrainPos.z + worldZ + cellSize / 2f
-                );
+                float sampleX = terrainPos.x + worldX + cellSize / 2f;
+                float sampleZ = terrainPos.z + worldZ + cellSize / 2f;
+                float terrainHeight = terrain.SampleHeight(new Vector3(sampleX, 0, sampleZ)) + terrainPos.y;
+
+                Vector3 cellPos = new Vector3(sampleX, terrainHeight + volumeHeight / 2f + groundOffset, sampleZ);
                 cell.transform.position = cellPos;
+
+                // Получаем нормаль террейна для наклона
+                Vector3 normal = terrain.terrainData.GetInterpolatedNormal((sampleX - terrainPos.x) / terrainSize.x, (sampleZ - terrainPos.z) / terrainSize.z);
+                cell.transform.rotation = Quaternion.FromToRotation(Vector3.up, normal);
 
                 // Масштаб под ячейку
                 float scale = cellSize / 10f; // Plane по умолчанию 10x10
@@ -81,18 +81,18 @@ public class TerrainRoadNavMesh : MonoBehaviour
                 vol.size = new Vector3(cellSize, volumeHeight, cellSize);
                 vol.area = NavMesh.GetAreaFromName("Walkable");
 
-                // Отключаем рендер, чтобы не было видно
+                // Отключаем Renderer после bake
                 var renderer = cell.GetComponent<MeshRenderer>();
                 if (renderer != null) renderer.enabled = false;
             }
         }
 
-        Debug.Log("Road NavMesh cells created for two texture indices.");
+        Debug.Log("Road NavMesh cells created with terrain slopes.");
 
         // Авто-бейк NavMeshSurface
         if (navMeshSurface != null)
         {
-            // Временно включаем все Renderer для bake
+            // Временно включаем Renderer для bake
             foreach (Transform t in transform)
             {
                 var rend = t.GetComponent<MeshRenderer>();
