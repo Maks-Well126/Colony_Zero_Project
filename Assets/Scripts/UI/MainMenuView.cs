@@ -21,7 +21,7 @@ public class MainMenuView : MonoBehaviour
 
     private void LoadGame()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("Intro");
     }
 
     private void ExitGame()
