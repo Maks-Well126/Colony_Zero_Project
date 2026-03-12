@@ -21,13 +21,14 @@ public class RobotRepair : MonoBehaviour
     {
         if (m_robot == null)
             m_robot = GetComponent<RobotController>();
-            
-        if (sfxMixerGroup != null)
-            audioSource.outputAudioMixerGroup = sfxMixerGroup;    
+   
 
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.loop = true;
+        
+        if (sfxMixerGroup != null)
+            audioSource.outputAudioMixerGroup = sfxMixerGroup; 
     }
 
     public bool CanRepair => m_robot != null && m_robot.IsBroken && !m_isRepairing;
