@@ -230,7 +230,7 @@ namespace Player
         {
             if (m_currentState != PlayerState.Aiming)
             {
-                m_crosshair.SetEnemyTarget(false);
+                m_crosshair.SetTargetColor(Color.white);
                 return;
             }
 
@@ -242,12 +242,18 @@ namespace Player
             {
                 if (hit.collider.CompareTag("Enemy"))
                 {
-                    m_crosshair.SetEnemyTarget(true);
+                    m_crosshair.SetTargetColor(Color.red);
+                    return;
+                }
+
+                if (hit.collider.CompareTag("HealthPlant"))
+                {
+                    m_crosshair.SetTargetColor(Color.green);
                     return;
                 }
             }
 
-            m_crosshair.SetEnemyTarget(false);
+            m_crosshair.SetTargetColor(Color.white);
         }
 
         private void HandleAnimations()

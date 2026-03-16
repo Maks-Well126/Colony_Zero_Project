@@ -9,7 +9,6 @@ namespace Player
         [SerializeField] private Image m_crosshairImage;
 
         [SerializeField] private Color m_defaultColor = Color.white;
-        [SerializeField] private Color m_enemyColor = Color.red;
 
         private void Awake()
         {
@@ -22,9 +21,9 @@ namespace Player
             m_root.SetActive(value);
         }
 
-        public void SetEnemyTarget(bool isEnemy)
+        public void SetTargetColor(Color color)
         {
-            m_crosshairImage.color = isEnemy ? m_enemyColor : m_defaultColor;
+            m_crosshairImage.color = color;
         }
     }
 }

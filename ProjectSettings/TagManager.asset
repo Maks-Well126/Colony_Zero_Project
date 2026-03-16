@@ -10,6 +10,7 @@ TagManager:
   - Artifact
   - Base
   - Robot
+  - HealthPlant
   layers:
   - Default
   - TransparentFX

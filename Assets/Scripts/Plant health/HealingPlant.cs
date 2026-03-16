@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Audio;
 
 public class HealingPlant : MonoBehaviour
 {
@@ -13,11 +14,23 @@ public class HealingPlant : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioClip m_hitSound;
+    [SerializeField] private AudioMixerGroup sfxMixerGroup;
 
     [Header("VFX")]
     [SerializeField] private ParticleSystem m_idleEffect;
 
     private bool m_isClosed;
+
+    private AudioSource m_audioSource;
+
+    private void Awake()
+    {
+        m_audioSource = gameObject.AddComponent<AudioSource>();
+        m_audioSource.playOnAwake = false;
+
+        if (sfxMixerGroup != null)
+            m_audioSource.outputAudioMixerGroup = sfxMixerGroup;
+    }
 
     private void Start()
     {
@@ -36,7 +49,7 @@ public class HealingPlant : MonoBehaviour
             m_animator.SetTrigger("Close");
 
         if (m_hitSound != null)
-            AudioSource.PlayClipAtPoint(m_hitSound, transform.position);
+            m_audioSource.PlayOneShot(m_hitSound);
 
         if (m_idleEffect != null)
             m_idleEffect.Stop();
